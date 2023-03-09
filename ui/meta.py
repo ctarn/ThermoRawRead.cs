@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 
 name = "ThermoRawRead"
-version = "1.0.0"
+version = "1.0.1"
 author = "Tarn Yeong Ching"
 url = f"http://{name.lower()}.ctarn.io"
 server = f"http://api.ctarn.io/{name}/{version}"
