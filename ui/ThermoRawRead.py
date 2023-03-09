@@ -94,7 +94,8 @@ ttk.Label(main, text=meta.copyright, justify="center").grid(column=0, row=row, c
 sys.stdout = util.Console(console)
 sys.stderr = util.Console(console)
 
-threading.Thread(target=lambda: util.show_headline(meta.server, main, 3)).start()
+if getattr(sys, 'frozen', False):
+    threading.Thread(target=lambda: util.show_headline(meta.server, main, 3)).start()
 
 util.load_task(path_autosave, vars)
 
