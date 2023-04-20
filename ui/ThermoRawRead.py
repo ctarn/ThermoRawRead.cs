@@ -7,6 +7,10 @@ from tkinter import ttk, filedialog, scrolledtext
 import meta
 import util
 
+handles = []
+running = False
+skip_rest = False
+
 os.makedirs(meta.homedir, exist_ok=True)
 path_autosave = os.path.join(meta.homedir, "autosave.task")
 
@@ -71,17 +75,35 @@ row += 1
 
 def do_run():
     btn_run.config(state="disabled")
+    global handles, running, skip_rest
+    running = True
+    skip_rest = False
     util.save_task(path_autosave, {k: v for k, v in vars.items() if v.get() != vars_spec[k]["value"]})
     for p in vars["data"].get().split(";"):
         cmd = [util.get_content("ThermoRawRead", "ThermoRawRead.exe", shared=True, zipped=True)]
         cmd = cmd + [p, vars["out"].get()]
         if not util.is_windows:
             cmd = [vars["mono"].get()] + cmd
-        util.run_cmd(cmd)
+        util.run_cmd(cmd, handles, skip_rest)
+    running = False
     btn_run.config(state="normal")
 
-btn_run = ttk.Button(main, text="RUN", command=lambda: threading.Thread(target=do_run).start())
-btn_run.grid(column=0, row=row, columnspan=3)
+def do_stop():
+    global handles, running, skip_rest
+    skip_rest = True
+    for job in handles:
+        if job.poll() is None:
+            job.terminate()
+    running = False
+    handles.clear()
+    btn_run.config(state="normal")
+    print("ThermoRawRead stopped.")
+
+frm_btn = ttk.Frame(main)
+frm_btn.grid(column=0, row=row, columnspan=3)
+btn_run = ttk.Button(frm_btn, text="RUN", command=lambda: threading.Thread(target=do_run).start())
+btn_run.grid(column=0, row=0, padx=16, pady=8)
+ttk.Button(frm_btn, text="STOP", command=lambda: threading.Thread(target=do_stop).start()).grid(column=1, row=0, padx=16, pady=8)
 row += 1
 
 console = scrolledtext.ScrolledText(main, height=16)
@@ -95,8 +117,15 @@ sys.stdout = util.Console(console)
 sys.stderr = util.Console(console)
 
 if getattr(sys, 'frozen', False):
-    threading.Thread(target=lambda: util.show_headline(meta.server, main, 3)).start()
+    threading.Thread(target=lambda: util.show_headline(meta.server, main, columnspan=3)).start()
+
+def on_delete():
+    if (not running) or tk.messagebox.askokcancel("Quit", "Task running. Quit now?"):
+        do_stop()
+        win.destroy()
 
 util.load_task(path_autosave, vars)
+
+win.protocol("WM_DELETE_WINDOW", on_delete)
 
 tk.mainloop()
