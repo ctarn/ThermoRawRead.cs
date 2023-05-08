@@ -4,7 +4,7 @@
 <title>ThermoRawRead</title>
 <style>
 * {
-    font-family: Helvetica, Arial, sans-serif;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     color: dimgrey;
 }
 
@@ -39,6 +39,27 @@ footer {
     justify-content: space-around;
 }
 
+header {
+    height: 64px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+header img {
+    height: 100%;
+}
+
+div.ui {
+    width: 50%;
+    float: right;
+}
+
+div.ui img {
+    width: 100%;
+}
+
 div.release section {
     margin: 16px 0;
 }
@@ -68,7 +89,7 @@ div.release section ol {
 </head>
 <body>
 <div class="wrapper">
-<header><h1>ThermoRawRead</h1></header>
+<header><img src="fig/ThermoRawRead.svg" alt="logo"/><h1>ThermoRawRead</h1></header>
 <main>
 ThermoRawRead is used to extract mass spectrometry data from RAW files of Thermo Fisher instruments.
 
@@ -79,6 +100,7 @@ ThermoRawRead is used to extract mass spectrometry data from RAW files of Thermo
 </ul>
 
 <h2>Release</h2>
+<div class="ui"><img src="fig/ThermoRawRead_ui.png" alt="ui"/></div>
 {{ release }}
 
 <h2>Q&A</h2>

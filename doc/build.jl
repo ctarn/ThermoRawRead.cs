@@ -23,6 +23,10 @@ open(io -> write(io, html), joinpath(out, "index.html"); write=true)
 
 open(io -> write(io, "thermorawread.ctarn.io"), joinpath(out, "CNAME"); write=true)
 
+for file in ["fig"]
+    cp(joinpath(root, file), joinpath(out, file); force=true)
+end
+
 Documenter.deploydocs(repo=repo, target=joinpath("..", out), versions=nothing)
 
 Documenter.makedocs(sitename="ThermoRawRead", build=joinpath("..", out))
