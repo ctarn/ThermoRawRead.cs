@@ -29,9 +29,7 @@ vars = {k: v["type"](value=v["value"]) for k, v in vars_spec.items()}
 util.load_task(path_autosave, vars)
 
 row = 0
-ttk.Label(main, width=20 if util.is_windows else 16).grid(column=0, row=row)
-ttk.Label(main, width=80 if util.is_windows else 60).grid(column=1, row=row)
-ttk.Label(main, width=12 if util.is_windows else 10).grid(column=2, row=row)
+util.init_form(main)
 
 def do_select_data():
     filetypes = (("Thermo RAW", "*.raw"), ("All", "*.*"))
@@ -45,18 +43,10 @@ def do_select_data():
     if len(vars["data"].get()) > 0 and len(vars["out"].get()) == 0:
         vars["out"].set(os.path.dirname(files[0]))
 
-ttk.Label(main, text="RAW Data:").grid(column=0, row=row, sticky="W")
-ttk.Entry(main, textvariable=vars["data"], width=40).grid(column=1, row=row, **util.sty_entry)
-ttk.Button(main, text="Select", command=do_select_data).grid(column=2, row=row, **util.sty_button)
+util.add_entry(main, row, "RAW Data:", vars["data"], "Select", do_select_data)
 row += 1
 
-def do_select_out():
-    path = filedialog.askdirectory()
-    if len(path) > 0: vars["out"].set(path)
-
-ttk.Label(main, text="Output Directory:").grid(column=0, row=row, sticky="W")
-ttk.Entry(main, textvariable=vars["out"]).grid(column=1, row=row, **util.sty_entry)
-ttk.Button(main, text="Select", command=do_select_out).grid(column=2, row=row, **util.sty_button)
+util.add_entry(main, row, "Output Directory:", vars["out"], "Select", util.askdir(vars["out"]))
 row += 1
 
 def do_run():
@@ -92,16 +82,10 @@ btn_run.grid(column=0, row=0, padx=16, pady=8)
 ttk.Button(frm_btn, text="STOP", command=lambda: threading.Thread(target=do_stop).start(), width=16).grid(column=1, row=0, padx=16, pady=8)
 row += 1
 
-def do_select_mono():
-    path = filedialog.askopenfilename()
-    if len(path) > 0: vars["mono"].set(path)
-
 if not util.is_windows:
-    ttk.Separator(main, orient=tk.HORIZONTAL).grid(column=0, row=row, columnspan=3, sticky="WE")
+    ttk.Separator(main, orient=tk.HORIZONTAL).grid(column=0, row=row, columnspan=3, sticky="EW")
     ttk.Label(main, text="Advanced Configuration").grid(column=0, row=row, columnspan=3)
     row += 1
 
-    ttk.Label(main, text="Mono Runtime:").grid(column=0, row=row, sticky="W")
-    ttk.Entry(main, textvariable=vars["mono"]).grid(column=1, row=row, **util.sty_entry)
-    ttk.Button(main, text="Select", command=do_select_mono).grid(column=2, row=row, **util.sty_button)
+    util.add_entry(main, row, "Mono Runtime:", vars["mono"], "Select", util.askfile(vars["mono"]))
     row += 1
