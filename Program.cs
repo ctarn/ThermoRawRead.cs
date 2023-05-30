@@ -57,14 +57,119 @@ namespace ThermoRawRead
             }
         }
 
-        public void Run()
+        public void Run(string fmt)
+        {
+            if (fmt == "peak")
+                RunPeak();
+            else if (fmt == "msx")
+                RunMSx();
+            else
+                Console.WriteLine($"unsupport output format: {fmt}");
+        }
+
+        public void RunPeak()
+        {
+            MS[] M = new MS[raw.RunHeaderEx.LastSpectrum - raw.RunHeaderEx.FirstSpectrum + 1];
+            int last_ms1 = 0;
+            for (int i = 0; i < M.Length; ++i)
+            {
+                int id = raw.RunHeaderEx.FirstSpectrum + i;
+                if (id % 10000 == 0 || id == raw.RunHeaderEx.LastSpectrum)
+                    Console.WriteLine($"reading scan data ({id} / {raw.RunHeaderEx.LastSpectrum})");
+                var ms = Read(id);
+                if (ms.ms_order == MSOrderType.Ms)
+                    last_ms1 = id;
+                else if (ms.ms_order == MSOrderType.Ms2)
+                    if (idx.pre < 0) ms.precursor_scan = last_ms1;
+                M[i] = ms;
+            }
+
+            string path = Path.Combine(path_out, Path.GetFileNameWithoutExtension(path_in));
+            if (!Directory.Exists(path_out)) Directory.CreateDirectory(path_out);
+
+
+            Console.WriteLine($"writing data info to {path}.info.txt~");
+            var info = new StreamWriter(path + ".info.txt~", false);
+            string instrument = $"Thermo {raw.GetInstrumentData().Name}";
+            double duration = raw.RunHeader.ExpectedRuntime * 60;
+            info.Write($"Instrument: {instrument}\n" + $"Duration: {duration}\n");
+            info.Close();
+            File.Delete(path + ".info.txt");
+            File.Move(path + ".info.txt~", path + ".info.txt");
+            Console.WriteLine($"data info saved to {path}.info.txt");
+
+            Console.WriteLine($"writing scan meta to {path}.scan.csv~");
+            var meta = new StreamWriter(path + ".scan.csv~", false);
+            meta.Write(
+                "ScanType,ScanID,PeakIndex,ScanMode,TotalIonCurrent,BasePeakIntensity,BasePeakMass," + 
+                "RetentionTime,IonInjectionTime,InstrumentType," +
+                "PrecursorScan,ActivationCenter,IsolationWidth,PrecursorMZ,PrecursorCharge\n"
+            );
+            for (int i = 0; i < M.Length; ++i)
+            {
+                var ms = M[i];
+                if (ms.ms_order == MSOrderType.Ms)
+                {
+                    meta.Write(
+                        $"MS1,{ms.id},{i+1},{ms.scan_mode},{ms.total_ion_current:F4},{ms.base_peak_intensity:F4},{ms.base_peak_mass:F8}," + 
+                        $"{ms.retention_time:F4},{ms.injection_time:F4},{ms.instrument_type}," +
+                        $"0,0.0,0.0,0.0,0\n"
+                    );
+                }
+                else if (ms.ms_order == MSOrderType.Ms2)
+                {
+                    meta.Write(
+                        $"MS2,{ms.id},{i+1},{ms.scan_mode},{ms.total_ion_current:F4},{ms.base_peak_intensity:F4},{ms.base_peak_mass:F8}," +
+                        $"{ms.retention_time:F4},{ms.injection_time:F4},{ms.instrument_type}," +
+                        $"{ms.precursor_scan},{ms.activation_center:F8},{ms.isolation_width:F4},{ms.mz:F8},{ms.z}\n"
+                    );
+                }
+            }
+            meta.Close();
+            File.Delete(path + ".scan.csv");
+            File.Move(path + ".scan.csv~", path + ".scan.csv");
+            Console.WriteLine($"scan meta saved to {path}.scan.csv");
+
+            Console.WriteLine($"writing peak list to {path}.peak~");
+            var stream = File.Open(path + ".peak~", FileMode.Create);
+            var peak = new BinaryWriter(stream);
+            peak.Write(Convert.ToInt64(M.Length));
+            for (int i = 1; i <= M.Length; ++i)
+            {
+                if (i % 10000 == 0 || i == M.Length)
+                    Console.WriteLine($"writing peak mass ({i} / {M.Length})");
+                var ms = M[i-1];
+                peak.Write(Convert.ToInt64(ms.masses.Length));
+                foreach(var x in ms.masses)
+                    peak.Write(Convert.ToDouble(x));
+            }
+            peak.Write(Convert.ToInt64(M.Length));
+            for (int i = 1; i <= M.Length; ++i)
+            {
+                if (i % 10000 == 0 || i == M.Length)
+                    Console.WriteLine($"writing peak intensity ({i} / {M.Length})");
+                var ms = M[i - 1];
+                peak.Write(Convert.ToInt64(ms.intensities.Length));
+                foreach (var x in ms.intensities)
+                    peak.Write(Convert.ToDouble(x));
+            }
+            stream.Close();
+            peak.Close();
+            File.Delete(path + ".peak");
+            File.Move(path + ".peak~", path + ".peak");
+            Console.WriteLine($"peak list saved to {path}.peak");
+
+            raw.Dispose();
+        }
+
+        public void RunMSx()
         {
             string path = Path.Combine(path_out, Path.GetFileNameWithoutExtension(path_in));
             if (!Directory.Exists(path_out)) Directory.CreateDirectory(path_out);
             Console.WriteLine($"writing to {path}.ms1~");
-            StreamWriter ms1 = new StreamWriter(path + ".ms1~", false);
+            var ms1 = new StreamWriter(path + ".ms1~", false);
             Console.WriteLine($"writing to {path}.ms2~");
-            StreamWriter ms2 = new StreamWriter(path + ".ms2~", false);
+            var ms2 = new StreamWriter(path + ".ms2~", false);
 
             string instrument = $"Thermo {raw.GetInstrumentData().Name}";
             double duration = raw.RunHeader.ExpectedRuntime * 60;
@@ -75,7 +180,7 @@ namespace ThermoRawRead
             int last_ms1 = 0;
             for (int id = raw.RunHeaderEx.FirstSpectrum; id <= raw.RunHeaderEx.LastSpectrum; ++id)
             {
-                if (id % 1000 == 0 || id == raw.RunHeaderEx.LastSpectrum)
+                if (id % 10000 == 0 || id == raw.RunHeaderEx.LastSpectrum)
                     Console.WriteLine($"writing scan data ({id} / {raw.RunHeaderEx.LastSpectrum})");
                 var ms = Read(id);
                 if (ms.ms_order == MSOrderType.Ms)
@@ -189,10 +294,12 @@ namespace ThermoRawRead
         public static int Main(string[] args)
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
-            if (args.Length != 2)
-                Console.WriteLine("usage: ThermoRawRead FILE OUT");
+            if (args.Length == 2)
+                new RawData(args[0], args[1]).Run("peak");
+            else if (args.Length == 3)
+                new RawData(args[1], args[2]).Run(args[0]);
             else
-                new RawData(args[0], args[1]).Run();
+                Console.WriteLine("usage: ThermoRawRead [format: peak|msx] file out");
             return 0;
         }
     }
