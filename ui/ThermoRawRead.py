@@ -19,7 +19,7 @@ main.pack(padx=16, pady=8)
 util.add_headline(main, meta.server)[0].pack()
 notebook = ttk.Notebook(main)
 notebook.pack(fill="x")
-util.add_console(main).pack(fill="x")
+util.add_console(main, height=24).pack(fill="x")
 ttk.Label(main, text=meta.copyright, justify="center").pack()
 
 import task

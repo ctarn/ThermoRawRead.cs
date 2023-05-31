@@ -179,8 +179,8 @@ def add_headline(weight, url):
     threading.Thread(target=lambda: show_headline(var, url)).start()
     return ttk.Label(weight, textvariable=var, justify="center"), var
 
-def add_console(weight):
-    console = tk.Text(weight, height=12, state="disabled")
+def add_console(weight, height=12):
+    console = tk.Text(weight, height=height, state="disabled")
     sys.stdout = Console(console)
     sys.stderr = Console(console)
     return console
