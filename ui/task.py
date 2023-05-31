@@ -13,10 +13,13 @@ if util.is_darwin:
 else:
     path_mono = "mono"
 
+fmts = ["MES: fast and small binary format", "MSx: human-friendly text format"]
+fmt_codes = ["mes", "msx"]
 vars_spec = {
-    "mono": {"type": tk.StringVar, "value": path_mono},
     "data": {"type": tk.StringVar, "value": ""},
+    "fmt": {"type": tk.StringVar, "value": fmts[0]},
     "out": {"type": tk.StringVar, "value": ""},
+    "mono": {"type": tk.StringVar, "value": path_mono},
 }
 task = util.Task("ThermoRawRead", vars_spec, path=meta.homedir)
 V = task.vars
@@ -25,6 +28,7 @@ def run():
     for p in V["data"].get().split(";"):
         task.call(*([] if util.is_windows else [V["mono"].get()]),
             util.get_content("ThermoRawRead", "ThermoRawRead.exe", shared=True, zipped=True),
+            fmt_codes[fmts.index(V["fmt"].get())],
             p, V["out"].get(),
         )
 
@@ -32,6 +36,8 @@ util.init_form(main)
 I = 0
 t = (("Thermo RAW", "*.raw"), ("All", "*.*"))
 util.add_entry(main, I, "Data:", V["data"], "Select", util.askfiles(V["data"], V["out"], filetypes=t))
+I += 1
+util.add_entry(main, I, "Format:", ttk.Combobox(main, textvariable=V["fmt"], values=fmts, state="readonly", justify="center"))
 I += 1
 util.add_entry(main, I, "Output Directory:", V["out"], "Select", util.askdir(V["out"]))
 I += 1
