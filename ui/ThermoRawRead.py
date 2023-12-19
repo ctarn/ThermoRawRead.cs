@@ -1,4 +1,5 @@
 import os
+import threading
 import tkinter as tk
 from tkinter import ttk
 
@@ -16,7 +17,9 @@ win.resizable(False, False)
 
 main = ttk.Frame(win)
 main.pack(padx=16, pady=8)
-util.add_headline(main, meta.server)[0].pack()
+var = tk.StringVar()
+threading.Thread(target=lambda: util.show_headline(var, meta.server)).start()
+ttk.Label(main, textvariable=var, justify="center").pack()
 notebook = ttk.Notebook(main)
 notebook.pack(fill="x")
 util.add_console(main, height=24).pack(fill="x")
