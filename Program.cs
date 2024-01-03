@@ -287,7 +287,7 @@ namespace ThermoRawRead
             else if (args.Length == 3)
                 new RawData(args[1], args[2]).Run(args[0]);
             else
-                Console.WriteLine("usage: ThermoRawRead [format: mes|msx] file out");
+                Console.WriteLine("usage: ThermoRawRead [format: mes|msx] input_path output_dir");
             return 0;
         }
     }
