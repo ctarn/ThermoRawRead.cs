@@ -21,6 +21,7 @@ namespace ThermoRawRead
         public string instrument_type;
         public double[] masses = { };
         public double[] intensities = { };
+        public double[] noises = { };
 
         // tandem
         public int precursor_scan = -1;
@@ -32,6 +33,7 @@ namespace ThermoRawRead
         // index
         public ulong index_mz = 0;
         public ulong index_inten = 0;
+        public ulong index_noise = 0;
     }
 
     public class RawData
@@ -140,6 +142,9 @@ namespace ThermoRawRead
                 M[i].index_inten = (ulong)stream.Position;
                 foreach (var x in M[i].intensities)
                     writer.Write(Convert.ToDouble(x));
+                M[i].index_noise = (ulong)stream.Position;
+                foreach (var x in M[i].noises)
+                    writer.Write(Convert.ToDouble(x));
             }
             var pos_data_end = stream.Position;
             var pos_meta_begin = stream.Position;
@@ -244,6 +249,7 @@ namespace ThermoRawRead
             {
                 ms.masses = scan.CentroidScan.Masses;
                 ms.intensities = scan.CentroidScan.Intensities;
+                ms.noises = scan.CentroidScan.Noises;
             }
             else
             {
@@ -268,7 +274,7 @@ namespace ThermoRawRead
                 "ScanType,ScanID,ScanMode,TotalIonCurrent,BasePeakIntensity,BasePeakMass" +
                 ",RetentionTime,IonInjectionTime,InstrumentType" +
                 ",PrecursorScan,ActivationCenter,IsolationWidth,PrecursorMZ,PrecursorCharge" +
-                ",_MassPosition,_MassLength,_IntensityPosition,_IntensityLength" +
+                ",_MassPosition,_MassLength,_IntensityPosition,_IntensityLength,_NoisePosition,_NoiseLength" +
                 "\n").ToCharArray()
             );
             foreach (var ms in M)
@@ -279,7 +285,7 @@ namespace ThermoRawRead
                         $"MS1,{ms.id},{ms.scan_mode},{ms.total_ion_current:F4},{ms.base_peak_intensity:F4},{ms.base_peak_mass:F8}" +
                         $",{ms.retention_time:F4},{ms.injection_time:F4},{ms.instrument_type}" +
                         $",0,0.0,0.0,0.0,0" +
-                        $",{ms.index_mz},{ms.masses.Length * 8},{ms.index_inten},{ms.intensities.Length * 8}" +
+                        $",{ms.index_mz},{ms.masses.Length * 8},{ms.index_inten},{ms.intensities.Length * 8},{ms.index_noise},{ms.noises.Length * 8}" +
                         "\n").ToCharArray()
                     );
                 }
@@ -289,7 +295,7 @@ namespace ThermoRawRead
                         $"MS2,{ms.id},{ms.scan_mode},{ms.total_ion_current:F4},{ms.base_peak_intensity:F4},{ms.base_peak_mass:F8}" +
                         $",{ms.retention_time:F4},{ms.injection_time:F4},{ms.instrument_type}" +
                         $",{ms.precursor_scan},{ms.activation_center:F8},{ms.isolation_width:F4},{ms.mz:F8},{ms.z}" +
-                        $",{ms.index_mz},{ms.masses.Length * 8},{ms.index_inten},{ms.intensities.Length * 8}" +
+                        $",{ms.index_mz},{ms.masses.Length * 8},{ms.index_inten},{ms.intensities.Length * 8},{ms.index_noise},{ms.noises.Length * 8}" +
                         "\n").ToCharArray()
                     );
                 }
