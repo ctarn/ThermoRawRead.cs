@@ -13,8 +13,8 @@ if util.is_darwin:
 else:
     path_mono = "mono"
 
-fmts = ["MES: fast and small binary format", "MSx: human-friendly text format"]
-fmt_codes = ["mes", "msx"]
+fmts = ["UMS: unified mass spectrum format", "MES: fast and small binary format", "MSx: human-friendly text format"]
+fmt_codes = ["ums", "mes", "msx"]
 vars_spec = {
     "data": {"type": tk.StringVar, "value": ""},
     "fmt": {"type": tk.StringVar, "value": fmts[0]},
