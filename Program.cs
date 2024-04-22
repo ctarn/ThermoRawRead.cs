@@ -87,10 +87,8 @@ namespace ThermoRawRead
             double duration = raw.RunHeader.ExpectedRuntime * 60;
             string head = $"Instrument: {instrument}\n" + $"Duration: {duration}\n";
 
-            if (fmt == "ums")
-                RunUMS(path, M, head);
-            else if (fmt == "mes")
-                RunMES(path, M);
+            if (fmt == "umz")
+                RunUMZ(path, M, head);
             else if (fmt == "msx")
                 RunMSx(path, M);
             else
@@ -115,11 +113,11 @@ namespace ThermoRawRead
             raw.Dispose();
         }
 
-        public void RunUMS(string path, MS[] M, string head = "")
+        public void RunUMZ(string path, MS[] M, string head = "")
         {
-            var stream = File.Open(path + ".ums~", FileMode.Create);
+            var stream = File.Open(path + ".umz~", FileMode.Create);
             var writer = new BinaryWriter(stream);
-            writer.Write("UMS\0\0\0\0\0".ToCharArray());
+            writer.Write("UMZ\0\0\0\0\0".ToCharArray());
             writer.Write(Convert.ToUInt64(0)); // version
             var pos_index = stream.Position;
             writer.Write(Convert.ToUInt64(0)); // head offset
@@ -159,45 +157,9 @@ namespace ThermoRawRead
             writer.Write(Convert.ToUInt64(pos_data_end - pos_data_begin));
             stream.Close();
             writer.Close();
-            File.Delete(path + ".ums");
-            File.Move(path + ".ums~", path + ".ums");
-            Console.WriteLine($"scan data saved as {path}.ums");
-        }
-
-        public void RunMES(string path, MS[] M)
-        {
-            var stream = File.Open(path + ".mes~", FileMode.Create);
-            var writer = new BinaryWriter(stream);
-            writer.Write("MES\n".ToCharArray());
-            writer.Write(Convert.ToUInt32(0));
-            writer.Write(Convert.ToUInt64(M.Length));
-            for (int i = 0; i < M.Length; ++i)
-            {
-                if (i % 10000 == 0)
-                    Console.WriteLine($"writing peak mass ({i} / {M.Length})");
-                var ms = M[i];
-                writer.Write(Convert.ToUInt64(ms.masses.Length));
-                M[i].index_mz = (ulong)stream.Position;
-                foreach (var x in ms.masses)
-                    writer.Write(Convert.ToDouble(x));
-            }
-            for (int i = 0; i < M.Length; ++i)
-            {
-                if (i % 10000 == 0)
-                    Console.WriteLine($"writing peak intensity ({i} / {M.Length})");
-                var ms = M[i];
-                writer.Write(Convert.ToUInt64(ms.intensities.Length));
-                M[i].index_inten = (ulong)stream.Position;
-                foreach (var x in ms.intensities)
-                    writer.Write(Convert.ToDouble(x));
-            }
-            writer.Write(new string('\n', 8192).ToCharArray());
-            WriteScanList(writer, M);
-            stream.Close();
-            writer.Close();
-            File.Delete(path + ".mes");
-            File.Move(path + ".mes~", path + ".mes");
-            Console.WriteLine($"scan data saved as {path}.mes");
+            File.Delete(path + ".umz");
+            File.Move(path + ".umz~", path + ".umz");
+            Console.WriteLine($"scan data saved as {path}.umz");
         }
 
         public void RunMSx(string path, MS[] M)
@@ -350,11 +312,11 @@ namespace ThermoRawRead
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
             if (args.Length == 2)
-                new RawData(args[0], args[1]).Run("ums");
+                new RawData(args[0], args[1]).Run("umz");
             else if (args.Length == 3)
                 new RawData(args[1], args[2]).Run(args[0]);
             else
-                Console.WriteLine("usage: ThermoRawRead [format: ums|mes|msx] input_path output_dir");
+                Console.WriteLine("usage: ThermoRawRead [format: umz|msx] input_path output_dir");
             return 0;
         }
     }
