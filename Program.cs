@@ -131,7 +131,7 @@ namespace ThermoRawRead
             scan_list.Flush();
             var pos_data_end = stream.Position;
             var pos_meta_begin = stream.Position;
-            writer.Write(scan_list.ToString());
+            writer.Write(scan_list.ToString().ToCharArray());
             var pos_meta_end = stream.Position;
             stream.Position = pos_index;
             writer.Write(Convert.ToUInt64(pos_head_begin));
