@@ -19,6 +19,7 @@ namespace ThermoRawRead
         public double retention_time = 0;
         public double injection_time = 0;
         public string instrument_type;
+        public double ovftt = 0;
         public double[] masses = { };
         public double[] intensities = { };
         public double[] noises = { };
@@ -41,7 +42,7 @@ namespace ThermoRawRead
         private readonly IRawDataPlus raw;
         private readonly string path_in;
         private readonly string path_out;
-        private (int pre, int itime, int mz, int z, int width) idx = (-1, -1, -1, -1, -1);
+        private (int pre, int itime, int mz, int z, int width, int ovftt) idx = (-1, -1, -1, -1, -1, -1);
         public const double MASS_PROTON = 1.007276466621;
 
         public RawData(string path_in, string path_out)
@@ -60,6 +61,7 @@ namespace ThermoRawRead
                 if (headers[i].Label == "Charge State:") idx.z = i;
                 if (headers[i].Label == "MS2 Isolation Width:") idx.width = i;
                 if (headers[i].Label == "Master Scan Number:") idx.pre = i;
+                if (headers[i].Label == "RawOvFtT:") idx.ovftt = i;
             }
         }
 
@@ -220,6 +222,7 @@ namespace ThermoRawRead
             if (idx.mz >= 0) ms.mz = Convert.ToDouble(raw.GetTrailerExtraValue(id, idx.mz));
             if (idx.width >= 0) ms.isolation_width = Convert.ToDouble(raw.GetTrailerExtraValue(id, idx.width));
             if (idx.pre >= 0) ms.precursor_scan = Convert.ToInt32(raw.GetTrailerExtraValue(id, idx.pre));
+            if (idx.ovftt >= 0) ms.ovftt = Convert.ToDouble(raw.GetTrailerExtraValue(id, idx.ovftt));
             if (ms.mz <= 0) ms.mz = ms.activation_center;
             return ms;
         }
@@ -229,7 +232,7 @@ namespace ThermoRawRead
             io.Write((
                 "ScanType,ScanID,ScanMode,TotalIonCurrent,BasePeakIntensity,BasePeakMass" +
                 ",RetentionTime,IonInjectionTime,InstrumentType" +
-                ",PrecursorScan,ActivationCenter,IsolationWidth,PrecursorMZ,PrecursorCharge" +
+                ",PrecursorScan,ActivationCenter,IsolationWidth,PrecursorMZ,PrecursorCharge,RawOvFtT" +
                 ",_MassPosition,_MassLength,_IntensityPosition,_IntensityLength,_NoisePosition,_NoiseLength" +
                 "\n").ToCharArray()
             );
@@ -242,7 +245,7 @@ namespace ThermoRawRead
                 io.Write((
                     $"MS1,{ms.id},{ms.scan_mode},{ms.total_ion_current:F4},{ms.base_peak_intensity:F4},{ms.base_peak_mass:F8}" +
                     $",{ms.retention_time:F4},{ms.injection_time:F4},{ms.instrument_type}" +
-                    $",0,0.0,0.0,0.0,0" +
+                    $",0,0.0,0.0,0.0,0,{ms.ovftt:F8}" +
                     $",{ms.index_mz},{ms.masses.Length * 8},{ms.index_inten},{ms.intensities.Length * 8},{ms.index_noise},{ms.noises.Length * 8}" +
                     "\n").ToCharArray()
                 );
@@ -252,7 +255,7 @@ namespace ThermoRawRead
                 io.Write((
                     $"MS2,{ms.id},{ms.scan_mode},{ms.total_ion_current:F4},{ms.base_peak_intensity:F4},{ms.base_peak_mass:F8}" +
                     $",{ms.retention_time:F4},{ms.injection_time:F4},{ms.instrument_type}" +
-                    $",{ms.precursor_scan},{ms.activation_center:F8},{ms.isolation_width:F4},{ms.mz:F8},{ms.z}" +
+                    $",{ms.precursor_scan},{ms.activation_center:F8},{ms.isolation_width:F4},{ms.mz:F8},{ms.z},{ms.ovftt:F8}" +
                     $",{ms.index_mz},{ms.masses.Length * 8},{ms.index_inten},{ms.intensities.Length * 8},{ms.index_noise},{ms.noises.Length * 8}" +
                     "\n").ToCharArray()
                 );
