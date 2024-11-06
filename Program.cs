@@ -142,8 +142,8 @@ namespace ThermoRawRead
             writer.Write(Convert.ToUInt64(pos_meta_end - pos_meta_begin));
             writer.Write(Convert.ToUInt64(pos_data_begin));
             writer.Write(Convert.ToUInt64(pos_data_end - pos_data_begin));
-            stream.Close();
             writer.Close();
+            stream.Close();
             File.Delete(path + ".umz");
             File.Move(path + ".umz~", path + ".umz");
             Console.WriteLine($"scan data saved as {path}.umz");
