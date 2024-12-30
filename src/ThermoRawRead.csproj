@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <PublishAot>true</PublishAot>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="ThermoFisher.CommonCore.BackgroundSubtraction" Version="8.0.6"/>
+        <PackageReference Include="ThermoFisher.CommonCore.Data" Version="8.0.6"/>
+        <PackageReference Include="ThermoFisher.CommonCore.MassPrecisionEstimator" Version="8.0.6"/>
+        <PackageReference Include="ThermoFisher.CommonCore.RandomAccessReaderPlugin" Version="8.0.6"/>
+        <PackageReference Include="ThermoFisher.CommonCore.RawFileReader" Version="8.0.6"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Include="..\fig\ThermoRawRead.svg" Link="ThermoRawRead.svg" CopyToOutputDirectory="Always"/>
+        <Content Include="..\fig\ThermoRawRead.pdf" Link="ThermoRawRead.pdf" CopyToOutputDirectory="Always"/>
+        <Content Include="..\fig\ThermoRawRead.png" Link="ThermoRawRead.png" CopyToOutputDirectory="Always"/>
+    </ItemGroup>
+
+</Project>

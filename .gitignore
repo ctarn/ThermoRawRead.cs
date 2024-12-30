@@ -1,2 +1,7 @@
+tmp
+
 obj/
-packages/
+bin/
+
+__pycache__/
+*.spec

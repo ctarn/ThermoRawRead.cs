@@ -12,7 +12,7 @@ os.makedirs(meta.homedir, exist_ok=True)
 
 win = tk.Tk()
 win.title(meta.name)
-win.iconphoto(True, tk.PhotoImage(file=util.get_content(f"{meta.name}.png", shared=True, zipped=True)))
+win.iconphoto(True, tk.PhotoImage(file=util.get_content(f"{meta.name}.png", zipped=True)))
 win.resizable(False, False)
 
 main = ttk.Frame(win)

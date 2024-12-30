@@ -1,9 +1,6 @@
 
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31729.503
-MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThermoRawRead", "ThermoRawRead.csproj", "{B010D1A1-330F-4781-88E0-6D1271116511}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThermoRawRead", "src/ThermoRawRead.csproj", "{B010D1A1-330F-4781-88E0-6D1271116511}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,11 +12,5 @@ Global
 		{B010D1A1-330F-4781-88E0-6D1271116511}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B010D1A1-330F-4781-88E0-6D1271116511}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B010D1A1-330F-4781-88E0-6D1271116511}.Release|Any CPU.Build.0 = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {B84A9AA9-A165-49AA-AC77-910FD4A928CD}
 	EndGlobalSection
 EndGlobal
