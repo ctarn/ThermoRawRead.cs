@@ -22,6 +22,8 @@ public class MS
     public double[] intensities = {};
     public double[] noises = {};
 
+    public string description = "";
+
     // tandem
     public int precursor_scan = -1;
     public double activation_center;
@@ -40,7 +42,7 @@ public class RawData
     private readonly IRawDataPlus raw;
     private readonly string path_in;
     private readonly string path_out;
-    private readonly (int pre, int itime, int mz, int z, int width, int ovftt) idx = (-1, -1, -1, -1, -1, -1);
+    private readonly (int desc, int pre, int itime, int mz, int z, int width, int ovftt) idx = (-1, -1, -1, -1, -1, -1, -1);
     public const double MASS_PROTON = 1.007276466621;
 
     public RawData(string path_in, string path_out)
@@ -54,6 +56,7 @@ public class RawData
         var headers = raw.GetTrailerExtraHeaderInformation();
         for (var i = 0; i < headers.Length; i++)
         {
+            if (headers[i].Label == "Scan Description:") idx.desc = i;
             if (headers[i].Label == "Ion Injection Time (ms):") idx.itime = i;
             if (headers[i].Label == "Monoisotopic M/Z:") idx.mz = i;
             if (headers[i].Label == "Charge State:") idx.z = i;
@@ -214,6 +217,8 @@ public class RawData
             Console.WriteLine($"[WARN] fail to read centroid data from scan #{id}");
         }
 
+        if (idx.desc >= 0) ms.description = raw.GetTrailerExtraValue(id, idx.desc).ToString() ?? string.Empty;
+
         if (ms.ms_order == MSOrderType.Ms) return ms;
 
         ms.activation_center = scan_event.GetMass(0);
@@ -230,7 +235,7 @@ public class RawData
     public void WriteScanListHead(TextWriter io)
     {
         io.Write((
-                "ScanType,ScanID,ScanMode,TotalIonCurrent,BasePeakIntensity,BasePeakMass" +
+                "ScanType,ScanID,ScanMode,ScanDescription,TotalIonCurrent,BasePeakIntensity,BasePeakMass" +
                 ",RetentionTime,IonInjectionTime,InstrumentType" +
                 ",PrecursorScan,ActivationCenter,IsolationWidth,PrecursorMZ,PrecursorCharge,RawOvFtT" +
                 ",_MassPosition,_MassLength,_IntensityPosition,_IntensityLength,_NoisePosition,_NoiseLength" +
@@ -243,7 +248,7 @@ public class RawData
         if (ms.ms_order == MSOrderType.Ms)
         {
             io.Write((
-                    $"MS1,{ms.id},{ms.scan_mode},{ms.total_ion_current:F4},{ms.base_peak_intensity:F4},{ms.base_peak_mass:F8}" +
+                    $"MS1,{ms.id},{ms.scan_mode},{ms.description},{ms.total_ion_current:F4},{ms.base_peak_intensity:F4},{ms.base_peak_mass:F8}" +
                     $",{ms.retention_time:F4},{ms.injection_time:F4},{ms.instrument_type}" +
                     $",0,0.0,0.0,0.0,0,{ms.ovftt:F8}" +
                     $",{ms.index_mz},{ms.masses.Length * 8},{ms.index_inten},{ms.intensities.Length * 8},{ms.index_noise},{ms.noises.Length * 8}" +
@@ -253,7 +258,7 @@ public class RawData
         else if (ms.ms_order == MSOrderType.Ms2)
         {
             io.Write((
-                    $"MS2,{ms.id},{ms.scan_mode},{ms.total_ion_current:F4},{ms.base_peak_intensity:F4},{ms.base_peak_mass:F8}" +
+                    $"MS2,{ms.id},{ms.scan_mode},{ms.description},{ms.total_ion_current:F4},{ms.base_peak_intensity:F4},{ms.base_peak_mass:F8}" +
                     $",{ms.retention_time:F4},{ms.injection_time:F4},{ms.instrument_type}" +
                     $",{ms.precursor_scan},{ms.activation_center:F8},{ms.isolation_width:F4},{ms.mz:F8},{ms.z},{ms.ovftt:F8}" +
                     $",{ms.index_mz},{ms.masses.Length * 8},{ms.index_inten},{ms.intensities.Length * 8},{ms.index_noise},{ms.noises.Length * 8}" +
