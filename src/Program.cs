@@ -19,6 +19,9 @@ public class MS
 
     public string Description = "";
     public double IonInjectionTime;
+    public long Resolution;
+    public string CollisionEnergy = "";
+    public double FAIMS;
     public double OvFtT;
 
     // tandem
@@ -44,7 +47,7 @@ public class RawData
     private readonly IRawDataPlus raw;
     private readonly string path_in;
     private readonly string path_out;
-    private readonly (int desc, int ijt, int ovftt, int width, int pre, int mz, int z) idx = (-1, -1, -1, -1, -1, -1, -1);
+    private readonly (int desc, int ijt, int res, int ce, int cv, int ovftt, int width, int pre, int mz, int z) idx = (-1, -1, -1, -1, -1, -1, -1, -1, -1, -1);
     private const double MassProton = 1.007276466621;
 
     public RawData(string path_in, string path_out)
@@ -60,6 +63,9 @@ public class RawData
         {
             if (headers[i].Label == "Scan Description:") idx.desc = i;
             if (headers[i].Label == "Ion Injection Time (ms):") idx.ijt = i;
+            if (headers[i].Label == "Orbitrap Resolution:") idx.res = i;
+            if (headers[i].Label == "HCD Energy:") idx.ce = i;
+            if (headers[i].Label == "FAIMS CV:") idx.cv = i;
             if (headers[i].Label == "RawOvFtT:") idx.ovftt = i;
             // tandem
             if (headers[i].Label == "MS2 Isolation Width:") idx.width = i;
@@ -204,8 +210,11 @@ public class RawData
         ms.BasePeakMass = scan_stats.BasePeakMass;
         ms.RetentionTime = scan_stats.StartTime * 60;
 
-        if (idx.desc >= 0) ms.Description = raw.GetTrailerExtraValue(id, idx.desc).ToString() ?? string.Empty;
+        if (idx.desc >= 0) ms.Description = raw.GetTrailerExtraValue(id, idx.desc).ToString() ?? "";
         if (idx.ijt >= 0) ms.IonInjectionTime = Convert.ToDouble(raw.GetTrailerExtraValue(id, idx.ijt));
+        if (idx.res >= 0) ms.Resolution = Convert.ToInt64(raw.GetTrailerExtraValue(id, idx.res));
+        if (idx.ce >= 0) ms.CollisionEnergy = raw.GetTrailerExtraValue(id, idx.ce).ToString() ?? "";
+        if (idx.cv >= 0) ms.FAIMS = Convert.ToDouble(raw.GetTrailerExtraValue(id, idx.cv));
         if (idx.ovftt >= 0) ms.OvFtT = Convert.ToDouble(raw.GetTrailerExtraValue(id, idx.ovftt));
 
         var scan = Scan.FromFile(raw, id);
@@ -237,7 +246,7 @@ public class RawData
     {
         io.Write((
                 "ScanID,ScanMode,ScanType,Analyzer,TotalIonCurrent,BasePeakIntensity,BasePeakMass,RetentionTime" +
-                ",Description,IonInjectionTime,RawOvFtT" +
+                ",Description,IonInjectionTime,Resolution,CollisionEnergy,FAIMS,RawOvFtT" +
                 ",ActivationCenter,IsolationWidth,PrecursorScan,PrecursorMZ,PrecursorCharge" +
                 ",_MassPosition,_MassLength,_IntensityPosition,_IntensityLength,_NoisePosition,_NoiseLength" +
                 "\n").ToCharArray()
@@ -254,7 +263,7 @@ public class RawData
         };
         io.Write((
                 $"{ms.ID},{ms.ScanMode},{scan_type},{ms.Analyzer},{ms.TotalIonCurrent:F4},{ms.BasePeakIntensity:F4},{ms.BasePeakMass:F8},{ms.RetentionTime:F4}" +
-                $",{ms.Description},{ms.IonInjectionTime:F4},{ms.OvFtT:F8}" +
+                $",{ms.Description},{ms.IonInjectionTime:F4},{ms.Resolution},{ms.CollisionEnergy},{ms.FAIMS:F4},{ms.OvFtT:F8}" +
                 $",{ms.ActivationCenter:F8},{ms.IsolationWidth:F4},{ms.PrecursorScan},{ms.MZ:F8},{ms.Z}" +
                 $",{ms.IndexMZ},{ms.Mass.Length * 8},{ms.IndexInten},{ms.Intensity.Length * 8},{ms.IndexNoise},{ms.Noise.Length * 8}" +
                 "\n").ToCharArray()
