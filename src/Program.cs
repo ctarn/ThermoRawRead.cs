@@ -9,28 +9,29 @@ using ThermoFisher.CommonCore.RawFileReader;
 public class MS
 {
     public int ID = -1;
-    public MSOrderType MSOrder;
-    public string MassAnalyzer = "";
     public string ScanMode = "";
+    public MSOrderType ScanType;
+    public string Analyzer = "";
     public double TotalIonCurrent;
     public double BasePeakIntensity;
     public double BasePeakMass;
     public double RetentionTime;
 
-    public string ScanDescription = "";
+    public string Description = "";
     public double IonInjectionTime;
     public double OvFtT;
 
+    // tandem
+    public double ActivationCenter;
+    public double IsolationWidth;
+    public int PrecursorScan = -1;
+    public double MZ;
+    public int Z;
+
+    // peak
     public double[] Mass = [];
     public double[] Intensity = [];
     public double[] Noise = [];
-
-    // tandem
-    public int PrecursorScan = -1;
-    public double ActivationCenter;
-    public double IsolationWidth;
-    public double MZ;
-    public int Z;
 
     // index
     public ulong IndexMZ;
@@ -43,7 +44,7 @@ public class RawData
     private readonly IRawDataPlus raw;
     private readonly string path_in;
     private readonly string path_out;
-    private readonly (int desc, int itime, int ovftt, int pre, int width, int mz, int z) idx = (-1, -1, -1, -1, -1, -1, -1);
+    private readonly (int desc, int ijt, int ovftt, int width, int pre, int mz, int z) idx = (-1, -1, -1, -1, -1, -1, -1);
     private const double MassProton = 1.007276466621;
 
     public RawData(string path_in, string path_out)
@@ -58,11 +59,11 @@ public class RawData
         for (var i = 0; i < headers.Length; i++)
         {
             if (headers[i].Label == "Scan Description:") idx.desc = i;
-            if (headers[i].Label == "Ion Injection Time (ms):") idx.itime = i;
+            if (headers[i].Label == "Ion Injection Time (ms):") idx.ijt = i;
             if (headers[i].Label == "RawOvFtT:") idx.ovftt = i;
             // tandem
-            if (headers[i].Label == "Master Scan Number:") idx.pre = i;
             if (headers[i].Label == "MS2 Isolation Width:") idx.width = i;
+            if (headers[i].Label == "Master Scan Number:") idx.pre = i;
             if (headers[i].Label == "Monoisotopic M/Z:") idx.mz = i;
             if (headers[i].Label == "Charge State:") idx.z = i;
         }
@@ -123,8 +124,8 @@ public class RawData
         {
             if (id % 10000 == 0) Console.WriteLine($"reading scan data ({id} / {raw.RunHeaderEx.LastSpectrum})");
             var ms = Read(id);
-            if (ms.MSOrder == MSOrderType.Ms) last_ms1 = id;
-            else if (ms.MSOrder == MSOrderType.Ms2)
+            if (ms.ScanType == MSOrderType.Ms) last_ms1 = id;
+            else if (ms.ScanType == MSOrderType.Ms2)
                 if (idx.pre < 0)
                     ms.PrecursorScan = last_ms1;
             ms.IndexMZ = (ulong)stream.Position;
@@ -164,12 +165,12 @@ public class RawData
         {
             if (id % 10000 == 0) Console.WriteLine($"reading scan data ({id} / {raw.RunHeaderEx.LastSpectrum})");
             var ms = Read(id);
-            if (ms.MSOrder == MSOrderType.Ms)
+            if (ms.ScanType == MSOrderType.Ms)
             {
                 last_ms1 = id;
                 WriteMS1(writer_ms1, ms);
             }
-            else if (ms.MSOrder == MSOrderType.Ms2)
+            else if (ms.ScanType == MSOrderType.Ms2)
             {
                 if (idx.pre < 0) ms.PrecursorScan = last_ms1;
                 WriteMS2(writer_ms2, ms);
@@ -192,19 +193,19 @@ public class RawData
         var ms = new MS { ID = id };
 
         var scan_event = raw.GetScanEventForScanNumber(id);
-        ms.MSOrder = scan_event.MSOrder;
-        if (scan_event.MassAnalyzer == MassAnalyzerType.MassAnalyzerITMS) ms.MassAnalyzer = "ITMS";
-        if (scan_event.MassAnalyzer == MassAnalyzerType.MassAnalyzerFTMS) ms.MassAnalyzer = "FTMS";
+        ms.ScanMode = scan_event.ToString();
+        ms.ScanType = scan_event.MSOrder;
+        if (scan_event.MassAnalyzer == MassAnalyzerType.MassAnalyzerITMS) ms.Analyzer = "ITMS";
+        if (scan_event.MassAnalyzer == MassAnalyzerType.MassAnalyzerFTMS) ms.Analyzer = "FTMS";
 
         var scan_stats = raw.GetScanStatsForScanNumber(id);
-        ms.ScanMode = scan_stats.ScanType;
         ms.TotalIonCurrent = scan_stats.TIC;
         ms.BasePeakIntensity = scan_stats.BasePeakIntensity;
         ms.BasePeakMass = scan_stats.BasePeakMass;
         ms.RetentionTime = scan_stats.StartTime * 60;
 
-        if (idx.desc >= 0) ms.ScanDescription = raw.GetTrailerExtraValue(id, idx.desc).ToString() ?? string.Empty;
-        if (idx.itime >= 0) ms.IonInjectionTime = Convert.ToDouble(raw.GetTrailerExtraValue(id, idx.itime));
+        if (idx.desc >= 0) ms.Description = raw.GetTrailerExtraValue(id, idx.desc).ToString() ?? string.Empty;
+        if (idx.ijt >= 0) ms.IonInjectionTime = Convert.ToDouble(raw.GetTrailerExtraValue(id, idx.ijt));
         if (idx.ovftt >= 0) ms.OvFtT = Convert.ToDouble(raw.GetTrailerExtraValue(id, idx.ovftt));
 
         var scan = Scan.FromFile(raw, id);
@@ -220,11 +221,11 @@ public class RawData
             Console.WriteLine($"[WARN] fail to read centroid data from scan #{id}");
         }
 
-        if (ms.MSOrder == MSOrderType.Ms) return ms;
+        if (ms.ScanType == MSOrderType.Ms) return ms;
 
-        if (idx.pre >= 0) ms.PrecursorScan = Convert.ToInt32(raw.GetTrailerExtraValue(id, idx.pre));
         ms.ActivationCenter = scan_event.GetMass(0);
         if (idx.width >= 0) ms.IsolationWidth = Convert.ToDouble(raw.GetTrailerExtraValue(id, idx.width));
+        if (idx.pre >= 0) ms.PrecursorScan = Convert.ToInt32(raw.GetTrailerExtraValue(id, idx.pre));
         if (idx.mz >= 0) ms.MZ = Convert.ToDouble(raw.GetTrailerExtraValue(id, idx.mz));
         if (ms.MZ <= 0) ms.MZ = ms.ActivationCenter;
         if (idx.z >= 0) ms.Z = Convert.ToInt32(raw.GetTrailerExtraValue(id, idx.z));
@@ -235,9 +236,9 @@ public class RawData
     public void WriteScanListHead(TextWriter io)
     {
         io.Write((
-                "ScanType,ScanID,ScanMode,ScanDescription,TotalIonCurrent,BasePeakIntensity,BasePeakMass" +
-                ",RetentionTime,IonInjectionTime,InstrumentType" +
-                ",PrecursorScan,ActivationCenter,IsolationWidth,PrecursorMZ,PrecursorCharge,RawOvFtT" +
+                "ScanID,ScanMode,ScanType,Analyzer,TotalIonCurrent,BasePeakIntensity,BasePeakMass,RetentionTime" +
+                ",Description,IonInjectionTime,RawOvFtT" +
+                ",ActivationCenter,IsolationWidth,PrecursorScan,PrecursorMZ,PrecursorCharge" +
                 ",_MassPosition,_MassLength,_IntensityPosition,_IntensityLength,_NoisePosition,_NoiseLength" +
                 "\n").ToCharArray()
         );
@@ -245,39 +246,32 @@ public class RawData
 
     public void WriteScanList(TextWriter io, MS ms)
     {
-        if (ms.MSOrder == MSOrderType.Ms)
+        var scan_type = ms.ScanType switch
         {
-            io.Write((
-                    $"MS1,{ms.ID},{ms.ScanMode},{ms.ScanDescription},{ms.TotalIonCurrent:F4},{ms.BasePeakIntensity:F4},{ms.BasePeakMass:F8}" +
-                    $",{ms.RetentionTime:F4},{ms.IonInjectionTime:F4},{ms.MassAnalyzer}" +
-                    $",0,0.0,0.0,0.0,0,{ms.OvFtT:F8}" +
-                    $",{ms.IndexMZ},{ms.Mass.Length * 8},{ms.IndexInten},{ms.Intensity.Length * 8},{ms.IndexNoise},{ms.Noise.Length * 8}" +
-                    "\n").ToCharArray()
-            );
-        }
-        else if (ms.MSOrder == MSOrderType.Ms2)
-        {
-            io.Write((
-                    $"MS2,{ms.ID},{ms.ScanMode},{ms.ScanDescription},{ms.TotalIonCurrent:F4},{ms.BasePeakIntensity:F4},{ms.BasePeakMass:F8}" +
-                    $",{ms.RetentionTime:F4},{ms.IonInjectionTime:F4},{ms.MassAnalyzer}" +
-                    $",{ms.PrecursorScan},{ms.ActivationCenter:F8},{ms.IsolationWidth:F4},{ms.MZ:F8},{ms.Z},{ms.OvFtT:F8}" +
-                    $",{ms.IndexMZ},{ms.Mass.Length * 8},{ms.IndexInten},{ms.Intensity.Length * 8},{ms.IndexNoise},{ms.Noise.Length * 8}" +
-                    "\n").ToCharArray()
-            );
-        }
+            MSOrderType.Ms => "MS1",
+            MSOrderType.Ms2 => "MS2",
+            _ => ""
+        };
+        io.Write((
+                $"{ms.ID},{ms.ScanMode},{scan_type},{ms.Analyzer},{ms.TotalIonCurrent:F4},{ms.BasePeakIntensity:F4},{ms.BasePeakMass:F8},{ms.RetentionTime:F4}" +
+                $",{ms.Description},{ms.IonInjectionTime:F4},{ms.OvFtT:F8}" +
+                $",{ms.ActivationCenter:F8},{ms.IsolationWidth:F4},{ms.PrecursorScan},{ms.MZ:F8},{ms.Z}" +
+                $",{ms.IndexMZ},{ms.Mass.Length * 8},{ms.IndexInten},{ms.Intensity.Length * 8},{ms.IndexNoise},{ms.Noise.Length * 8}" +
+                "\n").ToCharArray()
+        );
     }
 
     public void WriteMS1(StreamWriter io, MS ms)
     {
         io.Write(
             $"S\t{ms.ID}\t{ms.ID}\n" +
+            $"I\tScanMode\t{ms.ScanMode}\n" +
+            $"I\tInstrumentType\t{ms.Analyzer}\n" +
             $"I\tTotalIonCurrent\t{ms.TotalIonCurrent:F4}\n" +
             $"I\tBasePeakIntensity\t{ms.BasePeakIntensity:F4}\n" +
             $"I\tBasePeakMass\t{ms.BasePeakMass:F8}\n" +
-            $"I\tScanMode\t{ms.ScanMode}\n" +
             $"I\tRetentionTime\t{ms.RetentionTime:F4}\n" +
-            $"I\tIonInjectionTime\t{ms.IonInjectionTime:F4}\n" +
-            $"I\tInstrumentType\t{ms.MassAnalyzer}\n"
+            $"I\tIonInjectionTime\t{ms.IonInjectionTime:F4}\n"
         );
         for (var i = 0; i < ms.Mass.Length; i++) io.Write($"{ms.Mass[i]:F8} {ms.Intensity[i]:F4}\n");
     }
@@ -286,16 +280,16 @@ public class RawData
     {
         io.Write(
             $"S\t{ms.ID}\t{ms.ID}\t{ms.ActivationCenter:F8}\n" +
+            $"I\tScanMode\t{ms.ScanMode}\n" +
+            $"I\tInstrumentType\t{ms.Analyzer}\n" +
             $"I\tTotalIonCurrent\t{ms.TotalIonCurrent:F4}\n" +
             $"I\tBasePeakIntensity\t{ms.BasePeakIntensity:F4}\n" +
             $"I\tBasePeakMass\t{ms.BasePeakMass:F8}\n" +
-            $"I\tScanMode\t{ms.ScanMode}\n" +
             $"I\tRetentionTime\t{ms.RetentionTime:F4}\n" +
             $"I\tIonInjectionTime\t{ms.IonInjectionTime:F4}\n" +
-            $"I\tInstrumentType\t{ms.MassAnalyzer}\n" +
-            $"I\tPrecursorScan\t{ms.PrecursorScan}\n" +
             $"I\tActivationCenter\t{ms.ActivationCenter:F8}\n" +
-            $"I\tIsolationWidth\t{ms.IsolationWidth:F4}\n"
+            $"I\tIsolationWidth\t{ms.IsolationWidth:F4}\n" +
+            $"I\tPrecursorScan\t{ms.PrecursorScan}\n"
         );
         if (ms.Z > 0) io.Write($"Z\t{ms.Z}\t{ms.MZ * ms.Z - MassProton * (ms.Z - 1):F8}\n");
         else if (ms.Z == 0) io.Write($"Z\t{0}\t{0.0:F8}\n");
