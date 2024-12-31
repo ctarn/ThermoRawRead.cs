@@ -8,21 +8,22 @@ using ThermoFisher.CommonCore.RawFileReader;
 
 public class MS
 {
-    public MSOrderType ms_order;
     public int id = -1;
+    public MSOrderType ms_order;
+    public string instrument_type;
+    public string scan_mode = "";
     public double total_ion_current;
     public double base_peak_intensity;
     public double base_peak_mass;
-    public string scan_mode = "";
     public double retention_time;
+
+    public string description = "";
     public double injection_time;
-    public string instrument_type;
     public double ovftt;
+
     public double[] masses = {};
     public double[] intensities = {};
     public double[] noises = {};
-
-    public string description = "";
 
     // tandem
     public int precursor_scan = -1;
@@ -42,7 +43,7 @@ public class RawData
     private readonly IRawDataPlus raw;
     private readonly string path_in;
     private readonly string path_out;
-    private readonly (int desc, int pre, int itime, int mz, int z, int width, int ovftt) idx = (-1, -1, -1, -1, -1, -1, -1);
+    private readonly (int desc, int itime, int ovftt, int pre, int width, int mz, int z) idx = (-1, -1, -1, -1, -1, -1, -1);
     public const double MASS_PROTON = 1.007276466621;
 
     public RawData(string path_in, string path_out)
@@ -58,11 +59,12 @@ public class RawData
         {
             if (headers[i].Label == "Scan Description:") idx.desc = i;
             if (headers[i].Label == "Ion Injection Time (ms):") idx.itime = i;
+            if (headers[i].Label == "RawOvFtT:") idx.ovftt = i;
+            // tandem
+            if (headers[i].Label == "Master Scan Number:") idx.pre = i;
+            if (headers[i].Label == "MS2 Isolation Width:") idx.width = i;
             if (headers[i].Label == "Monoisotopic M/Z:") idx.mz = i;
             if (headers[i].Label == "Charge State:") idx.z = i;
-            if (headers[i].Label == "MS2 Isolation Width:") idx.width = i;
-            if (headers[i].Label == "Master Scan Number:") idx.pre = i;
-            if (headers[i].Label == "RawOvFtT:") idx.ovftt = i;
         }
     }
 
@@ -189,20 +191,21 @@ public class RawData
     {
         var ms = new MS { id = id };
 
-        ms.retention_time = raw.RetentionTimeFromScanNumber(id) * 60;
-
-        var scan_stats = raw.GetScanStatsForScanNumber(id);
-        ms.total_ion_current = scan_stats.TIC;
-        ms.base_peak_intensity = scan_stats.BasePeakIntensity;
-        ms.base_peak_mass = scan_stats.BasePeakMass;
-        ms.scan_mode = scan_stats.ScanType;
-
         var scan_event = raw.GetScanEventForScanNumber(id);
         ms.ms_order = scan_event.MSOrder;
         if (scan_event.MassAnalyzer == MassAnalyzerType.MassAnalyzerITMS) ms.instrument_type = "ITMS";
         if (scan_event.MassAnalyzer == MassAnalyzerType.MassAnalyzerFTMS) ms.instrument_type = "FTMS";
 
+        var scan_stats = raw.GetScanStatsForScanNumber(id);
+        ms.scan_mode = scan_stats.ScanType;
+        ms.total_ion_current = scan_stats.TIC;
+        ms.base_peak_intensity = scan_stats.BasePeakIntensity;
+        ms.base_peak_mass = scan_stats.BasePeakMass;
+        ms.retention_time = scan_stats.StartTime * 60;
+
+        if (idx.desc >= 0) ms.description = raw.GetTrailerExtraValue(id, idx.desc).ToString() ?? string.Empty;
         if (idx.itime >= 0) ms.injection_time = Convert.ToDouble(raw.GetTrailerExtraValue(id, idx.itime));
+        if (idx.ovftt >= 0) ms.ovftt = Convert.ToDouble(raw.GetTrailerExtraValue(id, idx.ovftt));
 
         var scan = Scan.FromFile(raw, id);
         if (!scan.HasCentroidStream) scan = Scan.ToCentroid(scan);
@@ -217,18 +220,15 @@ public class RawData
             Console.WriteLine($"[WARN] fail to read centroid data from scan #{id}");
         }
 
-        if (idx.desc >= 0) ms.description = raw.GetTrailerExtraValue(id, idx.desc).ToString() ?? string.Empty;
-
         if (ms.ms_order == MSOrderType.Ms) return ms;
 
+        if (idx.pre >= 0) ms.precursor_scan = Convert.ToInt32(raw.GetTrailerExtraValue(id, idx.pre));
         ms.activation_center = scan_event.GetMass(0);
+        if (idx.width >= 0) ms.isolation_width = Convert.ToDouble(raw.GetTrailerExtraValue(id, idx.width));
+        if (idx.mz >= 0) ms.mz = Convert.ToDouble(raw.GetTrailerExtraValue(id, idx.mz));
+        if (ms.mz <= 0) ms.mz = ms.activation_center;
         if (idx.z >= 0) ms.z = Convert.ToInt32(raw.GetTrailerExtraValue(id, idx.z));
         if (scan_event.Polarity == PolarityType.Negative) ms.z = -ms.z;
-        if (idx.mz >= 0) ms.mz = Convert.ToDouble(raw.GetTrailerExtraValue(id, idx.mz));
-        if (idx.width >= 0) ms.isolation_width = Convert.ToDouble(raw.GetTrailerExtraValue(id, idx.width));
-        if (idx.pre >= 0) ms.precursor_scan = Convert.ToInt32(raw.GetTrailerExtraValue(id, idx.pre));
-        if (idx.ovftt >= 0) ms.ovftt = Convert.ToDouble(raw.GetTrailerExtraValue(id, idx.ovftt));
-        if (ms.mz <= 0) ms.mz = ms.activation_center;
         return ms;
     }
 
