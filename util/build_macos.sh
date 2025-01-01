@@ -1,6 +1,6 @@
 name="ThermoRawRead"
 content="tmp/$(uname -m).$(uname -s)"
-dotnet build -c Release -o $content
+dotnet build src/$name.csproj -c Release -o $content
 out="tmp/release/$name-$(cat VERSION).$(uname -m).$(uname -s)"
 rm -rf $out
 pyinstaller ui/$name.py -Dwy -i fig/$name.png --distpath $out --workpath tmp/build

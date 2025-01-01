@@ -1,7 +1,7 @@
 set name=ThermoRawRead
 set arch=x86_64
 set content=tmp\%arch%.Windows
-dotnet build -c Release -o %content%
+dotnet build src\%name%.csproj -c Release -o %content%
 set /p version=<VERSION
 set out=tmp\release\%name%-%version%.%arch%.Windows
 rmdir /s /q %out%
