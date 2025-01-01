@@ -288,10 +288,11 @@ public class RawData
     public void WriteScanListHead(TextWriter io)
     {
         io.Write((
-                "ScanID,ScanMode,ScanType,Analyzer,TotalIonCurrent,BasePeakIntensity,BasePeakMass,RetentionTime" +
-                ",Description,IonInjectionTime,Resolution,CollisionEnergy,FAIMS,RawOvFtT" +
-                ",ActivationCenter,IsolationWidth,PrecursorScan,PrecursorMZ,PrecursorCharge" +
-                ",_MassPosition,_MassLength,_IntensityPosition,_IntensityLength,_NoisePosition,_NoiseLength" +
+                "ScanID::Int,ScanMode::String,ScanType::String,Analyzer::String" +
+                ",TotalIonCurrent::Float,BasePeakIntensity::Float,BasePeakMass::Float,RetentionTime::Float" +
+                ",Description::String,IonInjectionTime::Float,Resolution::Int,CollisionEnergy::String,FAIMS::Float,RawOvFtT::Float" +
+                ",ActivationCenter::Float,IsolationWidth::Float,PrecursorScan::Int,PrecursorMZ::Float,PrecursorCharge::Int" +
+                ",_MassPosition::UInt,_MassLength::UInt,_IntensityPosition::UInt,_IntensityLength::UInt,_NoisePosition::UInt,_NoiseLength::UInt" +
                 "\n").ToCharArray()
         );
     }
@@ -305,7 +306,8 @@ public class RawData
             _ => ""
         };
         io.Write((
-                $"{ms.ID},\"{ms.ScanMode}\",{scan_type},{ms.Analyzer},{ms.TotalIonCurrent:F4},{ms.BasePeakIntensity:F4},{ms.BasePeakMass:F8},{ms.RetentionTime:F4}" +
+                $"{ms.ID},\"{ms.ScanMode}\",{scan_type},{ms.Analyzer}" +
+                $",{ms.TotalIonCurrent:F4},{ms.BasePeakIntensity:F4},{ms.BasePeakMass:F8},{ms.RetentionTime:F4}" +
                 $",\"{ms.Description}\",{ms.IonInjectionTime:F4},{ms.Resolution},\"{ms.CollisionEnergy}\",{ms.FAIMS:F4},{ms.OvFtT:F8}" +
                 $",{ms.ActivationCenter:F8},{ms.IsolationWidth:F4},{ms.PrecursorScan},{ms.MZ:F8},{ms.Z}" +
                 $",{ms.IndexMZ},{ms.Mass.Length * 8},{ms.IndexInten},{ms.Intensity.Length * 8},{ms.IndexNoise},{ms.Noise.Length * 8}" +
