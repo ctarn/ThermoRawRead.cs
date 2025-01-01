@@ -91,6 +91,16 @@ public class RawData
         File.Move(path + ".txt~", path + ".txt");
         Console.WriteLine($"file meta saved as {path}.txt");
 
+        try
+        {
+            raw.ExportInstrumentMethod($"{path}.meth", true);
+            Console.WriteLine($"method saved as {path}.meth");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+
         for (var i = 0; i < raw.InstrumentMethodsCount; i++)
         {
             var path_meth = raw.InstrumentMethodsCount == 1 ? $"{path}.method.txt" : $"{path}.{i+1}.method.txt";
