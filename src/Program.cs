@@ -102,6 +102,19 @@ public class RawData
             Console.WriteLine($"method saved as {path_meth}");
         }
 
+        for (var i = 0; i < raw.GetTuneDataCount(); i++)
+        {
+            var path_tune = raw.GetTuneDataCount() == 1 ? $"{path}.tune.txt" : $"{path}.{i+1}.tune.txt";
+            var writer_tune = new StreamWriter(path_tune + "~", false);
+            var tune = raw.GetTuneData(i);
+            for (var j = 0; j < tune.Length; j++)
+                writer_tune.Write($"{tune.Labels[j]} {tune.Values[j]}\n");
+            writer_tune.Close();
+            File.Delete(path_tune);
+            File.Move(path_tune + "~", path_tune);
+            Console.WriteLine($"tune data saved as {path_tune}");
+        }
+
         var buffer_list = new StringWriter();
 
         if (fmt == "umz") RunUMZ(path, buffer_list, buffer_meta.ToString());
