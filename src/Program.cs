@@ -66,6 +66,7 @@ public class RawData
             if (headers[i].Label == "Scan Description:") idx.desc = i;
             if (headers[i].Label == "AGC Target:") idx.agc = i;
             if (headers[i].Label == "Ion Injection Time (ms):") idx.ijt = i;
+            if (headers[i].Label == "FT Resolution:") idx.res = i;
             if (headers[i].Label == "Orbitrap Resolution:") idx.res = i;
             if (headers[i].Label == "HCD Energy:") idx.ce = i;
             if (headers[i].Label == "FAIMS CV:") idx.cv = i;
