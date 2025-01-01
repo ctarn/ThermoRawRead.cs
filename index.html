@@ -101,14 +101,41 @@ div.release section > div > ol {
 ThermoRawRead is used to extract mass spectrometry data from RAW files of Thermo Fisher instruments.
 
 <h2>Usage</h2>
+Newer Releases (≥ 1.5.0):
 <ul>
-    <li>Mono is required on Linux or macOS. Please install Mono from <a href="https://www.mono-project.com">the offical website</a>.</li>
+    <li>.NET (≥ 8.0.0) is required on Linux or macOS. Please install .NET runtime from <a href="https://dotnet.microsoft.com/download">https://dotnet.microsoft.com</a>.</li>
+    <li>It's recommended to install .NET runtime using package manager (e.g., `sudo apt install dotnet8`).</li>
+</ul>
+Older Releases (< 1.5.0):
+<ul>
+    <li>Mono is required on Linux or macOS. Please install Mono from <a href="https://www.mono-project.com">https://www.mono-project.com</a>.</li>
     <li>For Ubuntu users, please do follow the instructions instead of installing mono-runtime from Ubuntu's original repository.</li>
 </ul>
 
 <h2>Release</h2>
 <div class="ui"><img src="fig/ThermoRawRead_ui.png" alt="ui"/></div>
-<div class="release"><section><time>2024-4-30</time>
+<div class="release"><section><time>2025-1-1</time>
+<h4>ThermoRawRead 1.5.0</h4>
+<div>
+<a href="https://github.com/ctarn/ThermoRawRead.cs/releases/download/v1.5.0/ThermoRawRead-1.5.0.x86_64.Linux.zip">Linux</a>
+|
+<a href="https://github.com/ctarn/ThermoRawRead.cs/releases/download/v1.5.0/ThermoRawRead-1.5.0.x86_64.Darwin.pkg">macOS (pkg)</a>
+|
+<a href="https://github.com/ctarn/ThermoRawRead.cs/releases/download/v1.5.0/ThermoRawRead-1.5.0.x86_64.Darwin.zip">macOS (zip)</a>
+|
+<a href="https://github.com/ctarn/ThermoRawRead.cs/releases/download/v1.5.0/ThermoRawRead-1.5.0.x86_64.Windows.zip">Windows</a>
+</div>
+<div>Note:
+<ol>
+    <li>happy new year!</li>
+    <li>add type hint to metadata. this may be a break change.</li>
+    <li>export much more metadata.</li>
+    <li>export method (both `.meth` and `.meth.txt`) and tune data (`.tune.txt`).</li>
+    <li>support Astral and other mass analyzers.</li>
+    <li>upgrade to `.net 8.0`. `mono` runtime is not required anymore, use `.net` instead.</li>
+</ol>
+</div>
+</section><section><time>2024-4-30</time>
 <h4>ThermoRawRead 1.4.1</h4>
 <div>
 <a href="https://github.com/ctarn/ThermoRawRead.cs/releases/download/v1.4.1/ThermoRawRead-1.4.1.x86_64.Linux.zip">Linux</a>
