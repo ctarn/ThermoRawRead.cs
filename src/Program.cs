@@ -235,8 +235,17 @@ public class RawData
         var scan_event = raw.GetScanEventForScanNumber(id);
         ms.ScanMode = scan_event.ToString();
         ms.ScanType = scan_event.MSOrder;
-        if (scan_event.MassAnalyzer == MassAnalyzerType.MassAnalyzerITMS) ms.Analyzer = "ITMS";
-        if (scan_event.MassAnalyzer == MassAnalyzerType.MassAnalyzerFTMS) ms.Analyzer = "FTMS";
+        ms.Analyzer = scan_event.MassAnalyzer switch
+        {
+            MassAnalyzerType.MassAnalyzerITMS => "ITMS",
+            MassAnalyzerType.MassAnalyzerTQMS => "TQMS",
+            MassAnalyzerType.MassAnalyzerSQMS => "SQMS",
+            MassAnalyzerType.MassAnalyzerTOFMS => "TOFMS",
+            MassAnalyzerType.MassAnalyzerFTMS => "FTMS",
+            MassAnalyzerType.MassAnalyzerSector => "Sector",
+            MassAnalyzerType.MassAnalyzerASTMS => "ASTMS",
+            _ => ms.Analyzer
+        };
 
         var scan_stats = raw.GetScanStatsForScanNumber(id);
         ms.TotalIonCurrent = scan_stats.TIC;
