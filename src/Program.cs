@@ -18,6 +18,7 @@ public class MS
     public double RetentionTime;
 
     public string Description = "";
+    public long AGCTarget;
     public double IonInjectionTime;
     public long Resolution;
     public string CollisionEnergy = "";
@@ -27,6 +28,7 @@ public class MS
     // tandem
     public double ActivationCenter;
     public double IsolationWidth;
+    public double IsolationOffset;
     public int PrecursorScan = -1;
     public double MZ;
     public int Z;
@@ -47,7 +49,7 @@ public class RawData
     private readonly IRawDataPlus raw;
     private readonly string path_in;
     private readonly string path_out;
-    private readonly (int desc, int ijt, int res, int ce, int cv, int ovftt, int width, int pre, int mz, int z) idx = (-1, -1, -1, -1, -1, -1, -1, -1, -1, -1);
+    private readonly (int desc, int agc, int ijt, int res, int ce, int cv, int ovftt, int width, int offset, int pre, int mz, int z) idx = (-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1);
     private const double MassProton = 1.007276466621;
 
     public RawData(string path_in, string path_out)
@@ -62,6 +64,7 @@ public class RawData
         for (var i = 0; i < headers.Length; i++)
         {
             if (headers[i].Label == "Scan Description:") idx.desc = i;
+            if (headers[i].Label == "AGC Target:") idx.agc = i;
             if (headers[i].Label == "Ion Injection Time (ms):") idx.ijt = i;
             if (headers[i].Label == "Orbitrap Resolution:") idx.res = i;
             if (headers[i].Label == "HCD Energy:") idx.ce = i;
@@ -69,6 +72,7 @@ public class RawData
             if (headers[i].Label == "RawOvFtT:") idx.ovftt = i;
             // tandem
             if (headers[i].Label == "MS2 Isolation Width:") idx.width = i;
+            if (headers[i].Label == "MS2 Isolation Offset::") idx.offset = i;
             if (headers[i].Label == "Master Scan Number:") idx.pre = i;
             if (headers[i].Label == "Monoisotopic M/Z:") idx.mz = i;
             if (headers[i].Label == "Charge State:") idx.z = i;
@@ -254,6 +258,7 @@ public class RawData
         ms.RetentionTime = scan_stats.StartTime * 60;
 
         if (idx.desc >= 0) ms.Description = raw.GetTrailerExtraValue(id, idx.desc).ToString() ?? "";
+        if (idx.agc >= 0) ms.AGCTarget = Convert.ToInt64(raw.GetTrailerExtraValue(id, idx.agc));
         if (idx.ijt >= 0) ms.IonInjectionTime = Convert.ToDouble(raw.GetTrailerExtraValue(id, idx.ijt));
         if (idx.res >= 0) ms.Resolution = Convert.ToInt64(raw.GetTrailerExtraValue(id, idx.res));
         if (idx.ce >= 0) ms.CollisionEnergy = raw.GetTrailerExtraValue(id, idx.ce).ToString() ?? "";
@@ -277,6 +282,7 @@ public class RawData
 
         ms.ActivationCenter = scan_event.GetMass(0);
         if (idx.width >= 0) ms.IsolationWidth = Convert.ToDouble(raw.GetTrailerExtraValue(id, idx.width));
+        if (idx.offset >= 0) ms.IsolationOffset = Convert.ToDouble(raw.GetTrailerExtraValue(id, idx.offset));
         if (idx.pre >= 0) ms.PrecursorScan = Convert.ToInt32(raw.GetTrailerExtraValue(id, idx.pre));
         if (idx.mz >= 0) ms.MZ = Convert.ToDouble(raw.GetTrailerExtraValue(id, idx.mz));
         if (ms.MZ <= 0) ms.MZ = ms.ActivationCenter;
@@ -290,8 +296,8 @@ public class RawData
         io.Write((
                 "ScanID::Int,ScanMode::String,ScanType::String,Analyzer::String" +
                 ",TotalIonCurrent::Float,BasePeakIntensity::Float,BasePeakMass::Float,RetentionTime::Float" +
-                ",Description::String,IonInjectionTime::Float,Resolution::Int,CollisionEnergy::String,FAIMS::Float,RawOvFtT::Float" +
-                ",ActivationCenter::Float,IsolationWidth::Float,PrecursorScan::Int,PrecursorMZ::Float,PrecursorCharge::Int" +
+                ",Description::String,AGCTarget::Int,IonInjectionTime::Float,Resolution::Int,CollisionEnergy::String,FAIMS::Float,RawOvFtT::Float" +
+                ",ActivationCenter::Float,IsolationWidth::Float,IsolationOffset::Float,PrecursorScan::Int,PrecursorMZ::Float,PrecursorCharge::Int" +
                 ",_MassPosition::UInt,_MassLength::UInt,_IntensityPosition::UInt,_IntensityLength::UInt,_NoisePosition::UInt,_NoiseLength::UInt" +
                 "\n").ToCharArray()
         );
@@ -308,8 +314,8 @@ public class RawData
         io.Write((
                 $"{ms.ID},\"{ms.ScanMode}\",{scan_type},{ms.Analyzer}" +
                 $",{ms.TotalIonCurrent:F4},{ms.BasePeakIntensity:F4},{ms.BasePeakMass:F8},{ms.RetentionTime:F4}" +
-                $",\"{ms.Description}\",{ms.IonInjectionTime:F4},{ms.Resolution},\"{ms.CollisionEnergy}\",{ms.FAIMS:F4},{ms.OvFtT:F8}" +
-                $",{ms.ActivationCenter:F8},{ms.IsolationWidth:F4},{ms.PrecursorScan},{ms.MZ:F8},{ms.Z}" +
+                $",\"{ms.Description}\",{ms.AGCTarget},{ms.IonInjectionTime:F4},{ms.Resolution},\"{ms.CollisionEnergy}\",{ms.FAIMS:F4},{ms.OvFtT:F8}" +
+                $",{ms.ActivationCenter:F8},{ms.IsolationWidth:F4},{ms.IsolationOffset:F4},{ms.PrecursorScan},{ms.MZ:F8},{ms.Z}" +
                 $",{ms.IndexMZ},{ms.Mass.Length * 8},{ms.IndexInten},{ms.Intensity.Length * 8},{ms.IndexNoise},{ms.Noise.Length * 8}" +
                 "\n").ToCharArray()
         );
