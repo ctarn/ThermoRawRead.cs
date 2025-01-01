@@ -84,18 +84,29 @@ public class RawData
         buffer_meta.WriteLine($"Instrument: Thermo {raw.GetInstrumentData().Name}");
         buffer_meta.WriteLine($"Duration: {raw.RunHeader.ExpectedRuntime * 60}");
 
-        var buffer_list = new StringWriter();
-
-        if (fmt == "umz") RunUMZ(path, buffer_list, buffer_meta.ToString());
-        else if (fmt == "msx") RunMSx(path, buffer_list);
-        else Console.WriteLine($"unsupported output format: {fmt}");
-
         var writer_meta = new StreamWriter(path + ".txt~", false);
         writer_meta.Write(buffer_meta.ToString());
         writer_meta.Close();
         File.Delete(path + ".txt");
         File.Move(path + ".txt~", path + ".txt");
         Console.WriteLine($"file meta saved as {path}.txt");
+
+        for (var i = 0; i < raw.InstrumentMethodsCount; i++)
+        {
+            var path_meth = raw.InstrumentMethodsCount == 1 ? $"{path}.method.txt" : $"{path}.{i+1}.method.txt";
+            var writer_meth = new StreamWriter(path_meth + "~", false);
+            writer_meth.Write(raw.GetInstrumentMethod(i));
+            writer_meth.Close();
+            File.Delete(path_meth);
+            File.Move(path_meth + "~", path_meth);
+            Console.WriteLine($"method saved as {path_meth}");
+        }
+
+        var buffer_list = new StringWriter();
+
+        if (fmt == "umz") RunUMZ(path, buffer_list, buffer_meta.ToString());
+        else if (fmt == "msx") RunMSx(path, buffer_list);
+        else Console.WriteLine($"unsupported output format: {fmt}");
 
         var writer_list = new StreamWriter(path + ".csv~", false);
         writer_list.Write(buffer_list.ToString());
