@@ -103,7 +103,7 @@ public class RawData
 
         for (var i = 0; i < raw.InstrumentMethodsCount; i++)
         {
-            var path_meth = raw.InstrumentMethodsCount == 1 ? $"{path}.method.txt" : $"{path}.{i+1}.method.txt";
+            var path_meth = raw.InstrumentMethodsCount == 1 ? $"{path}.meth.txt" : $"{path}.{i+1}.meth.txt";
             var writer_meth = new StreamWriter(path_meth + "~", false);
             writer_meth.Write(raw.GetInstrumentMethod(i));
             writer_meth.Close();
