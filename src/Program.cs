@@ -305,8 +305,8 @@ public class RawData
             _ => ""
         };
         io.Write((
-                $"{ms.ID},{ms.ScanMode},{scan_type},{ms.Analyzer},{ms.TotalIonCurrent:F4},{ms.BasePeakIntensity:F4},{ms.BasePeakMass:F8},{ms.RetentionTime:F4}" +
-                $",{ms.Description},{ms.IonInjectionTime:F4},{ms.Resolution},{ms.CollisionEnergy},{ms.FAIMS:F4},{ms.OvFtT:F8}" +
+                $"{ms.ID},\"{ms.ScanMode}\",{scan_type},{ms.Analyzer},{ms.TotalIonCurrent:F4},{ms.BasePeakIntensity:F4},{ms.BasePeakMass:F8},{ms.RetentionTime:F4}" +
+                $",\"{ms.Description}\",{ms.IonInjectionTime:F4},{ms.Resolution},\"{ms.CollisionEnergy}\",{ms.FAIMS:F4},{ms.OvFtT:F8}" +
                 $",{ms.ActivationCenter:F8},{ms.IsolationWidth:F4},{ms.PrecursorScan},{ms.MZ:F8},{ms.Z}" +
                 $",{ms.IndexMZ},{ms.Mass.Length * 8},{ms.IndexInten},{ms.Intensity.Length * 8},{ms.IndexNoise},{ms.Noise.Length * 8}" +
                 "\n").ToCharArray()
