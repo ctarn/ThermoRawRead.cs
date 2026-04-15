@@ -26,6 +26,7 @@ public static class MSX
         {
             case MSOrderType.Ms when msx.WriterMS1 != null: WriteMS1(msx.WriterMS1, ms); break;
             case MSOrderType.Ms2 when msx.WriterMS2 != null: WriteMS2(msx.WriterMS2, ms); break;
+            default: Console.WriteLine($"[WARN] scan #{ms.ID}: not supported type {ms.ScanType}"); break;
         }
     }
 
