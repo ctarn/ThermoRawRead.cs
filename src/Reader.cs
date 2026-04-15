@@ -204,7 +204,7 @@ public class Reader
         }
         else
         {
-            Console.WriteLine($"[WARN] fail to read centroid data from scan #{id}");
+            Console.WriteLine($"[WARN] scan #{id}: fail to read centroid data");
         }
 
         return ms;
