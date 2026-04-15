@@ -22,8 +22,11 @@ public static class MSX
 
     public static void Write(MSXData msx, MS ms)
     {
-        if (ms.ScanType == MSOrderType.Ms && msx.WriterMS1 != null) WriteMS1(msx.WriterMS1, ms);
-        if (ms.ScanType == MSOrderType.Ms2 && msx.WriterMS2 != null) WriteMS2(msx.WriterMS2, ms);
+        switch (ms.ScanType)
+        {
+            case MSOrderType.Ms when msx.WriterMS1 != null: WriteMS1(msx.WriterMS1, ms); break;
+            case MSOrderType.Ms2 when msx.WriterMS2 != null: WriteMS2(msx.WriterMS2, ms); break;
+        }
     }
 
     public static void Close(MSXData msx)
@@ -75,9 +78,12 @@ public static class MSX
             $"I\tIsolationWidth\t{ms.IsolationWidth:F4}\n" +
             $"I\tPrecursorScan\t{ms.PrecursorScan}\n"
         );
-        if (ms.Z > 0) io.Write($"Z\t{ms.Z}\t{ms.MZ * ms.Z - MassProton * (ms.Z - 1):F8}\n");
-        else if (ms.Z == 0) io.Write($"Z\t{0}\t{0.0:F8}\n");
-        else io.Write($"Z\t{-ms.Z}\t{ms.MZ * -ms.Z + MassProton * (-ms.Z - 1):F8}\n");
+        switch (ms.Z)
+        {
+            case > 0: io.Write($"Z\t{ms.Z}\t{ms.MZ * ms.Z - MassProton * (ms.Z - 1):F8}\n"); break;
+            case < 0: io.Write($"Z\t{-ms.Z}\t{ms.MZ * -ms.Z + MassProton * (-ms.Z - 1):F8}\n"); break;
+            default: io.Write($"Z\t{0}\t{0.0:F8}\n"); break;
+        }
         for (var i = 0; i < ms.Mass.Length; i++) io.Write($"{ms.Mass[i]:F8} {ms.Intensity[i]:F4}\n");
     }
 }
