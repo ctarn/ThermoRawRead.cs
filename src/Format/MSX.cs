@@ -39,7 +39,6 @@ public static class MSX
             File.Move(msx.Path + ".ms1~", msx.Path + ".ms1");
             Console.WriteLine($"MS1 data saved as {msx.Path}.ms1");
         }
-
         if (msx.WriterMS2 != null)
         {
             msx.WriterMS2.Close();
