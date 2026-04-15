@@ -120,8 +120,6 @@ class Task:
         if len(path) > 0:
             os.makedirs(path, exist_ok=True)
             save_task(os.path.join(path, f"{self.name}.task"), self.vars)
-        else:
-            print("`Output Directory` is required")
 
     def run(self, job):
         if self.btn_run is not None: self.btn_run.config(state="disabled")
