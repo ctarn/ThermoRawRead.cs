@@ -146,7 +146,6 @@ public class Reader
     public MS Read(int id, bool read_peak = true)
     {
         var ms = new MS { ID = id };
-
         var scan_event = raw.GetScanEventForScanNumber(id);
         ms.ScanMode = scan_event.ToString();
         ms.ScanType = scan_event.MSOrder;
