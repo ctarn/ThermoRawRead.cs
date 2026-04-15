@@ -13,7 +13,7 @@ public class Reader
     private readonly string path_out;
     private readonly TrailerExtraHeaderIndex idx;
 
-    internal struct TrailerExtraHeaderIndex()
+    private struct TrailerExtraHeaderIndex()
     {
         public int Description = -1;
         public int AGC = -1;
