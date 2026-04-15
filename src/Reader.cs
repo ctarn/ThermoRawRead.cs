@@ -29,16 +29,6 @@ public class Reader
         public int PrecursorZ = -1;
     }
 
-    public Reader(string path_in, string path_out)
-    {
-        this.path_in = path_in;
-        this.path_out = path_out;
-        Console.WriteLine($"loading {path_in}");
-        raw = RawFileReaderAdapter.FileFactory(path_in);
-        raw.SelectInstrument(Device.MS, 1);
-        idx = InitTrailerExtraHeaderIndex();
-    }
-
     private TrailerExtraHeaderIndex InitTrailerExtraHeaderIndex()
     {
         var idx = new TrailerExtraHeaderIndex();
@@ -61,6 +51,16 @@ public class Reader
             if (headers[i].Label == "Charge State:") idx.PrecursorZ = i;
         }
         return idx;
+    }
+
+    public Reader(string path_in, string path_out)
+    {
+        this.path_in = path_in;
+        this.path_out = path_out;
+        Console.WriteLine($"loading {path_in}");
+        raw = RawFileReaderAdapter.FileFactory(path_in);
+        raw.SelectInstrument(Device.MS, 1);
+        idx = InitTrailerExtraHeaderIndex();
     }
 
     public void Run(HashSet<string> outputs)
