@@ -3,8 +3,14 @@ content="tmp/$(uname -m).$(uname -s)"
 dotnet build src/$name.csproj -c Release -o $content
 out="tmp/release/$name-$(cat VERSION).$(uname -m).$(uname -s)"
 rm -rf $out
-pyinstaller ui/$name.py -Dwy -i fig/$name.png --distpath $out --workpath tmp/build
-mkdir $out/$name.app/Contents/MacOS/content
-cp -R $content/ $out/$name.app/Contents/MacOS/content/
-rm -rf $name.spec $out/$name
+python3 -m nuitka ui/$name.py \
+    --mode=app \
+    --assume-yes-for-downloads \
+    --enable-plugin=tk-inter \
+    --include-package-data=ttkbootstrap \
+    --include-data-dir=$content=content \
+    --include-data-files=fig/$name.png=content/$name.png \
+    --macos-app-icon=fig/$name.png \
+    --output-dir=$out \
+    --output-filename=$name
 productbuild --component $out/$name.app /Applications $out.pkg

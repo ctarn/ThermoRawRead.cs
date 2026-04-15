@@ -3,7 +3,13 @@ content="tmp/$(uname -m).$(uname -s)"
 dotnet build src/$name.csproj -c Release -o $content
 out="tmp/release/$name-$(cat VERSION).$(uname -m).$(uname -s)"
 rm -rf $out
-pyinstaller ui/$name.py -Fwy -i fig/$name.png --distpath $out --workpath tmp/build \
-    --add-data $content:content \
-    --hidden-import "ttkbootstrap" --hidden-import "PIL._tkinter_finder"
-rm -rf $name.spec
+python3 -m nuitka ui/$name.py \
+    --mode=app \
+    --assume-yes-for-downloads \
+    --enable-plugin=tk-inter \
+    --include-package-data=ttkbootstrap \
+    --include-data-dir=$content=content \
+    --include-data-files=fig/$name.png=content/$name.png \
+    --include-onefile-external-data=content/** \
+    --output-dir=$out \
+    --output-filename=$name

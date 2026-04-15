@@ -22,6 +22,25 @@ except:
 def get_arch(m=platform.machine()):
     return {"AMD64": "x86_64",}.get(m, m)
 
+
+def is_compiled():
+    return getattr(sys, "frozen", False) or "__compiled__" in globals()
+
+
+def get_compiled_roots():
+    roots = []
+    argv_root = os.path.dirname(os.path.abspath(sys.argv[0]))
+    if len(argv_root) > 0:
+        roots.append(argv_root)
+    compiled = globals().get("__compiled__")
+    if compiled is not None:
+        root = getattr(compiled, "containing_dir", None)
+        if root is not None:
+            roots.append(root)
+    if getattr(sys, "frozen", False):
+        roots.append(getattr(sys, "_MEIPASS", os.path.dirname(sys.executable)))
+    return [root for i, root in enumerate(roots) if root is not None and root not in roots[:i]]
+
 # CMD
 class Console:
     widget = None
@@ -45,9 +64,13 @@ class Console:
 
 def get_content(*path, shared=False, zipped=False):
     path = os.path.join(*path)
-    if getattr(sys, 'frozen', False):
-        if zipped or is_darwin: return os.path.join(sys._MEIPASS, "content", path)
-        else: return os.path.join("content", path)
+    roots = get_compiled_roots()
+    if len(roots) > 0:
+        for root in roots:
+            candidate = os.path.join(root, "content", path)
+            if os.path.exists(candidate):
+                return candidate
+        return os.path.join(roots[0], "content", path)
     else:
         if shared: return os.path.join("tmp", "shared", path)
         else: return os.path.join("tmp", f"{get_arch()}.{platform.system()}", path)
@@ -167,7 +190,7 @@ def center_window(win):
     win.geometry(f"+{x}+{y}")
 
 def show_headline(var, url):
-    if not getattr(sys, 'frozen', False): return
+    if not is_compiled(): return
     try:
         text = request.urlopen(f"{url}/headline").read().decode("utf-8")
         if text.startswith("NEWS:"):

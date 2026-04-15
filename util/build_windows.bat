@@ -5,6 +5,15 @@ dotnet build src\%name%.csproj -c Release -o %content%
 set /p version=<VERSION
 set out=tmp\release\%name%-%version%.%arch%.Windows
 rmdir /s /q %out%
-pyinstaller ui\%name%.py -Fwy -i fig\%name%.png --distpath %out% --workpath tmp\build ^
-    --add-data %content%;content
-del %name%.spec
+python -m nuitka ui\%name%.py ^
+    --mode=app ^
+    --assume-yes-for-downloads ^
+    --enable-plugin=tk-inter ^
+    --include-package-data=ttkbootstrap ^
+    --include-data-dir=%content%=content ^
+    --include-data-files=fig\%name%.png=content/%name%.png ^
+    --include-onefile-external-data=content/** ^
+    --windows-console-mode=disable ^
+    --windows-icon-from-ico=fig\%name%.png ^
+    --output-dir=%out% ^
+    --output-filename=%name%
