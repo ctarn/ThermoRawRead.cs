@@ -13,7 +13,14 @@ public static class CSV
     public static CSVData Init(string path)
     {
         var writer = new StringWriter();
-        WriteHead(writer);
+        writer.Write((
+                "ScanID::Int,ScanMode::String,ScanType::String,Analyzer::String" +
+                ",TotalIonCurrent::Float,BasePeakIntensity::Float,BasePeakMass::Float,RetentionTime::Float" +
+                ",Description::String,AGCTarget::Int,IonInjectionTime::Float,Resolution::Int,CollisionEnergy::String,FAIMS::Float,RawOvFtT::Float" +
+                ",ActivationCenter::Float,IsolationWidth::Float,IsolationOffset::Float,PrecursorScan::Int,PrecursorMZ::Float,PrecursorCharge::Int" +
+                ",_MassPosition::UInt,_MassLength::UInt,_IntensityPosition::UInt,_IntensityLength::UInt,_NoisePosition::UInt,_NoiseLength::UInt" +
+                "\n").ToCharArray()
+        );
         return new CSVData(path, writer);
     }
 
@@ -23,7 +30,7 @@ public static class CSV
         {
             MSOrderType.Ms => "MS1",
             MSOrderType.Ms2 => "MS2",
-            _ => ""
+            _ => "",
         };
         csv.Writer.Write((
                 $"{ms.ID},\"{ms.ScanMode}\",{scan_type},{ms.Analyzer}" +
@@ -35,10 +42,7 @@ public static class CSV
         );
     }
 
-    public static string GetText(CSVData csv)
-    {
-        return csv.Writer.ToString();
-    }
+    public static string GetText(CSVData csv) { return csv.Writer.ToString(); }
 
     public static void Close(CSVData csv)
     {
@@ -48,17 +52,5 @@ public static class CSV
         File.Delete(csv.Path + ".csv");
         File.Move(csv.Path + ".csv~", csv.Path + ".csv");
         Console.WriteLine($"scan list saved as {csv.Path}.csv");
-    }
-
-    private static void WriteHead(TextWriter io)
-    {
-        io.Write((
-                "ScanID::Int,ScanMode::String,ScanType::String,Analyzer::String" +
-                ",TotalIonCurrent::Float,BasePeakIntensity::Float,BasePeakMass::Float,RetentionTime::Float" +
-                ",Description::String,AGCTarget::Int,IonInjectionTime::Float,Resolution::Int,CollisionEnergy::String,FAIMS::Float,RawOvFtT::Float" +
-                ",ActivationCenter::Float,IsolationWidth::Float,IsolationOffset::Float,PrecursorScan::Int,PrecursorMZ::Float,PrecursorCharge::Int" +
-                ",_MassPosition::UInt,_MassLength::UInt,_IntensityPosition::UInt,_IntensityLength::UInt,_NoisePosition::UInt,_NoiseLength::UInt" +
-                "\n").ToCharArray()
-        );
     }
 }
