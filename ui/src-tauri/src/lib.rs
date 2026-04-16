@@ -106,29 +106,13 @@ fn resolve_backend_executable(app: &AppHandle) -> Result<PathBuf, String> {
             .join(format!("{}.{}", arch, platform))
             .join(name),
     );
-    candidates.push(
-        repo_root()
-            .join("tmp")
-            .join(format!("{}.{}", arch, platform))
-            .join(name),
-    );
-    candidates.push(
-        repo_root()
-            .join("src")
-            .join("bin")
-            .join("Release")
-            .join("net8.0")
-            .join(name),
-    );
 
     if let Ok(resource_dir) = app.path().resource_dir() {
-        candidates.push(resource_dir.join(name));
         candidates.push(resource_dir.join("content").join(name));
     }
 
     if let Ok(exe) = env::current_exe() {
         if let Some(parent) = exe.parent() {
-            candidates.push(parent.join(name));
             candidates.push(parent.join("content").join(name));
         }
     }
