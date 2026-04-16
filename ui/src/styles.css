@@ -289,14 +289,14 @@ button:disabled {
     background: rgba(255, 250, 248, 0.85);
 }
 
+.option-card input {
+    margin: 0;
+}
+
 .option-card > div {
     display: grid;
     min-width: 0;
     line-height: 1.2;
-}
-
-.option-card input {
-    margin: 0;
 }
 
 /* status */
