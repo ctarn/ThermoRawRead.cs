@@ -87,7 +87,6 @@ body {
 }
 
 .stack > h2,
-.field > span,
 .section-head > h2 {
   margin: 0;
   font-size: 1rem;
@@ -164,12 +163,7 @@ button:disabled {
   background: var(--danger-strong);
 }
 
-.field {
-  display: grid;
-  gap: 10px;
-}
-
-.field input,
+.input-row input,
 .input-action {
   padding: 14px 16px;
   border: 1px solid var(--line-strong);
@@ -178,11 +172,12 @@ button:disabled {
   color: var(--text);
 }
 
-.field input {
+.input-row input {
   width: 100%;
+  min-width: 0;
 }
 
-.field input:focus {
+.input-row input:focus {
   outline: 2px solid rgba(250, 128, 114, 0.22);
   border-color: var(--accent);
 }
@@ -192,10 +187,6 @@ button:disabled {
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: 12px;
-}
-
-.input-row input {
-  min-width: 0;
 }
 
 .input-action {
