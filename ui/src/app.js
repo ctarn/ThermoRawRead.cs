@@ -78,7 +78,7 @@ function renderFormats() {
       <input type="checkbox" ${state.outputs.has(format.code) ? "checked" : ""} />
       <div>
         <strong>${format.title}</strong>
-        <span>${format.desc}</span>
+        <small>${format.desc}</small>
       </div>
     `;
 
