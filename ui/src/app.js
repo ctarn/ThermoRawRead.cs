@@ -143,7 +143,7 @@ function setRunning(running) {
 }
 
 function appendLog(line) {
-    const content = els.logOutput.textContent === "Waiting for a run." ? "" : els.logOutput.textContent;
+    const content = els.logOutput.textContent === "idle..." ? "" : els.logOutput.textContent;
     els.logOutput.textContent = `${content}${content ? "\n" : ""}${line}`;
     els.logOutput.scrollTop = els.logOutput.scrollHeight;
 }
