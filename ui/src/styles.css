@@ -15,17 +15,18 @@
     --radius-xl: 28px;
     --radius-lg: 20px;
     --radius-md: 14px;
+    --font-sans: "Helvetica Neue", Helvetica, "Segoe UI", Arial, sans-serif;
     --font-mono: "SFMono-Regular", "Menlo", monospace;
 }
 
 * {
     box-sizing: border-box;
-    font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, sans-serif;
-    color: dimgrey;
+    font-family: var(--font-sans);
+    color: var(--text);
 }
 
 h1, h2, h3, h4, h5, h6 {
-    color: salmon;
+    color: var(--accent);
 }
 
 html,
@@ -34,7 +35,6 @@ body {
     min-height: 100%;
     font-size: 16px;
     line-height: 1.5;
-    color: var(--text);
     background: radial-gradient(circle at top left, rgba(250, 128, 114, 0.18), transparent 36%),
     radial-gradient(circle at right, rgba(250, 128, 114, 0.1), transparent 28%),
     linear-gradient(180deg, #fffdfc 0%, var(--bg) 100%);
@@ -71,7 +71,6 @@ header > h1 {
     font-size: clamp(2.5rem, 3vw, 3.8rem);
     font-weight: 700;
     letter-spacing: -0.03em;
-    color: var(--accent);
 }
 
 main {
