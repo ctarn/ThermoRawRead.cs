@@ -11,13 +11,11 @@
     --danger-strong: #bf5a4f;
     --line: rgba(105, 105, 105, 0.18);
     --line-strong: rgba(105, 105, 105, 0.2);
-    --font-sans: "Helvetica Neue", Helvetica, "Segoe UI", Arial, sans-serif;
-    --font-mono: "SFMono-Regular", "Menlo", monospace;
 }
 
 * {
     box-sizing: border-box;
-    font-family: var(--font-sans);
+    font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, sans-serif;
     color: var(--text);
 }
 
@@ -116,7 +114,7 @@ footer a {
 .mono-block {
     overflow: auto;
     white-space: pre-wrap;
-    font-family: var(--font-mono);
+    font-family: "SFMono-Regular", "Menlo", monospace;
 }
 
 button {
