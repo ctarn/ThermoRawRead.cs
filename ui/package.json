@@ -1,0 +1,14 @@
+{
+  "name": "thermorawread-tauri-ui",
+  "private": true,
+  "version": "1.5.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node ./scripts/dev-server.mjs",
+    "tauri:dev": "node ./scripts/tauri-runner.mjs dev",
+    "tauri:build": "node ./scripts/tauri-runner.mjs build"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.0.0"
+  }
+}

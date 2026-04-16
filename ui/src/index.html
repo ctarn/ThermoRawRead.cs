@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ThermoRawRead</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">Thermo RAW Toolkit</p>
+          <h1>ThermoRawRead</h1>
+          <p class="lead">
+            Tauri desktop UI for selecting RAW inputs, choosing export formats, and
+            streaming converter logs without the old Python shell.
+          </p>
+        </div>
+        <div class="status-card">
+          <span id="backend-badge" class="badge badge-muted">Backend idle</span>
+          <p id="status-text">Load RAW files or folders, then start a conversion run.</p>
+        </div>
+      </header>
+
+      <main class="layout">
+        <section class="panel panel-form">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Inputs</p>
+              <h2>Source Selection</h2>
+            </div>
+            <button id="clear-inputs" class="ghost-btn" type="button">Clear</button>
+          </div>
+
+          <div class="actions">
+            <button id="pick-files" class="primary-btn" type="button">Select RAW Files</button>
+            <button id="pick-input-dir" class="secondary-btn" type="button">Select Folder</button>
+            <button id="pick-output-dir" class="secondary-btn" type="button">Output Folder</button>
+          </div>
+
+          <label class="field">
+            <span>Output Directory</span>
+            <input id="output-dir" type="text" placeholder="Optional. Defaults to each RAW file directory." />
+          </label>
+
+          <label class="toggle">
+            <input id="recursive" type="checkbox" />
+            <span>Recursively discover `.raw` files inside selected folders</span>
+          </label>
+
+          <div class="stack">
+            <div class="section-title">
+              <span>Selected Inputs</span>
+              <small id="input-count">0 entries</small>
+            </div>
+            <ul id="input-list" class="path-list"></ul>
+          </div>
+
+          <div class="stack">
+            <div class="section-title">
+              <span>Export Formats</span>
+              <small>Choose one or more</small>
+            </div>
+            <div id="format-grid" class="format-grid"></div>
+          </div>
+
+          <div class="command-preview">
+            <span>Command Preview</span>
+            <code id="command-preview">ThermoRawRead --umz --csv --txt --meth &lt;input&gt;</code>
+          </div>
+
+          <div class="runbar">
+            <button id="run-job" class="primary-btn" type="button">Run Conversion</button>
+            <button id="stop-job" class="danger-btn" type="button" disabled>Stop</button>
+          </div>
+        </section>
+
+        <section class="panel panel-log">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Runtime</p>
+              <h2>Live Log</h2>
+            </div>
+            <button id="clear-log" class="ghost-btn" type="button">Clear Log</button>
+          </div>
+          <pre id="log-output" class="log-output">Waiting for a run.</pre>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>

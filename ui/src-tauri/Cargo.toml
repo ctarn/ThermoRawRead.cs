@@ -1,0 +1,18 @@
+[package]
+name = "thermorawread-tauri"
+version = "1.5.0"
+description = "Tauri UI for ThermoRawRead"
+authors = ["OpenAI Codex"]
+edition = "2021"
+
+[lib]
+name = "thermorawread_tauri_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tauri = { version = "2", features = [] }
