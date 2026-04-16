@@ -9,63 +9,61 @@
 <body>
 <div class="shell">
     <h1>ThermoRawRead</h1>
-
-    <main class="layout">
-        <section class="panel controls-panel">
-            <section class="stack">
-                <header class="section-head">
-                    <h2>Selected Inputs</h2>
-                    <small id="input-count">0 entry</small>
-                </header>
-                <ul class="path-list" id="input-list"></ul>
-                <label class="toggle">
-                    <input id="recursive" type="checkbox"/>
-                    <span>discover `.raw` files inside subfolders</span>
-                </label>
-                <div class="button-row">
-                    <button class="primary-btn" id="pick-files" type="button">Select File</button>
-                    <button class="secondary-btn" id="pick-input-dir" type="button">Select Folder</button>
-                    <button class="secondary-btn" id="clear-inputs" type="button">Clear</button>
-                </div>
-            </section>
-
-            <section class="stack">
-                <h2>Output Directory</h2>
-                <div class="input-row">
-                    <input id="output-dir" placeholder="Optional. Defaults to each RAW file directory." type="text"/>
-                    <button class="secondary-btn input-action" id="pick-output-dir" type="button">Select Output Folder
-                    </button>
-                </div>
-            </section>
-
-            <section class="stack">
-                <header class="section-head">
-                    <h2>Export Formats</h2>
-                    <small>Choose one or more</small>
-                </header>
-                <div class="option-grid" id="format-grid"></div>
-            </section>
-
-            <section class="stack">
-                <h2>Command Preview</h2>
-                <code class="mono-block command-preview" id="command-preview">ThermoRawRead --umz --csv --txt --meth
-                    &lt;input&gt;</code>
-            </section>
-
+    
+    <section class="panel controls-panel">
+        <section class="stack">
+            <header class="section-head">
+                <h2>Selected Inputs</h2>
+                <small id="input-count">0 entry</small>
+            </header>
+            <ul class="path-list" id="input-list"></ul>
+            <label class="toggle">
+                <input id="recursive" type="checkbox"/>
+                <span>discover `.raw` files inside subfolders</span>
+            </label>
             <div class="button-row">
-                <button class="primary-btn" id="run-job" type="button">Run</button>
-                <button class="danger-btn" disabled id="stop-job" type="button">Stop</button>
-            </div>
-            <div class="stack status-panel">
-                <span class="badge badge-muted" id="backend-badge">Backend idle</span>
-                <p id="status-text">Load RAW files or folders, then start a conversion run.</p>
+                <button class="primary-btn" id="pick-files" type="button">Select File</button>
+                <button class="secondary-btn" id="pick-input-dir" type="button">Select Folder</button>
+                <button class="secondary-btn" id="clear-inputs" type="button">Clear</button>
             </div>
         </section>
-        <section class="panel log-panel">
-            <pre class="mono-block log-output" id="log-output">backend idle...</pre>
-            <button class="secondary-btn" id="clear-log" type="button">Clear</button>
+
+        <section class="stack">
+            <h2>Output Directory</h2>
+            <div class="input-row">
+                <input id="output-dir" placeholder="Optional. Defaults to each RAW file directory." type="text"/>
+                <button class="secondary-btn input-action" id="pick-output-dir" type="button">Select Output Folder
+                </button>
+            </div>
         </section>
-    </main>
+
+        <section class="stack">
+            <header class="section-head">
+                <h2>Export Formats</h2>
+                <small>Choose one or more</small>
+            </header>
+            <div class="option-grid" id="format-grid"></div>
+        </section>
+
+        <section class="stack">
+            <h2>Command Preview</h2>
+            <code class="mono-block command-preview" id="command-preview">ThermoRawRead --umz --csv --txt --meth
+                &lt;input&gt;</code>
+        </section>
+
+        <div class="button-row">
+            <button class="primary-btn" id="run-job" type="button">Run</button>
+            <button class="danger-btn" disabled id="stop-job" type="button">Stop</button>
+        </div>
+        <div class="stack status-panel">
+            <span class="badge badge-muted" id="backend-badge">Backend idle</span>
+            <p id="status-text">Load RAW files or folders, then start a conversion run.</p>
+        </div>
+    </section>
+    <section class="panel log-panel">
+        <pre class="mono-block log-output" id="log-output">backend idle...</pre>
+        <button class="secondary-btn" id="clear-log" type="button">Clear</button>
+    </section>
 </div>
 
 <script src="./app.js" type="module"></script>
