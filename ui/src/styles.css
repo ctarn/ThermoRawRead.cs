@@ -1,3 +1,4 @@
+/* theme */
 :root {
     color-scheme: light;
     --bg: #fff8f5;
@@ -13,18 +14,11 @@
     --line-strong: rgba(105, 105, 105, 0.2);
 }
 
+/* base */
 * {
     box-sizing: border-box;
     font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, sans-serif;
     color: var(--text);
-}
-
-h1, h2, h3, h4, h5, h6 {
-    color: var(--accent);
-}
-
-small {
-    color: var(--muted);
 }
 
 html, body {
@@ -38,6 +32,30 @@ html, body {
     display: grid;
 }
 
+h1, h2, h3, h4, h5, h6 {
+    color: var(--accent);
+}
+
+small {
+    color: var(--muted);
+}
+
+/* typography */
+header > h1 {
+    margin: 0;
+    font-size: 3rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+}
+
+main section h2 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+/* layout */
 header, main, footer {
     width: 100%;
     max-width: 1200px;
@@ -59,24 +77,11 @@ footer {
     min-height: 40px;
 }
 
-header > h1 {
-    margin: 0;
-    font-size: 3rem;
-    font-weight: 700;
-    letter-spacing: -0.03em;
-}
-
-main section h2 {
-    margin: 0;
-    font-size: 1rem;
-    font-weight: 700;
-    line-height: 1.2;
-}
-
 footer a {
     text-decoration: none;
 }
 
+/* panel */
 .panel {
     display: grid;
     padding: 24px;
@@ -96,7 +101,8 @@ footer a {
     min-height: 100%;
 }
 
-.stack {
+/* section */
+section.stack {
     display: grid;
     gap: 8px;
 }
@@ -116,12 +122,14 @@ section.status {
     gap: 16px;
 }
 
+/* text block */
 .mono-block {
     overflow: auto;
     white-space: pre-wrap;
     font-family: "SFMono-Regular", "Menlo", monospace;
 }
 
+/* button */
 button {
     padding: 9px 12px;
     border-radius: 12px;
@@ -175,6 +183,7 @@ button:disabled {
     background: var(--danger-strong);
 }
 
+/* input */
 .input-row {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
@@ -200,6 +209,7 @@ button:disabled {
     border-color: var(--accent);
 }
 
+/* toggle */
 .toggle {
     display: inline-flex;
     align-items: center;
@@ -211,6 +221,7 @@ button:disabled {
     height: 18px;
 }
 
+/* list */
 .path-list {
     display: grid;
     gap: 10px;
@@ -234,6 +245,7 @@ button:disabled {
     border-style: dashed;
 }
 
+/* option */
 .option-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
@@ -272,6 +284,7 @@ button:disabled {
     line-height: 1.45;
 }
 
+/* status */
 .badge {
     padding: 0;
     font-weight: 900;
@@ -293,6 +306,7 @@ button:disabled {
     color: var(--danger);
 }
 
+/* output */
 .command-preview {
     display: block;
     padding: 12px;
