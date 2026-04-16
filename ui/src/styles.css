@@ -67,6 +67,12 @@ header > h1 {
     letter-spacing: -0.03em;
 }
 
+main section h2 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
 footer a {
     text-decoration: none;
 }
@@ -93,13 +99,6 @@ footer a {
 .stack {
     display: grid;
     gap: 10px;
-}
-
-.stack > h2,
-.section-head > h2 {
-    margin: 0;
-    font-size: 1rem;
-    font-weight: 700;
 }
 
 .section-head {
