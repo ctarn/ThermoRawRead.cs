@@ -124,11 +124,11 @@ footer a {
 button {
     padding: 9px 12px;
     border-radius: 12px;
+    border: 1px solid rgba(105, 105, 105, 0.16);
     cursor: pointer;
     transition: transform 0.18s ease, opacity 0.18s ease, background-color 0.18s ease;
     font-size: 1rem;
     color: var(--text);
-    border: 1px solid rgba(105, 105, 105, 0.16);
 }
 
 button:hover:not(:disabled) {
