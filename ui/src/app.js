@@ -131,9 +131,13 @@ function setStatus(kind, message) {
         error: ["badge-error", "Task Failed"]
     };
     const [className, badgeText] = mapping[kind] ?? mapping.idle;
-    els.backendBadge.className = `badge ${className}`;
-    els.backendBadge.textContent = badgeText;
-    els.statusText.textContent = message;
+    if (els.backendBadge) {
+        els.backendBadge.className = `badge ${className}`;
+        els.backendBadge.textContent = badgeText;
+    }
+    if (els.statusText) {
+        els.statusText.textContent = message;
+    }
 }
 
 function setRunning(running) {
