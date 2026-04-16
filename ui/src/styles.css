@@ -11,10 +11,6 @@
     --danger-strong: #bf5a4f;
     --line: rgba(105, 105, 105, 0.18);
     --line-strong: rgba(105, 105, 105, 0.2);
-    --shadow: 0 24px 60px rgba(105, 105, 105, 0.12);
-    --radius-xl: 28px;
-    --radius-lg: 20px;
-    --radius-md: 14px;
     --font-sans: "Helvetica Neue", Helvetica, "Segoe UI", Arial, sans-serif;
     --font-mono: "SFMono-Regular", "Menlo", monospace;
 }
@@ -83,9 +79,8 @@ footer a {
     display: grid;
     padding: 24px;
     border: 1px solid var(--line);
-    border-radius: var(--radius-xl);
+    border-radius: 28px;
     background: var(--surface);
-    box-shadow: var(--shadow);
     backdrop-filter: blur(18px);
 }
 
@@ -180,7 +175,7 @@ button:disabled {
 .input-row input, .input-action {
     padding: 14px 16px;
     border: 1px solid var(--line-strong);
-    border-radius: var(--radius-md);
+    border-radius: 12px;
     background: var(--surface-strong);
     color: var(--text);
 }
@@ -230,7 +225,7 @@ button:disabled {
 .path-list li {
     padding: 12px 14px;
     border: 1px solid rgba(250, 128, 114, 0.16);
-    border-radius: var(--radius-md);
+    border-radius: 12px;
     background: rgba(250, 128, 114, 0.08);
     word-break: break-all;
 }
@@ -253,7 +248,7 @@ button:disabled {
     gap: 10px;
     padding: 10px 12px;
     border: 1px solid rgba(250, 128, 114, 0.14);
-    border-radius: var(--radius-md);
+    border-radius: 12px;
     background: rgba(255, 250, 248, 0.85);
 }
 
@@ -282,7 +277,7 @@ section.status {
     gap: 0;
     padding: 9px 12px;
     border: 1px solid rgba(250, 128, 114, 0.14);
-    border-radius: var(--radius-md);
+    border-radius: 12px;
     background: rgba(255, 250, 248, 0.7);
 }
 
@@ -310,7 +305,7 @@ section.status {
 .command-preview {
     display: block;
     padding: 12px;
-    border-radius: var(--radius-md);
+    border-radius: 12px;
     background: #6f6a69;
     color: #fffaf8;
     word-break: break-all;
@@ -321,7 +316,7 @@ section.status {
     min-width: 0;
     margin: 0;
     padding: 18px;
-    border-radius: var(--radius-lg);
+    border-radius: 20px;
     background: linear-gradient(180deg, rgba(92, 88, 87, 0.98), rgba(74, 70, 69, 0.98)),
     linear-gradient(135deg, rgba(250, 128, 114, 0.14), transparent 40%);
     color: #fff8f5;
