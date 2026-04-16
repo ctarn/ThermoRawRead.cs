@@ -40,6 +40,11 @@ small {
     color: var(--muted);
 }
 
+input:focus {
+    outline: 2px solid rgba(250, 128, 114, 0.22);
+    border-color: var(--accent);
+}
+
 /* typography */
 header > h1 {
     margin: 0;
@@ -228,11 +233,6 @@ button:disabled {
 .input-row input {
     width: 100%;
     min-width: 0;
-}
-
-.input-row input:focus {
-    outline: 2px solid rgba(250, 128, 114, 0.22);
-    border-color: var(--accent);
 }
 
 /* toggle */
