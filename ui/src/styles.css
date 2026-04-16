@@ -193,10 +193,6 @@ button:disabled {
     border-color: var(--accent);
 }
 
-.input-action {
-    white-space: nowrap;
-}
-
 .toggle {
     display: inline-flex;
     align-items: center;
