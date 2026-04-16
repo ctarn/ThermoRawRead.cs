@@ -6,10 +6,10 @@ import {fileURLToPath} from "node:url";
 const scriptDir = dirname(fileURLToPath(import.meta.url));
 const uiRoot = join(scriptDir, "..");
 const repoRoot = join(uiRoot, "..");
-const cargoTargetDir = join(repoRoot, "tmp", "ui", "target");
+const cargoTargetDir = join(repoRoot, "tmp", "build-ui", "target");
 const iconSource = join(repoRoot, "fig", "ThermoRawRead.png");
-const iconOutputDir = join(repoRoot, "tmp", "ui", "icons");
-const backendOutputDir = join(repoRoot, "tmp", "ui", "backend");
+const iconOutputDir = join(repoRoot, "tmp", "build-ui", "icons");
+const backendOutputDir = join(repoRoot, "tmp", "build-ui", "backend");
 
 function hostArch() {
     return {x64: "x86_64", arm64: "arm64"}[process.arch] ?? process.arch;

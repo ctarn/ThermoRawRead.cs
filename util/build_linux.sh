@@ -9,12 +9,12 @@ repo_root="$(pwd)"
 arch="$(uname -m)"
 os="$(uname -s)"
 content="tmp/build/${arch}.${os}"
-tauri_target="tmp/ui/target/release"
+tauri_target="tmp/build-ui/target/release"
 bundle_dir="${tauri_target}/bundle"
 staging_dir="$(mktemp -d "${TMPDIR:-/tmp}/${name}-release.XXXXXX")"
 cli_stage="${staging_dir}/cli"
 gui_stage="${staging_dir}/gui"
-backend_stage="tmp/ui/backend"
+backend_stage="tmp/build-ui/backend"
 
 trap 'rm -rf "${staging_dir}"' EXIT
 

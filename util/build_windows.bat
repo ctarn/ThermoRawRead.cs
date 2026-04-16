@@ -6,9 +6,9 @@ echo [1/12] Define paths
 set name=ThermoRawRead
 set arch=x86_64
 set content=tmp\build\%arch%.Windows
-set tauri_target=tmp\ui\target\release
+set tauri_target=tmp\build-ui\target\release
 set bundle_dir=%tauri_target%\bundle
-set backend_stage=tmp\ui\backend
+set backend_stage=tmp\build-ui\backend
 
 REM 2. Build CLI backend
 echo [2/12] Build CLI backend

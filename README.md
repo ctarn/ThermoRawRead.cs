@@ -23,8 +23,8 @@ npm run tauri:dev
 ```
 
 If the backend binary is not in `tmp/build/<arch>.<OS>/ThermoRawRead`, set `THERMO_RAW_READ_BIN` before launching Tauri.
-Tauri/Cargo build artifacts are written to `tmp/ui/target`.
-App icons are generated at build/dev time from `fig/ThermoRawRead.png` into `tmp/ui/icons` and are not stored as generated assets in the repo.
+Tauri/Cargo build artifacts are written to `tmp/build-ui/target`.
+App icons are generated at build/dev time from `fig/ThermoRawRead.png` into `tmp/build-ui/icons` and are not stored as generated assets in the repo.
 
 ## Release Packaging
 

@@ -29,14 +29,14 @@
     "active": true,
     "targets": "all",
     "resources": {
-      "../../tmp/ui/backend/": "content"
+      "../../tmp/build-ui/backend/": "content"
     },
     "icon": [
-      "../../tmp/ui/icons/32x32.png",
-      "../../tmp/ui/icons/128x128.png",
-      "../../tmp/ui/icons/128x128@2x.png",
-      "../../tmp/ui/icons/icon.icns",
-      "../../tmp/ui/icons/icon.ico"
+      "../../tmp/build-ui/icons/32x32.png",
+      "../../tmp/build-ui/icons/128x128.png",
+      "../../tmp/build-ui/icons/128x128@2x.png",
+      "../../tmp/build-ui/icons/icon.icns",
+      "../../tmp/build-ui/icons/icon.ico"
     ]
   }
 }
