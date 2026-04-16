@@ -14,12 +14,6 @@
 
     <main class="layout">
         <section class="panel panel-form">
-            <div class="panel-head">
-                <div>
-                    <p class="eyebrow">Configuration</p>
-                </div>
-            </div>
-
             <div class="actions">
                 <button class="primary-btn" id="pick-files" type="button">Select File</button>
                 <button class="secondary-btn" id="pick-input-dir" type="button">Select Folder</button>
@@ -35,16 +29,15 @@
                 <ul class="path-list" id="input-list"></ul>
             </div>
 
-            <label class="field">
-                <span>Output Directory</span>
-                <input id="output-dir" placeholder="Optional. Defaults to each RAW file directory." type="text"/>
-            </label>
-
             <label class="toggle">
                 <input id="recursive" type="checkbox"/>
                 <span>Recursively discover `.raw` files inside selected folders</span>
             </label>
 
+            <label class="field">
+                <span>Output Directory</span>
+                <input id="output-dir" placeholder="Optional. Defaults to each RAW file directory." type="text"/>
+            </label>
 
             <div class="stack">
                 <div class="section-title">
@@ -63,20 +56,14 @@
                 <button class="primary-btn" id="run-job" type="button">Run</button>
                 <button class="danger-btn" disabled id="stop-job" type="button">Stop</button>
             </div>
-        </section>
-
-        <section class="panel panel-log">
-            <div class="panel-head">
-                <div>
-                    <p class="eyebrow">Status</p>
-                </div>
-                <button class="ghost-btn" id="clear-log" type="button">Clear</button>
-            </div>
-            <pre class="log-output" id="log-output">backend idle...</pre>
             <div class="status-card">
                 <span class="badge badge-muted" id="backend-badge">Backend idle</span>
                 <p id="status-text">Load RAW files or folders, then start a conversion run.</p>
             </div>
+        </section>
+        <section class="panel panel-log">
+            <pre class="log-output" id="log-output">backend idle...</pre>
+            <button class="ghost-btn" id="clear-log" type="button">Clear</button>
         </section>
     </main>
 </div>
