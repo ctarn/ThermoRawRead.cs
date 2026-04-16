@@ -48,9 +48,14 @@ body {
 }
 
 .shell > h1,
-.controls-panel h2,
 .field > span {
   margin: 0;
+  font-weight: 700;
+}
+
+.controls-panel h2 {
+  margin: 0;
+  font-size: 1rem;
   font-weight: 700;
 }
 
