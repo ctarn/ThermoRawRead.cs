@@ -33,7 +33,18 @@ html, body {
 }
 
 h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    font-weight: 700;
+    line-height: 1.2;
     color: var(--accent);
+}
+
+h1 {
+    font-size: 3rem;
+}
+
+h2 {
+    font-size: 1rem;
 }
 
 small {
@@ -43,21 +54,6 @@ small {
 input:focus {
     outline: 2px solid rgba(250, 128, 114, 0.22);
     border-color: var(--accent);
-}
-
-/* typography */
-header > h1 {
-    margin: 0;
-    font-size: 3rem;
-    font-weight: 700;
-    letter-spacing: -0.03em;
-}
-
-main section h2 {
-    margin: 0;
-    font-size: 1rem;
-    font-weight: 700;
-    line-height: 1.2;
 }
 
 /* layout */
@@ -129,31 +125,15 @@ section.status {
 
 /* text block */
 .mono-block {
+    display: block;
     overflow: auto;
     white-space: pre-wrap;
     font-family: "SFMono-Regular", "Menlo", monospace;
-}
-
-.command {
-    display: block;
-    padding: 12px;
-    border-radius: 12px;
     background: #6f6a69;
     color: #fffaf8;
     word-break: break-all;
-}
-
-.log {
-    min-height: 0;
-    min-width: 0;
-    margin: 0;
-    padding: 18px;
-    border-radius: 20px;
-    background: linear-gradient(180deg, rgba(92, 88, 87, 0.98), rgba(74, 70, 69, 0.98)),
-    linear-gradient(135deg, rgba(250, 128, 114, 0.14), transparent 40%);
-    color: #fff8f5;
-    font-size: 14px;
-    line-height: 1.55;
+    padding: 12px;
+    border-radius: 12px;
 }
 
 /* button */
