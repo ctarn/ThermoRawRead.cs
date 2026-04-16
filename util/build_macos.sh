@@ -8,7 +8,7 @@ name="ThermoRawRead"
 repo_root="$(pwd)"
 arch="$(uname -m)"
 os="$(uname -s)"
-content="tmp/build/${arch}.${os}"
+artifacts="tmp/build/${arch}.${os}"
 tauri_target="tmp/build-ui/target/release"
 bundle_dir="${tauri_target}/bundle"
 staging_dir="$(mktemp -d "${TMPDIR:-/tmp}/${name}-release.XXXXXX")"
@@ -19,11 +19,11 @@ trap 'rm -rf "${staging_dir}"' EXIT
 
 # 2. Build CLI backend
 echo "[2/12] Build CLI backend"
-dotnet build "src/${name}.csproj" -c Release -o "${content}"
+dotnet build "src/${name}.csproj" -c Release -o "${artifacts}"
 
 # 3. Read version and prepare release directories
 echo "[3/12] Read version and prepare release directories"
-version="$(cat "${content}/VERSION")"
+version="$(cat "${artifacts}/VERSION")"
 release_root="tmp/release/${version}"
 mkdir -p "${release_root}" "${cli_stage}" "${gui_stage}"
 rm -f \
@@ -40,7 +40,7 @@ echo "[4/12] Build GUI bundle"
 
 # 5. Stage CLI payload
 echo "[5/12] Stage CLI payload"
-cp -R "${content}/." "${cli_stage}/"
+cp -R "${artifacts}/." "${cli_stage}/"
 
 # 6. Create CLI zip
 echo "[6/12] Create CLI zip"

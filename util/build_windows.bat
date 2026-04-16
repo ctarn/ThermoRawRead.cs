@@ -5,18 +5,18 @@ REM 1. Define paths
 echo [1/12] Define paths
 set name=ThermoRawRead
 set arch=x86_64
-set content=tmp\build\%arch%.Windows
+set artifacts=tmp\build\%arch%.Windows
 set tauri_target=tmp\build-ui\target\release
 set bundle_dir=%tauri_target%\bundle
 set backend_stage=tmp\build-ui\backend
 
 REM 2. Build CLI backend
 echo [2/12] Build CLI backend
-dotnet build src\%name%.csproj -c Release -o %content%
+dotnet build src\%name%.csproj -c Release -o %artifacts%
 
 REM 3. Read version and prepare release directories
 echo [3/12] Read version and prepare release directories
-set /p version=<%content%\VERSION
+set /p version=<%artifacts%\VERSION
 set release_root=tmp\release\%version%
 set cli_stage=%release_root%\cli
 set gui_stage=%release_root%\gui
@@ -41,7 +41,7 @@ cd ..
 
 REM 5. Stage CLI payload
 echo [5/12] Stage CLI payload
-xcopy /e /i /y "%content%\*" "%cli_stage%\" >nul
+xcopy /e /i /y "%artifacts%\*" "%cli_stage%\" >nul
 
 REM 6. Create CLI zip
 echo [6/12] Create CLI zip
@@ -58,8 +58,8 @@ if not exist "%backend_stage%" (
   exit /b 1
 )
 copy /y "%tauri_target%\thermorawread-ui.exe" "%gui_stage%\%name%.exe" >nul
-mkdir "%gui_stage%\content"
-xcopy /e /i /y "%backend_stage%\*" "%gui_stage%\content\" >nul
+mkdir "%gui_stage%\artifacts"
+xcopy /e /i /y "%backend_stage%\*" "%gui_stage%\artifacts\" >nul
 
 REM 8. Create GUI zip
 echo [8/12] Create GUI zip
