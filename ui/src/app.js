@@ -124,11 +124,11 @@ function renderPreview() {
 
 function setStatus(kind, message) {
     const mapping = {
-        idle: ["badge-muted", "Backend idle"],
-        running: ["badge-running", "Conversion running"],
-        stopped: ["badge-muted", "Conversion stopped"],
-        success: ["badge-success", "Conversion finished"],
-        error: ["badge-error", "Conversion failed"]
+        idle: ["badge-muted", "Backend Idle"],
+        running: ["badge-running", "Task Running"],
+        stopped: ["badge-muted", "Task Stopped"],
+        success: ["badge-success", "Task Finished"],
+        error: ["badge-error", "Task Failed"]
     };
     const [className, badgeText] = mapping[kind] ?? mapping.idle;
     els.backendBadge.className = `badge ${className}`;
