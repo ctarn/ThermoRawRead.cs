@@ -115,9 +115,7 @@ function renderInputs() {
 
 function renderPreview() {
     const parts = ["ThermoRawRead"];
-    Array.from(state.outputs)
-        .sort()
-        .forEach((code) => parts.push(`--${code}`));
+    Array.from(state.outputs).sort().forEach((code) => parts.push(`--${code}`));
     if (state.recursive) parts.push("--recursive");
     if (state.outputDir.trim()) parts.push("--out", state.outputDir.trim());
     parts.push(...(state.inputPaths.length > 0 ? state.inputPaths : ["<input>"]));
