@@ -168,6 +168,13 @@ button:disabled {
     background: var(--danger-strong);
 }
 
+.input-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+}
+
 .input-row input, .input-action {
     padding: 14px 16px;
     border: 1px solid var(--line-strong);
@@ -184,13 +191,6 @@ button:disabled {
 .input-row input:focus {
     outline: 2px solid rgba(250, 128, 114, 0.22);
     border-color: var(--accent);
-}
-
-.input-row {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
-    gap: 12px;
 }
 
 .input-action {
