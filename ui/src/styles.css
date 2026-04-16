@@ -42,28 +42,31 @@ body {
 
 body {
     padding: 28px;
+    display: grid;
+    gap: 24px;
 }
 
 section.footer {
-    height: 40px;
     display: flex;
-    flex-direction: row;
     justify-content: space-around;
     align-items: center;
+    gap: 16px;
+    min-height: 40px;
 }
 
-div.header a, section.footer a {
+section.footer a {
     text-decoration: none;
 }
 
-.shell {
-    display: grid;
-    gap: 24px;
+header,
+main,
+footer {
+    width: 100%;
     max-width: 1360px;
     margin: 0 auto;
 }
 
-.shell > h1 {
+header > h1 {
     margin: 0;
     font-size: clamp(2.5rem, 3vw, 3.8rem);
     font-weight: 700;
@@ -71,7 +74,7 @@ div.header a, section.footer a {
     color: var(--accent);
 }
 
-.layout {
+main {
     display: grid;
     grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
     gap: 24px;
@@ -379,7 +382,7 @@ button:disabled {
         padding: 18px;
     }
 
-    .layout {
+    main {
         grid-template-columns: 1fr;
     }
 
@@ -390,6 +393,11 @@ button:disabled {
 }
 
 @media (max-width: 720px) {
+    section.footer {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
     .option-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
