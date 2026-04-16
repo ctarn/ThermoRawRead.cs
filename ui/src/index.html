@@ -15,7 +15,6 @@
             <div class="button-row">
                 <button class="primary-btn" id="pick-files" type="button">Select File</button>
                 <button class="secondary-btn" id="pick-input-dir" type="button">Select Folder</button>
-                <button class="secondary-btn" id="pick-output-dir" type="button">Select Output Folder</button>
                 <button class="secondary-btn" id="clear-inputs" type="button">Clear</button>
             </div>
 
@@ -34,7 +33,10 @@
 
             <label class="stack field">
                 <span>Output Directory</span>
-                <input id="output-dir" placeholder="Optional. Defaults to each RAW file directory." type="text"/>
+                <div class="input-row">
+                    <input id="output-dir" placeholder="Optional. Defaults to each RAW file directory." type="text"/>
+                    <button class="secondary-btn input-action" id="pick-output-dir" type="button">Select Output Folder</button>
+                </div>
             </label>
 
             <section class="stack">

@@ -120,6 +120,30 @@ body {
   color: var(--text);
 }
 
+.input-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.input-row input {
+  min-width: 0;
+}
+
+.input-action {
+  padding: 14px 16px;
+  border: 1px solid rgba(105, 105, 105, 0.2);
+  border-radius: var(--radius-md);
+  background: var(--surface-strong);
+  white-space: nowrap;
+}
+
+.input-action:hover:not(:disabled) {
+  background: rgba(250, 128, 114, 0.08);
+  border-color: rgba(250, 128, 114, 0.22);
+}
+
 .field input:focus {
   outline: 2px solid rgba(250, 128, 114, 0.22);
   border-color: var(--accent);
@@ -335,6 +359,10 @@ button:disabled {
 @media (max-width: 720px) {
   .option-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .input-row {
+    grid-template-columns: 1fr;
   }
 
   .button-row {
