@@ -6,7 +6,7 @@ echo [1/12] Define paths
 set name=ThermoRawRead
 set arch=x86_64
 set /p version=<VERSION
-set content=tmp\%arch%.Windows
+set content=tmp\build\%arch%.Windows
 set tauri_target=tmp\ui\target\release
 set bundle_dir=%tauri_target%\bundle
 set backend_stage=tmp\ui\backend

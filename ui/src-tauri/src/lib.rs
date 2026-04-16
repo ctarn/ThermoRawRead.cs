@@ -65,7 +65,7 @@ fn file_name() -> &'static str {
     }
 }
 
-fn old_platform_name() -> &'static str {
+fn platform_dir_name() -> &'static str {
     match env::consts::OS {
         "macos" => "Darwin",
         "linux" => "Linux",
@@ -98,10 +98,18 @@ fn resolve_backend_executable(app: &AppHandle) -> Result<PathBuf, String> {
 
     let name = file_name();
     let arch = env::consts::ARCH;
+    let platform = platform_dir_name();
     candidates.push(
         repo_root()
             .join("tmp")
-            .join(format!("{}.{}", arch, old_platform_name()))
+            .join("build")
+            .join(format!("{}.{}", arch, platform))
+            .join(name),
+    );
+    candidates.push(
+        repo_root()
+            .join("tmp")
+            .join(format!("{}.{}", arch, platform))
             .join(name),
     );
     candidates.push(

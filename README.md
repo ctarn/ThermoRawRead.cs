@@ -7,7 +7,7 @@
 Build the converter first:
 
 ```bash
-dotnet build src/ThermoRawRead.csproj -c Release -o tmp/$(uname -m).$(uname -s)
+dotnet build src/ThermoRawRead.csproj -c Release -o tmp/build/$(uname -m).$(uname -s)
 ```
 
 That produces the CLI binary consumed by the Tauri UI.
@@ -22,7 +22,7 @@ npm install
 npm run tauri:dev
 ```
 
-If the backend binary is not in `tmp/<arch>.<os>/ThermoRawRead`, set `THERMO_RAW_READ_BIN` before launching Tauri.
+If the backend binary is not in `tmp/build/<arch>.<OS>/ThermoRawRead`, set `THERMO_RAW_READ_BIN` before launching Tauri.
 Tauri/Cargo build artifacts are written to `tmp/ui/target`.
 App icons are generated at build/dev time from `fig/ThermoRawRead.png` into `tmp/ui/icons` and are not stored as generated assets in the repo.
 

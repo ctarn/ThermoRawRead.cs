@@ -61,7 +61,7 @@ function run(commandArgs) {
 }
 
 async function stageBackend() {
-  const backendSourceDir = join(repoRoot, "tmp", `${hostArch()}.${hostOs()}`);
+  const backendSourceDir = join(repoRoot, "tmp", "build", `${hostArch()}.${hostOs()}`);
   await rm(backendOutputDir, { recursive: true, force: true });
   await mkdir(backendOutputDir, { recursive: true });
   await cp(backendSourceDir, backendOutputDir, { recursive: true });
