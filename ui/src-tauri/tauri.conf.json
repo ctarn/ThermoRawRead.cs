@@ -28,6 +28,9 @@
   "bundle": {
     "active": true,
     "targets": "all",
+    "resources": {
+      "../../tmp/ui/backend/": "content"
+    },
     "icon": [
       "../../tmp/ui/icons/32x32.png",
       "../../tmp/ui/icons/128x128.png",

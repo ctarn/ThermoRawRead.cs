@@ -26,6 +26,16 @@ If the backend binary is not in `tmp/<arch>.<os>/ThermoRawRead`, set `THERMO_RAW
 Tauri/Cargo build artifacts are written to `tmp/ui/target`.
 App icons are generated at build/dev time from `fig/ThermoRawRead.png` into `tmp/ui/icons` and are not stored as generated assets in the repo.
 
+## Release Packaging
+
+Use the platform build script in `util/` to produce all three release artifacts together:
+
+- `cli.zip`
+- `gui.zip`
+- `installer`
+
+They are written under `tmp/release/ThermoRawRead-<version>.<arch>.<os>/`.
+
 ## Layout
 
 - `src/`: Thermo RAW reader and exporters
