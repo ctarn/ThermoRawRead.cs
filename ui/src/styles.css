@@ -44,7 +44,7 @@ body {
     padding: 28px;
 }
 
-div.footer {
+section.footer {
     height: 40px;
     display: flex;
     flex-direction: row;
@@ -52,7 +52,7 @@ div.footer {
     align-items: center;
 }
 
-div.header a, div.footer a {
+div.header a, section.footer a {
     text-decoration: none;
 }
 
