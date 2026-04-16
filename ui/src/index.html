@@ -24,18 +24,18 @@
                     <small id="input-count">0 entry</small>
                 </header>
                 <ul class="path-list" id="input-list"></ul>
+                <label class="toggle">
+                    <input id="recursive" type="checkbox"/>
+                    <span>Recursively discover `.raw` files inside selected folders</span>
+                </label>
             </section>
-
-            <label class="toggle">
-                <input id="recursive" type="checkbox"/>
-                <span>Recursively discover `.raw` files inside selected folders</span>
-            </label>
 
             <label class="stack field">
                 <span>Output Directory</span>
                 <div class="input-row">
                     <input id="output-dir" placeholder="Optional. Defaults to each RAW file directory." type="text"/>
-                    <button class="secondary-btn input-action" id="pick-output-dir" type="button">Select Output Folder</button>
+                    <button class="secondary-btn input-action" id="pick-output-dir" type="button">Select Output Folder
+                    </button>
                 </div>
             </label>
 
