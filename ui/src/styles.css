@@ -15,13 +15,12 @@
     --radius-xl: 28px;
     --radius-lg: 20px;
     --radius-md: 14px;
-    --font-sans: "Helvetica Neue", Helvetica, "Segoe UI", Arial, sans-serif;
     --font-mono: "SFMono-Regular", "Menlo", monospace;
 }
 
 * {
     box-sizing: border-box;
-    font-family: var(--font-sans);
+    font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, sans-serif;
     color: dimgrey;
 }
 
