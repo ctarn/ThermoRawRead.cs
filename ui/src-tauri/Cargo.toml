@@ -2,7 +2,7 @@
 name = "thermorawread-tauri"
 version = "1.5.0"
 description = "Tauri UI for ThermoRawRead"
-authors = ["OpenAI Codex"]
+authors = ["Tarn Yeong Ching <i@ctarn.io>"]
 edition = "2024"
 
 [lib]
