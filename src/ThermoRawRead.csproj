@@ -6,6 +6,7 @@
         <RollForward>Major</RollForward>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <Version>2.0.0</Version>
         <PublishAot>true</PublishAot>
     </PropertyGroup>
 
@@ -22,5 +23,9 @@
         <Content Include="..\fig\ThermoRawRead.pdf" Link="ThermoRawRead.pdf" CopyToOutputDirectory="Always"/>
         <Content Include="..\fig\ThermoRawRead.png" Link="ThermoRawRead.png" CopyToOutputDirectory="Always"/>
     </ItemGroup>
+
+    <Target Name="WriteVersionFile" AfterTargets="Build">
+        <WriteLinesToFile File="$(TargetDir)VERSION" Lines="$(Version)" Overwrite="true"/>
+    </Target>
 
 </Project>

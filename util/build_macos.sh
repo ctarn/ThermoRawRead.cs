@@ -8,27 +8,27 @@ name="ThermoRawRead"
 repo_root="$(pwd)"
 arch="$(uname -m)"
 os="$(uname -s)"
-version="$(cat VERSION)"
 content="tmp/build/${arch}.${os}"
 tauri_target="tmp/ui/target/release"
 bundle_dir="${tauri_target}/bundle"
-release_root="tmp/release/${version}"
 staging_dir="$(mktemp -d "${TMPDIR:-/tmp}/${name}-release.XXXXXX")"
 cli_stage="${staging_dir}/cli"
 gui_stage="${staging_dir}/gui"
 
 trap 'rm -rf "${staging_dir}"' EXIT
 
-# 2. Prepare release directories
-echo "[2/12] Prepare release directories"
+# 2. Build CLI backend
+echo "[2/12] Build CLI backend"
+dotnet build "src/${name}.csproj" -c Release -o "${content}"
+
+# 3. Read version and prepare release directories
+echo "[3/12] Read version and prepare release directories"
+version="$(cat "${content}/VERSION")"
+release_root="tmp/release/${version}"
 mkdir -p "${release_root}" "${cli_stage}" "${gui_stage}"
 rm -f \
     "${release_root}/${name}-"{cli,gui}"-${version}.${arch}.${os}.zip" \
     "${release_root}/${name}-installer-${version}.${arch}.${os}."*
-
-# 3. Build CLI backend
-echo "[3/12] Build CLI backend"
-dotnet build "src/${name}.csproj" -c Release -o "${content}"
 
 # 4. Build GUI bundle
 echo "[4/12] Build GUI bundle"

@@ -3,7 +3,10 @@
 set -euo pipefail
 shopt -s nullglob
 
-version="$(cat VERSION)"
+arch="$(uname -m)"
+os="$(uname -s)"
+content="tmp/build/${arch}.${os}"
+version="$(cat "${content}/VERSION")"
 tag="v${version}"
 files=(tmp/release/"${version}"/*)
 
