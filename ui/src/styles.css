@@ -279,7 +279,7 @@ button:disabled {
     line-height: 1.45;
 }
 
-.status-panel {
+section.status {
     gap: 6px;
     padding: 14px 16px;
     border: 1px solid rgba(250, 128, 114, 0.14);
