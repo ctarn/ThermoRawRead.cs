@@ -15,26 +15,22 @@ const contentTypes = {
     ".png": "image/png"
 };
 
-http
-    .createServer((req, res) => {
-        const urlPath = req.url === "/" ? "/index.html" : req.url ?? "/index.html";
-        const safePath = normalize(urlPath).replace(/^(\.\.[/\\])+/, "");
-        let filePath = join(root, safePath);
+http.createServer((req, res) => {
+    const urlPath = req.url === "/" ? "/index.html" : req.url ?? "/index.html";
+    const safePath = normalize(urlPath).replace(/^(\.\.[/\\])+/, "");
+    let filePath = join(root, safePath);
 
-        if (!existsSync(filePath) || statSync(filePath).isDirectory()) {
-            filePath = join(root, "index.html");
-        }
+    if (!existsSync(filePath) || statSync(filePath).isDirectory()) {
+        filePath = join(root, "index.html");
+    }
 
-        const stream = createReadStream(filePath);
-        stream.on("error", () => {
-            res.writeHead(404);
-            res.end("Not found");
-        });
-        res.writeHead(200, {
-            "Content-Type": contentTypes[extname(filePath)] ?? "application/octet-stream"
-        });
-        stream.pipe(res);
-    })
-    .listen(port, host, () => {
-        console.log(`ThermoRawRead Tauri frontend running at http://${host}:${port}`);
+    const stream = createReadStream(filePath);
+    stream.on("error", () => {
+        res.writeHead(404);
+        res.end("Not found");
     });
+    res.writeHead(200, {"Content-Type": contentTypes[extname(filePath)] ?? "application/octet-stream"});
+    stream.pipe(res);
+}).listen(port, host, () => {
+    console.log(`Tauri frontend running at http://${host}:${port}`);
+});
