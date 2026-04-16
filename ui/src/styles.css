@@ -134,7 +134,7 @@ section.status {
     font-family: "SFMono-Regular", "Menlo", monospace;
 }
 
-.command-preview {
+.command {
     display: block;
     padding: 12px;
     border-radius: 12px;
@@ -143,7 +143,7 @@ section.status {
     word-break: break-all;
 }
 
-.log-output {
+.log {
     min-height: 0;
     min-width: 0;
     margin: 0;
