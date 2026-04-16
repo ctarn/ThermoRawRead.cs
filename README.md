@@ -34,7 +34,14 @@ Use the platform build script in `util/` to produce all three release artifacts 
 - `gui.zip`
 - `installer`
 
-They are written under `tmp/release/ThermoRawRead-<version>.<arch>.<os>/`.
+They are written under `tmp/release/<version>/`.
+
+## CI Release
+
+GitHub Actions builds release artifacts on macOS, Linux, and Windows via [`.github/workflows/release.yml`](./.github/workflows/release.yml).
+
+- `workflow_dispatch`: build all three platforms and upload workflow artifacts
+- `push` tag `v*`: build all three platforms, upload workflow artifacts, and publish them to the GitHub Release for that tag
 
 ## Layout
 

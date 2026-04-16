@@ -1,1 +1,15 @@
-gh release upload --clobber v$(cat VERSION) tmp/release/*-$(cat VERSION).*.{zip,pkg}
+#!/bin/bash
+
+set -euo pipefail
+shopt -s nullglob
+
+version="$(cat VERSION)"
+tag="v${version}"
+files=(tmp/release/"${version}"/*)
+
+if [ "${#files[@]}" -eq 0 ]; then
+  echo "no release artifacts found under tmp/release" >&2
+  exit 1
+fi
+
+gh release upload --clobber "${tag}" "${files[@]}"

@@ -1,10 +1,13 @@
-tmp
+tmp/
 
-obj/
 bin/
+obj/
+
 ui/node_modules/
-ui/src-tauri/target/
 ui/src-tauri/gen/
+ui/src-tauri/target/
+
+.DS_Store
 
 __pycache__/
 *.spec

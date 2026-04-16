@@ -12,7 +12,7 @@ version="$(cat VERSION)"
 content="tmp/${arch}.${os}"
 tauri_target="tmp/ui/target/release"
 bundle_dir="${tauri_target}/bundle"
-release_root="tmp/release/${name}-${version}.${arch}.${os}"
+release_root="tmp/release/${version}"
 staging_dir="$(mktemp -d "${TMPDIR:-/tmp}/${name}-release.XXXXXX")"
 cli_stage="${staging_dir}/cli"
 gui_stage="${staging_dir}/gui"
@@ -21,8 +21,10 @@ trap 'rm -rf "${staging_dir}"' EXIT
 
 # 2. Prepare release directories
 echo "[2/12] Prepare release directories"
-rm -rf "${release_root}"
 mkdir -p "${release_root}" "${cli_stage}" "${gui_stage}"
+rm -f \
+    "${release_root}/${name}-"{cli,gui}"-${version}.${arch}.${os}.zip" \
+    "${release_root}/${name}-installer-${version}.${arch}.${os}."*
 
 # 3. Build CLI backend
 echo "[3/12] Build CLI backend"
@@ -65,13 +67,7 @@ gui_zip="${release_root}/${name}-gui-${version}.${arch}.${os}.zip"
 
 # 9. Locate installer
 echo "[9/12] Locate installer"
-installer=""
-for pattern in '*.dmg' '*.pkg'; do
-    installer="$(find "${bundle_dir}" -type f -name "${pattern}" -print -quit 2>/dev/null || true)"
-    if [ -n "${installer}" ]; then
-        break
-    fi
-done
+installer="$(find "${bundle_dir}" -type f \( -name '*.dmg' -o -name '*.pkg' \) -print -quit 2>/dev/null || true)"
 
 if [ -z "${installer}" ]; then
     echo "missing installer output under ${bundle_dir}" >&2

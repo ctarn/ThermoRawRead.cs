@@ -10,7 +10,7 @@ set content=tmp\%arch%.Windows
 set tauri_target=tmp\ui\target\release
 set bundle_dir=%tauri_target%\bundle
 set backend_stage=tmp\ui\backend
-set release_root=tmp\release\%name%-%version%.%arch%.Windows
+set release_root=tmp\release\%version%
 set cli_stage=%release_root%\cli
 set gui_stage=%release_root%\gui
 set cli_zip=%release_root%\%name%-cli-%version%.%arch%.Windows.zip
@@ -18,10 +18,15 @@ set gui_zip=%release_root%\%name%-gui-%version%.%arch%.Windows.zip
 
 REM 2. Prepare release directories
 echo [2/12] Prepare release directories
-if exist "%release_root%" rmdir /s /q "%release_root%"
 mkdir "%release_root%"
+if exist "%cli_stage%" rmdir /s /q "%cli_stage%"
+if exist "%gui_stage%" rmdir /s /q "%gui_stage%"
 mkdir "%cli_stage%"
 mkdir "%gui_stage%"
+del /f /q "%cli_zip%" 2>nul
+del /f /q "%gui_zip%" 2>nul
+del /f /q "%release_root%\%name%-installer-%version%.%arch%.Windows.msi" 2>nul
+del /f /q "%release_root%\%name%-installer-%version%.%arch%.Windows.exe" 2>nul
 
 REM 3. Build CLI backend
 echo [3/12] Build CLI backend
