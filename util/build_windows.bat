@@ -49,15 +49,15 @@ powershell -NoProfile -Command "Compress-Archive -Path '%cli_stage%\*' -Destinat
 
 REM 7. Stage GUI payload
 echo [7/12] Stage GUI payload
-if not exist "%tauri_target%\thermorawread-tauri.exe" (
-  echo missing Windows GUI binary at %tauri_target%\thermorawread-tauri.exe
+if not exist "%tauri_target%\thermorawread-ui.exe" (
+  echo missing Windows GUI binary at %tauri_target%\thermorawread-ui.exe
   exit /b 1
 )
 if not exist "%backend_stage%" (
   echo missing staged backend at %backend_stage%
   exit /b 1
 )
-copy /y "%tauri_target%\thermorawread-tauri.exe" "%gui_stage%\%name%.exe" >nul
+copy /y "%tauri_target%\thermorawread-ui.exe" "%gui_stage%\%name%.exe" >nul
 mkdir "%gui_stage%\content"
 xcopy /e /i /y "%backend_stage%\*" "%gui_stage%\content\" >nul
 

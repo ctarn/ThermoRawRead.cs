@@ -1,3 +1,3 @@
 fn main() {
-    thermorawread_tauri_lib::run();
+    thermorawread_ui_lib::run();
 }

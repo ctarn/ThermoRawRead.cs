@@ -53,7 +53,7 @@ cli_zip="${release_root}/${name}-cli-${version}.${arch}.${os}.zip"
 
 # 7. Stage GUI payload
 echo "[7/12] Stage GUI payload"
-gui_payload="${tauri_target}/thermorawread-tauri"
+gui_payload="${tauri_target}/thermorawread-ui"
 if [ ! -f "${gui_payload}" ]; then
     echo "missing Linux GUI binary at ${gui_payload}" >&2
     exit 1

@@ -1,12 +1,12 @@
 [package]
-name = "thermorawread-tauri"
-version = "1.5.0"
+name = "thermorawread-ui"
+version = "2.0.0"
 description = "ThermoRawRead UI"
 authors = ["Tarn Yeong Ching <i@ctarn.io>"]
 edition = "2024"
 
 [lib]
-name = "thermorawread_tauri_lib"
+name = "thermorawread_ui_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]
