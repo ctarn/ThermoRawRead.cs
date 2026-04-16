@@ -41,9 +41,7 @@ body {
 }
 
 body {
-    padding: 28px;
     display: grid;
-    gap: 24px;
 }
 
 section.footer {
