@@ -44,7 +44,7 @@ body {
     display: grid;
 }
 
-section.footer {
+footer {
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -52,7 +52,7 @@ section.footer {
     min-height: 40px;
 }
 
-section.footer a {
+footer a {
     text-decoration: none;
 }
 
