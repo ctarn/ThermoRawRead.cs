@@ -1,4 +1,4 @@
-namespace ThermoRawRead.Format;
+namespace ThermoRawRead.FileIO;
 
 public readonly struct UMZData(
     string path,

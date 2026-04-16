@@ -1,4 +1,4 @@
-namespace ThermoRawRead.Format;
+namespace ThermoRawRead.FileIO;
 
 using ThermoFisher.CommonCore.Data.Interfaces;
 

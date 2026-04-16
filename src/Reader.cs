@@ -4,7 +4,7 @@ using ThermoFisher.CommonCore.Data.Business;
 using ThermoFisher.CommonCore.Data.FilterEnums;
 using ThermoFisher.CommonCore.Data.Interfaces;
 using ThermoFisher.CommonCore.RawFileReader;
-using ThermoRawRead.Format;
+using ThermoRawRead.FileIO;
 
 public class Reader
 {
