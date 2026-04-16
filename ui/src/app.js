@@ -95,7 +95,7 @@ function renderFormats() {
 }
 
 function renderInputs() {
-    els.inputCount.textContent = `${state.inputPaths.length} entr${state.inputPaths.length === 1 ? "y" : "ies"}`;
+    els.inputCount.textContent = `${state.inputPaths.length} entr${state.inputPaths.length <= 1 ? "y" : "ies"}`;
     els.inputList.innerHTML = "";
 
     if (state.inputPaths.length === 0) {
