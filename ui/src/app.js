@@ -73,7 +73,7 @@ function renderFormats() {
     els.formatGrid.innerHTML = "";
     formats.forEach((format) => {
         const label = document.createElement("label");
-        label.className = "format-option";
+        label.className = "option-card";
         label.innerHTML = `
       <input type="checkbox" ${state.outputs.has(format.code) ? "checked" : ""} />
       <div>

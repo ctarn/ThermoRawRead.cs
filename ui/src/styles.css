@@ -48,14 +48,9 @@ body {
 }
 
 .shell > h1,
+.stack > h2,
 .field > span {
   margin: 0;
-  font-weight: 700;
-}
-
-.controls-panel h2 {
-  margin: 0;
-  font-size: 1rem;
   font-weight: 700;
 }
 
@@ -63,6 +58,12 @@ body {
   font-size: clamp(2.5rem, 3vw, 3.8rem);
   letter-spacing: -0.03em;
   color: var(--accent);
+}
+
+.stack > h2,
+.field > span,
+.section-head > h2 {
+  font-size: 1rem;
 }
 
 .layout {
@@ -85,22 +86,20 @@ body {
   gap: 22px;
 }
 
-.controls-panel > section,
-.field,
-.status-panel {
+.stack {
   display: grid;
   gap: 10px;
 }
 
-.controls-panel > section > header {
+.section-head {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
   gap: 16px;
 }
 
-.controls-panel small,
-.format-option span,
+.section-head small,
+.option-card span,
 #status-text,
 .toggle {
   color: var(--muted);
@@ -160,13 +159,13 @@ body {
   border-style: dashed;
 }
 
-.format-grid {
+.option-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
 }
 
-.format-option {
+.option-card {
   display: grid;
   grid-template-columns: auto 1fr;
   align-items: center;
@@ -177,29 +176,29 @@ body {
   background: rgba(255, 250, 248, 0.85);
 }
 
-.format-option > div {
+.option-card > div {
   display: grid;
   gap: 2px;
   min-width: 0;
 }
 
-.format-option input {
+.option-card input {
   margin: 0;
 }
 
-.format-option strong {
+.option-card strong {
   display: block;
   margin: 0;
   line-height: 1.1;
 }
 
-.format-option span {
+.option-card span {
   font-size: 0.88rem;
   line-height: 1.45;
 }
 
-.command-preview,
-.log-output {
+.mono-block {
+  font-family: var(--font-mono);
   overflow: auto;
   white-space: pre-wrap;
 }
@@ -210,7 +209,6 @@ body {
   border-radius: var(--radius-md);
   background: #6f6a69;
   color: #fffaf8;
-  font-family: var(--font-mono);
   word-break: break-all;
 }
 
@@ -263,7 +261,6 @@ body {
     linear-gradient(180deg, rgba(92, 88, 87, 0.98), rgba(74, 70, 69, 0.98)),
     linear-gradient(135deg, rgba(250, 128, 114, 0.14), transparent 40%);
   color: #fff8f5;
-  font-family: var(--font-mono);
   font-size: 14px;
   line-height: 1.55;
 }
@@ -336,7 +333,7 @@ button:disabled {
 }
 
 @media (max-width: 720px) {
-  .format-grid {
+  .option-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -350,7 +347,7 @@ button:disabled {
 }
 
 @media (max-width: 560px) {
-  .format-grid {
+  .option-grid {
     grid-template-columns: 1fr;
   }
 }
