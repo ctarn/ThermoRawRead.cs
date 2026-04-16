@@ -1,10 +1,10 @@
 const formats = [
-    {code: "umz", title: "UMZ", desc: "Unified binary spectrum format", checked: true},
-    {code: "csv", title: "CSV", desc: "Scan list without peaks", checked: true},
-    {code: "txt", title: "TXT", desc: "Run metadata", checked: true},
-    {code: "meth", title: "METH", desc: "Instrument method file", checked: true},
-    {code: "ms1", title: "MS1", desc: "Text spectrum format"},
-    {code: "ms2", title: "MS2", desc: "Text spectrum format"}
+    {code: "umz", title: "UMZ", desc: "Unified Binary Format", checked: true},
+    {code: "csv", title: "CSV", desc: "Scan Metadata List", checked: true},
+    {code: "txt", title: "TXT", desc: "Run Metadata", checked: true},
+    {code: "meth", title: "METH", desc: "Instrument Method File", checked: true},
+    {code: "ms1", title: "MS1", desc: "Text Format"},
+    {code: "ms2", title: "MS2", desc: "Text Format"}
 ];
 
 const state = {
