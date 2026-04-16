@@ -48,21 +48,22 @@ header, main, footer {
 
 main {
     display: grid;
-    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    grid-template-columns: repeat(auto-fit, minmax(min(480px, 100%), 1fr));
     gap: 24px;
 }
 
 footer {
-    display: flex;
-    justify-content: space-around;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
     align-items: center;
+    justify-items: center;
     gap: 16px;
     min-height: 40px;
 }
 
 header > h1 {
     margin: 0;
-    font-size: clamp(2.5rem, 3vw, 3.8rem);
+    font-size: 3rem;
     font-weight: 700;
     letter-spacing: -0.03em;
 }
@@ -71,6 +72,7 @@ main section h2 {
     margin: 0;
     font-size: 1rem;
     font-weight: 700;
+    line-height: 1.2;
 }
 
 footer a {
@@ -94,11 +96,12 @@ footer a {
 .status-panel {
     grid-template-rows: minmax(0, 1fr) auto;
     gap: 14px;
+    min-height: 100%;
 }
 
 .stack {
     display: grid;
-    gap: 10px;
+    gap: 8px;
 }
 
 .section-head {
@@ -125,12 +128,15 @@ button {
     padding: 9px 12px;
     border-radius: 12px;
     border: 1px solid rgba(105, 105, 105, 0.16);
+    background: var(--surface-strong);
     cursor: pointer;
     font-size: 1rem;
     color: var(--text);
 }
 
 button:hover:not(:disabled) {
+    background: rgba(250, 128, 114, 0.08);
+    border-color: rgba(250, 128, 114, 0.22);
     transform: translateY(-2px);
 }
 
@@ -140,9 +146,14 @@ button:disabled {
 }
 
 .button-row {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(140px, 100%), 1fr));
     gap: 12px;
+}
+
+.button-row > * {
+    width: 100%;
+    min-width: 0;
 }
 
 .primary-btn, .danger-btn {
@@ -166,8 +177,7 @@ button:disabled {
     background: var(--danger-strong);
 }
 
-.input-row input,
-.input-action {
+.input-row input, .input-action {
     padding: 14px 16px;
     border: 1px solid var(--line-strong);
     border-radius: var(--radius-md);
@@ -194,11 +204,6 @@ button:disabled {
 
 .input-action {
     white-space: nowrap;
-}
-
-.input-action:hover:not(:disabled) {
-    background: rgba(250, 128, 114, 0.08);
-    border-color: rgba(250, 128, 114, 0.22);
 }
 
 .toggle {
@@ -237,7 +242,7 @@ button:disabled {
 
 .option-grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
     gap: 10px;
 }
 
@@ -312,9 +317,7 @@ section.status {
 }
 
 .log-output {
-    height: 100%;
     min-height: 0;
-    max-height: none;
     min-width: 0;
     margin: 0;
     padding: 18px;
@@ -328,48 +331,4 @@ section.status {
 
 #clear-log {
     justify-self: end;
-}
-
-@media (max-width: 1080px) {
-    body {
-        padding: 18px;
-    }
-
-    main {
-        grid-template-columns: 1fr;
-    }
-
-    .log-output {
-        min-height: 360px;
-        max-height: 360px;
-    }
-}
-
-@media (max-width: 720px) {
-    section.footer {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .option-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .input-row {
-        grid-template-columns: 1fr;
-    }
-
-    .button-row {
-        flex-direction: column;
-    }
-
-    button {
-        width: 100%;
-    }
-}
-
-@media (max-width: 560px) {
-    .option-grid {
-        grid-template-columns: 1fr;
-    }
 }
