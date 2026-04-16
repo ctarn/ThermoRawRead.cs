@@ -50,6 +50,12 @@ header, main, footer {
     margin: 0 auto;
 }
 
+main {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: 24px;
+}
+
 footer {
     display: flex;
     justify-content: space-around;
@@ -58,11 +64,6 @@ footer {
     min-height: 40px;
 }
 
-footer a {
-    text-decoration: none;
-}
-
-
 header > h1 {
     margin: 0;
     font-size: clamp(2.5rem, 3vw, 3.8rem);
@@ -70,10 +71,9 @@ header > h1 {
     letter-spacing: -0.03em;
 }
 
-main {
-    display: grid;
-    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
-    gap: 24px;
+
+footer a {
+    text-decoration: none;
 }
 
 .panel {
