@@ -312,20 +312,11 @@ button:disabled {
 
 /* status */
 .badge {
-    padding: 0;
-    font-weight: 900;
+    color: var(--accent-strong);
 }
 
 .badge-muted {
     color: var(--muted);
-}
-
-.badge-running {
-    color: var(--accent-strong);
-}
-
-.badge-success {
-    color: var(--accent-strong);
 }
 
 .badge-error {
