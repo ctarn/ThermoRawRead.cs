@@ -9,34 +9,30 @@
 <body>
 <div class="shell">
     <header class="hero">
-        <div>
-            <p class="eyebrow">Thermo RAW Toolkit</p>
-            <h1>ThermoRawRead</h1>
-            <p class="lead">
-                Tauri desktop UI for selecting RAW inputs, choosing export formats, and
-                streaming converter logs without the old Python shell.
-            </p>
-        </div>
-        <div class="status-card">
-            <span class="badge badge-muted" id="backend-badge">Backend idle</span>
-            <p id="status-text">Load RAW files or folders, then start a conversion run.</p>
-        </div>
+        <div><h1>ThermoRawRead</h1></div>
     </header>
 
     <main class="layout">
         <section class="panel panel-form">
             <div class="panel-head">
                 <div>
-                    <p class="eyebrow">Inputs</p>
-                    <h2>Source Selection</h2>
+                    <p class="eyebrow">Configuration</p>
                 </div>
-                <button class="ghost-btn" id="clear-inputs" type="button">Clear</button>
             </div>
 
             <div class="actions">
-                <button class="primary-btn" id="pick-files" type="button">Select RAW Files</button>
+                <button class="primary-btn" id="pick-files" type="button">Select File</button>
                 <button class="secondary-btn" id="pick-input-dir" type="button">Select Folder</button>
-                <button class="secondary-btn" id="pick-output-dir" type="button">Output Folder</button>
+                <button class="secondary-btn" id="pick-output-dir" type="button">Select Output Folder</button>
+                <button class="ghost-btn" id="clear-inputs" type="button">Clear</button>
+            </div>
+
+            <div class="stack">
+                <div class="section-title">
+                    <span>Selected Inputs</span>
+                    <small id="input-count">0 entry</small>
+                </div>
+                <ul class="path-list" id="input-list"></ul>
             </div>
 
             <label class="field">
@@ -49,13 +45,6 @@
                 <span>Recursively discover `.raw` files inside selected folders</span>
             </label>
 
-            <div class="stack">
-                <div class="section-title">
-                    <span>Selected Inputs</span>
-                    <small id="input-count">0 entries</small>
-                </div>
-                <ul class="path-list" id="input-list"></ul>
-            </div>
 
             <div class="stack">
                 <div class="section-title">
@@ -71,7 +60,7 @@
             </div>
 
             <div class="runbar">
-                <button class="primary-btn" id="run-job" type="button">Run Conversion</button>
+                <button class="primary-btn" id="run-job" type="button">Run</button>
                 <button class="danger-btn" disabled id="stop-job" type="button">Stop</button>
             </div>
         </section>
@@ -79,12 +68,15 @@
         <section class="panel panel-log">
             <div class="panel-head">
                 <div>
-                    <p class="eyebrow">Runtime</p>
-                    <h2>Live Log</h2>
+                    <p class="eyebrow">Status</p>
                 </div>
-                <button class="ghost-btn" id="clear-log" type="button">Clear Log</button>
+                <button class="ghost-btn" id="clear-log" type="button">Clear</button>
             </div>
-            <pre class="log-output" id="log-output">Waiting for a run.</pre>
+            <pre class="log-output" id="log-output">backend idle...</pre>
+            <div class="status-card">
+                <span class="badge badge-muted" id="backend-badge">Backend idle</span>
+                <p id="status-text">Load RAW files or folders, then start a conversion run.</p>
+            </div>
         </section>
     </main>
 </div>
