@@ -14,7 +14,6 @@ bundle_dir="${tauri_target}/bundle"
 staging_dir="$(mktemp -d "${TMPDIR:-/tmp}/${name}-release.XXXXXX")"
 cli_stage="${staging_dir}/cli"
 gui_stage="${staging_dir}/gui"
-backend_stage="tmp/build-ui/backend"
 
 trap 'rm -rf "${staging_dir}"' EXIT
 
@@ -56,10 +55,6 @@ echo "[7/12] Stage GUI payload"
 gui_payload="${tauri_target}/thermorawread-ui"
 if [ ! -f "${gui_payload}" ]; then
     echo "missing Linux GUI binary at ${gui_payload}" >&2
-    exit 1
-fi
-if [ ! -d "${backend_stage}" ]; then
-    echo "missing staged backend at ${backend_stage}" >&2
     exit 1
 fi
 
