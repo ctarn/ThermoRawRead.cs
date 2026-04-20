@@ -1,94 +1,68 @@
 @echo off
 setlocal
 
-REM 1. Define paths
-echo [1/12] Define paths
-set name=ThermoRawRead
-set arch=x86_64
-set artifacts=tmp\build\%arch%.Windows
-set tauri_target=tmp\build-ui\target\release
-set bundle_dir=%tauri_target%\bundle
-set backend_stage=tmp\build-ui\backend
+echo [1/9] Define paths
+set product_name=ThermoRawRead
+set platform_arch=x86_64
+set platform_os=Windows
+set backend_dir=tmp\build\%platform_arch%.%platform_os%
 
-REM 2. Build CLI backend
-echo [2/12] Build CLI backend
-dotnet build src\%name%.csproj -c Release -o %artifacts%
+echo [2/9] Build CLI backend
+dotnet build src\%product_name%.csproj -c Release -o %backend_dir%
 
-REM 3. Read version and prepare release directories
-echo [3/12] Read version and prepare release directories
-set /p version=<%artifacts%\VERSION
-set release_root=tmp\release\%version%
-set cli_stage=%release_root%\cli
-set gui_stage=%release_root%\gui
-set cli_zip=%release_root%\%name%-cli-%version%.%arch%.Windows.zip
-set gui_zip=%release_root%\%name%-gui-%version%.%arch%.Windows.zip
-mkdir "%release_root%"
-if exist "%cli_stage%" rmdir /s /q "%cli_stage%"
-if exist "%gui_stage%" rmdir /s /q "%gui_stage%"
-mkdir "%cli_stage%"
-mkdir "%gui_stage%"
+echo [3/9] Read version and prepare release directories
+set /p version=<%backend_dir%\VERSION
+set release_dir=tmp\release\%version%
+set gui_build_dir=%release_dir%\gui-build
+set cli_stage_dir=%release_dir%\cli
+set cli_zip=%release_dir%\%product_name%-cli-%version%.%platform_arch%.%platform_os%.zip
+set gui_zip=%release_dir%\%product_name%-gui-%version%.%platform_arch%.%platform_os%.zip
+mkdir "%release_dir%"
+if exist "%gui_build_dir%" rmdir /s /q "%gui_build_dir%"
+if exist "%cli_stage_dir%" rmdir /s /q "%cli_stage_dir%"
+mkdir "%cli_stage_dir%"
 del /f /q "%cli_zip%" 2>nul
 del /f /q "%gui_zip%" 2>nul
-del /f /q "%release_root%\%name%-installer-%version%.%arch%.Windows.msi" 2>nul
-del /f /q "%release_root%\%name%-installer-%version%.%arch%.Windows.exe" 2>nul
+del /f /q "%release_dir%\%product_name%-installer-%version%.%platform_arch%.%platform_os%.msi" 2>nul
+del /f /q "%release_dir%\%product_name%-installer-%version%.%platform_arch%.%platform_os%.exe" 2>nul
 
-REM 4. Build GUI bundle
-echo [4/12] Build GUI bundle
+echo [4/9] Build GUI bundle
 cd ui
 npm install
-npm run tauri:build
+npm run make
 cd ..
 
-REM 5. Stage CLI payload
-echo [5/12] Stage CLI payload
-xcopy /e /i /y "%artifacts%\*" "%cli_stage%\" >nul
+echo [5/9] Create CLI zip
+xcopy /e /i /y "%backend_dir%\*" "%cli_stage_dir%\" >nul
+powershell -NoProfile -Command "Compress-Archive -Path '%cli_stage_dir%\*' -DestinationPath '%cli_zip%' -Force"
 
-REM 6. Create CLI zip
-echo [6/12] Create CLI zip
-powershell -NoProfile -Command "Compress-Archive -Path '%cli_stage%\*' -DestinationPath '%cli_zip%' -Force"
-
-REM 7. Stage GUI payload
-echo [7/12] Stage GUI payload
-if not exist "%tauri_target%\thermorawread-ui.exe" (
-  echo missing Windows GUI binary at %tauri_target%\thermorawread-ui.exe
+echo [6/9] Copy GUI zip
+set gui_payload=
+for /r "%gui_build_dir%\make\zip" %%F in (*.zip) do set gui_payload=%%~fF
+if not defined gui_payload (
+  echo missing Windows GUI zip under %gui_build_dir%\make\zip
   exit /b 1
 )
-if not exist "%backend_stage%" (
-  echo missing staged backend at %backend_stage%
-  exit /b 1
-)
-copy /y "%tauri_target%\thermorawread-ui.exe" "%gui_stage%\%name%.exe" >nul
-mkdir "%gui_stage%\artifacts"
-xcopy /e /i /y "%backend_stage%\*" "%gui_stage%\artifacts\" >nul
+copy /y "%gui_payload%" "%gui_zip%" >nul
 
-REM 8. Create GUI zip
-echo [8/12] Create GUI zip
-powershell -NoProfile -Command "Compress-Archive -Path '%gui_stage%\*' -DestinationPath '%gui_zip%' -Force"
-
-REM 9. Locate installer
-echo [9/12] Locate installer
+echo [7/9] Copy installer
 set installer=
-for %%F in ("%bundle_dir%\msi\*.msi") do set installer=%%~fF
+for /r "%gui_build_dir%\make" %%F in (*.exe) do set installer=%%~fF
 if not defined installer (
-  for %%F in ("%bundle_dir%\nsis\*.exe") do set installer=%%~fF
+  for /r "%gui_build_dir%\make" %%F in (*.msi) do set installer=%%~fF
 )
 if not defined installer (
-  echo missing installer output under %bundle_dir%
+  echo missing installer output under %gui_build_dir%
   exit /b 1
 )
 
-REM 10. Copy installer
-echo [10/12] Copy installer
-for %%F in ("%installer%") do set installer_out=%release_root%\%name%-installer-%version%.%arch%.Windows%%~xF
+for %%F in ("%installer%") do set installer_out=%release_dir%\%product_name%-installer-%version%.%platform_arch%.%platform_os%%%~xF
 for %%F in ("%installer%") do copy /y "%%~fF" "%installer_out%" >nul
 
-REM 11. Clean staging directories
-echo [11/12] Clean staging directories
-rmdir /s /q "%cli_stage%"
-rmdir /s /q "%gui_stage%"
+echo [8/9] Cleanup staging directory
+rmdir /s /q "%cli_stage_dir%"
 
-REM 12. Print outputs
-echo [12/12] Print outputs
+echo [9/9] Print outputs
 echo release outputs:
 echo   %cli_zip%
 echo   %gui_zip%

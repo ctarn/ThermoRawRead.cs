@@ -2,88 +2,70 @@
 
 set -euo pipefail
 
-# 1. Define paths
-echo "[1/12] Define paths"
-name="ThermoRawRead"
+echo "[1/9] Define paths"
+product_name="ThermoRawRead"
 repo_root="$(pwd)"
-arch="$(uname -m)"
-os="$(uname -s)"
-artifacts="tmp/build/${arch}.${os}"
-tauri_target="tmp/build-ui/target/release"
-bundle_dir="${tauri_target}/bundle"
-staging_dir="$(mktemp -d "${TMPDIR:-/tmp}/${name}-release.XXXXXX")"
-cli_stage="${staging_dir}/cli"
-gui_stage="${staging_dir}/gui"
+platform_arch="$(uname -m)"
+platform_os="$(uname -s)"
+backend_dir="tmp/build/${platform_arch}.${platform_os}"
+staging_dir="$(mktemp -d "${TMPDIR:-/tmp}/${product_name}-release.XXXXXX")"
+cli_stage_dir="${staging_dir}/cli"
 
 trap 'rm -rf "${staging_dir}"' EXIT
 
-# 2. Build CLI backend
-echo "[2/12] Build CLI backend"
-dotnet build "src/${name}.csproj" -c Release -o "${artifacts}"
+echo "[2/9] Build CLI backend"
+dotnet build "src/${product_name}.csproj" -c Release -o "${backend_dir}"
 
-# 3. Read version and prepare release directories
-echo "[3/12] Read version and prepare release directories"
-version="$(cat "${artifacts}/VERSION")"
-release_root="tmp/release/${version}"
-mkdir -p "${release_root}" "${cli_stage}" "${gui_stage}"
+echo "[3/9] Read version and prepare release directories"
+version="$(cat "${backend_dir}/VERSION")"
+release_dir="tmp/release/${version}"
+gui_build_dir="${release_dir}/gui-build"
+cli_zip="${release_dir}/${product_name}-cli-${version}.${platform_arch}.${platform_os}.zip"
+gui_zip="${release_dir}/${product_name}-gui-${version}.${platform_arch}.${platform_os}.zip"
+mkdir -p "${release_dir}" "${cli_stage_dir}"
 rm -f \
-    "${release_root}/${name}-"{cli,gui}"-${version}.${arch}.${os}.zip" \
-    "${release_root}/${name}-installer-${version}.${arch}.${os}."*
+    "${cli_zip}" \
+    "${gui_zip}" \
+    "${release_dir}/${product_name}-installer-${version}.${platform_arch}.${platform_os}."*
 
-# 4. Build GUI bundle
-echo "[4/12] Build GUI bundle"
+rm -rf "${gui_build_dir}"
+
+echo "[4/9] Build GUI bundle"
 (
     cd ui
     npm install
-    npm run tauri:build
+    npm run make
 )
 
-# 5. Stage CLI payload
-echo "[5/12] Stage CLI payload"
-cp -R "${artifacts}/." "${cli_stage}/"
-
-# 6. Create CLI zip
-echo "[6/12] Create CLI zip"
-cli_zip="${release_root}/${name}-cli-${version}.${arch}.${os}.zip"
+echo "[5/9] Create CLI zip"
+cp -R "${backend_dir}/." "${cli_stage_dir}/"
 (
-    cd "$(dirname "${cli_stage}")"
-    zip -qry "${repo_root}/${cli_zip}" "$(basename "${cli_stage}")"
+    cd "$(dirname "${cli_stage_dir}")"
+    zip -qry "${repo_root}/${cli_zip}" "$(basename "${cli_stage_dir}")"
 )
 
-# 7. Stage GUI payload
-echo "[7/12] Stage GUI payload"
-gui_payload="$(find "${bundle_dir}/macos" -maxdepth 1 -name '*.app' -print -quit)"
+echo "[6/9] Copy GUI zip"
+gui_payload="$(find "${gui_build_dir}/make/zip" -type f -name '*.zip' -print -quit)"
 if [ -z "${gui_payload}" ]; then
-    echo "missing macOS app bundle in ${bundle_dir}/macos" >&2
+    echo "missing macOS GUI zip under ${gui_build_dir}/make/zip" >&2
     exit 1
 fi
 
-cp -R "${gui_payload}" "${gui_stage}/"
+cp "${gui_payload}" "${gui_zip}"
 
-# 8. Create GUI zip
-echo "[8/12] Create GUI zip"
-gui_zip="${release_root}/${name}-gui-${version}.${arch}.${os}.zip"
-/usr/bin/ditto -c -k --sequesterRsrc --keepParent "${gui_stage}/$(basename "${gui_payload}")" "${gui_zip}"
-
-# 9. Locate installer
-echo "[9/12] Locate installer"
-installer="$(find "${bundle_dir}" -type f \( -name '*.dmg' -o -name '*.pkg' \) -print -quit 2>/dev/null || true)"
+echo "[7/9] Copy installer"
+installer="$(find "${gui_build_dir}/make" -type f \( -name '*.dmg' -o -name '*.pkg' \) -print -quit 2>/dev/null || true)"
 
 if [ -z "${installer}" ]; then
-    echo "missing installer output under ${bundle_dir}" >&2
+    echo "missing installer output under ${gui_build_dir}" >&2
     exit 1
 fi
 
-# 10. Copy installer
-echo "[10/12] Copy installer"
 installer_ext="${installer##*.}"
-installer_out="${release_root}/${name}-installer-${version}.${arch}.${os}.${installer_ext}"
+installer_out="${release_dir}/${product_name}-installer-${version}.${platform_arch}.${platform_os}.${installer_ext}"
 cp "${installer}" "${installer_out}"
 
-# 11. Cleanup staging directories via trap
-echo "[11/12] Cleanup staging directories via trap"
-
-# 12. Print outputs
-echo "[12/12] Print outputs"
+echo "[8/9] Cleanup staging directory"
+echo "[9/9] Print outputs"
 echo "release outputs:"
 printf '  %s\n' "${cli_zip}" "${gui_zip}" "${installer_out}"
