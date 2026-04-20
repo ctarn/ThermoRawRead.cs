@@ -1,6 +1,6 @@
 # ThermoRawRead.cs
 
-`ThermoRawRead.cs` keeps the Thermo RAW conversion logic in C# and ships a Tauri desktop UI in [`ui`](./ui).
+`ThermoRawRead.cs` keeps the Thermo RAW conversion logic in C# and ships an Electron desktop UI in [`ui`](./ui), built with Electron Forge.
 
 ## Backend
 
@@ -10,21 +10,21 @@ Build the converter first:
 dotnet build src/ThermoRawRead.csproj -c Release -o tmp/build/$(uname -m).$(uname -s)
 ```
 
-That produces the CLI binary consumed by the Tauri UI.
+That produces the CLI binary consumed by the Electron UI.
 
-## Tauri UI
+## Electron UI
 
-The Tauri app lives in `ui/` and talks to the existing CLI instead of re-implementing the conversion pipeline.
+The Electron app lives in `ui/` and talks to the existing CLI instead of re-implementing the conversion pipeline. The desktop build pipeline is managed by Electron Forge via [`ui/forge.config.cjs`](./ui/forge.config.cjs).
 
 ```bash
 cd ui
 npm install
-npm run tauri:dev
+npm start
 ```
 
-If the backend binary is not in `tmp/build/<arch>.<OS>/ThermoRawRead`, set `THERMO_RAW_READ_BIN` before launching Tauri.
-Tauri/Cargo build artifacts are written to `tmp/build-ui/target`.
-App icons are generated at build/dev time from `fig/ThermoRawRead.png` into `tmp/build-ui/icons` and are not stored as generated assets in the repo.
+If the backend binary is not in `tmp/build/<arch>.<OS>/ThermoRawRead`, set `THERMO_RAW_READ_BIN` before launching Electron.
+Electron build artifacts are written to `tmp/release/<version>/gui-build`.
+Before `start` / `package` / `make`, [`ui/prepare-assets.mjs`](./ui/prepare-assets.mjs) stages the CLI bundle into `tmp/build-ui/backend` and prepares Forge icon assets under `tmp/build-ui/icons`.
 
 ## Release Packaging
 
@@ -46,4 +46,7 @@ GitHub Actions builds release artifacts on macOS, Linux, and Windows via [`.gith
 ## Layout
 
 - `src/`: Thermo RAW reader and exporters
-- `ui/`: Tauri desktop UI
+- `ui/src/main.cjs`: Electron main process
+- `ui/src/preload.cjs`: Electron preload bridge
+- `ui/src/index.html`, `ui/src/app.js`, `ui/src/styles.css`: desktop UI renderer
+- `ui/prepare-assets.mjs`: stage backend and icon assets for Forge
