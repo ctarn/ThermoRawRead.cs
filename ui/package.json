@@ -1,14 +1,35 @@
 {
   "name": "thermorawread-ui",
+  "productName": "ThermoRawRead",
   "private": true,
   "version": "2.0.0",
+  "description": "Electron desktop UI for the ThermoRawRead CLI converter.",
+  "author": "Tarn Yeong Ching",
   "type": "module",
+  "main": "src/main.cjs",
   "scripts": {
-    "dev": "node ./scripts/dev-server.mjs",
-    "tauri:dev": "node ./scripts/tauri-runner.mjs dev",
-    "tauri:build": "node ./scripts/tauri-runner.mjs build"
+    "prepare-assets": "node ./prepare-assets.mjs",
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
+    "prestart": "npm run prepare-assets",
+    "prepackage": "npm run prepare-assets",
+    "premake": "npm run prepare-assets"
+  },
+  "config": {
+    "forge": "./forge.config.cjs"
+  },
+  "dependencies": {
+    "electron-squirrel-startup": "^1.0.1"
   },
   "devDependencies": {
-    "@tauri-apps/cli": "^2.0.0"
+    "@electron-forge/cli": "^7.11.1",
+    "@electron-forge/maker-deb": "^7.11.1",
+    "@electron-forge/maker-dmg": "^7.11.1",
+    "@electron-forge/maker-squirrel": "^7.11.1",
+    "@electron-forge/maker-zip": "^7.11.1",
+    "electron": "^31.7.7",
+    "png-to-ico": "^3.0.1"
   }
 }

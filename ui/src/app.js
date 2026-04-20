@@ -1,325 +1,186 @@
-const formats = [
-    {code: "umz", title: "UMZ", desc: "Unified Binary Format", checked: true},
-    {code: "csv", title: "CSV", desc: "Scan Metadata List", checked: true},
-    {code: "txt", title: "TXT", desc: "Run Metadata", checked: true},
-    {code: "meth", title: "METH", desc: "Instrument Method File", checked: true},
-    {code: "ms1", title: "MS1", desc: "Text Format"},
-    {code: "ms2", title: "MS2", desc: "Text Format"}
-];
-
+const commandBus = window.thermoRawRead;
 const state = {
     inputPaths: [],
     outputDir: "",
     recursive: false,
-    outputs: new Set(formats.filter((item) => item.checked).map((item) => item.code)),
+    outputs: new Set(["umz", "csv", "txt", "meth"]),
     running: false
 };
 
-const tauriCore = window.__TAURI__?.core;
-const tauriEvent = window.__TAURI__?.event;
-
-const els = {
-    backendBadge: document.querySelector("#backend-badge"),
-    statusText: document.querySelector("#status-text"),
-    outputDir: document.querySelector("#output-dir"),
-    recursive: document.querySelector("#recursive"),
-    inputList: document.querySelector("#input-list"),
-    inputCount: document.querySelector("#input-count"),
-    formatGrid: document.querySelector("#format-grid"),
-    commandPreview: document.querySelector("#command-preview"),
-    runJob: document.querySelector("#run-job"),
-    stopJob: document.querySelector("#stop-job"),
+const elements = {
     clearInputs: document.querySelector("#clear-inputs"),
-    clearLog: document.querySelector("#clear-log"),
-    logOutput: document.querySelector("#log-output"),
+    inputList: document.querySelector("#input-list"),
+    outputDir: document.querySelector("#output-dir"),
     pickFiles: document.querySelector("#pick-files"),
-    pickInputDir: document.querySelector("#pick-input-dir"),
-    pickOutputDir: document.querySelector("#pick-output-dir")
+    pickFolder: document.querySelector("#pick-folder"),
+    pickOutput: document.querySelector("#pick-output"),
+    recursive: document.querySelector("#recursive"),
+    outputOptions: [...document.querySelectorAll("#output-options input[type='checkbox']")],
+    startJob: document.querySelector("#start-job"),
+    stopJob: document.querySelector("#stop-job"),
+    statusBadge: document.querySelector("#status-badge"),
+    statusMessage: document.querySelector("#status-message"),
+    logOutput: document.querySelector("#log-output")
 };
 
-function invoke(command, payload = {}) {
-    if (!tauriCore?.invoke) {
-        return Promise.reject(new Error("This UI needs to run inside Tauri."));
-    }
-    return tauriCore.invoke(command, payload);
-}
-
-function listen(eventName, handler) {
-    if (!tauriEvent?.listen) return Promise.resolve(() => {
-    });
-    return tauriEvent.listen(eventName, handler);
-}
-
-function pathSeparator(path) {
-    return path.includes("\\") ? "\\" : "/";
-}
-
-function trimTrailingSeparators(path) {
-    return path.replace(/[\\/]+$/, "");
-}
-
-function defaultOutDir(path) {
-    const normalized = trimTrailingSeparators(path);
-    const separator = pathSeparator(path);
-    const index = normalized.lastIndexOf(separator);
-
-    if (index < 0) return `${normalized}${separator}out`;
-    if (index === 0) return `${separator}out`;
-
-    return `${normalized.slice(0, index)}${separator}out`;
-}
-
-function renderFormats() {
-    els.formatGrid.innerHTML = "";
-    formats.forEach((format) => {
-        const label = document.createElement("label");
-        label.className = "option-card";
-        label.innerHTML = `
-      <input type="checkbox" ${state.outputs.has(format.code) ? "checked" : ""} />
-      <div>
-        <strong>${format.title}</strong>
-        <small>${format.desc}</small>
-      </div>
-    `;
-
-        const input = label.querySelector("input");
-        input.addEventListener("change", () => {
-            if (input.checked) state.outputs.add(format.code);
-            else state.outputs.delete(format.code);
-            persistState();
-            renderPreview();
-        });
-
-        els.formatGrid.appendChild(label);
-    });
-}
-
 function renderInputs() {
-    els.inputCount.textContent = `${state.inputPaths.length} entr${state.inputPaths.length <= 1 ? "y" : "ies"}`;
-    els.inputList.innerHTML = "";
+    elements.inputList.innerHTML = "";
 
     if (state.inputPaths.length === 0) {
-        const empty = document.createElement("li");
-        empty.className = "empty";
-        empty.textContent = "No RAW files or folders selected.";
-        els.inputList.appendChild(empty);
+        elements.inputList.classList.add("empty");
+        const item = document.createElement("li");
+        item.textContent = "No input selected.";
+        elements.inputList.append(item);
         return;
     }
 
-    state.inputPaths.forEach((path) => {
+    elements.inputList.classList.remove("empty");
+    state.inputPaths.forEach((value) => {
         const item = document.createElement("li");
-        item.textContent = path;
-        els.inputList.appendChild(item);
+        item.textContent = value;
+        elements.inputList.append(item);
     });
 }
 
-function renderPreview() {
-    const parts = ["ThermoRawRead"];
-    Array.from(state.outputs).sort().forEach((code) => parts.push(`--${code}`));
-    if (state.recursive) parts.push("--recursive");
-    if (state.outputDir.trim()) parts.push("--out", state.outputDir.trim());
-    parts.push(...(state.inputPaths.length > 0 ? state.inputPaths : ["<input>"]));
-    els.commandPreview.textContent = parts.join(" ");
+function renderOutputs() {
+    elements.outputOptions.forEach((option) => {
+        option.checked = state.outputs.has(option.value);
+    });
 }
 
-function setStatus(kind, message) {
-    const mapping = {
-        idle: ["badge-muted", "Backend Idle"],
-        running: ["badge-running", "Task Running"],
-        stopped: ["badge-muted", "Task Stopped"],
-        success: ["badge-success", "Task Finished"],
-        error: ["badge-error", "Task Failed"]
-    };
-    const [className, badgeText] = mapping[kind] ?? mapping.idle;
-    if (els.backendBadge) {
-        els.backendBadge.className = `badge ${className}`;
-        els.backendBadge.textContent = badgeText;
-    }
-    if (els.statusText) {
-        els.statusText.textContent = message;
-    }
+function renderState() {
+    renderInputs();
+    renderOutputs();
+    elements.outputDir.value = state.outputDir;
+    elements.recursive.checked = state.recursive;
+    elements.startJob.disabled = state.running;
+    elements.stopJob.disabled = !state.running;
 }
 
-function setRunning(running) {
-    state.running = running;
-    els.runJob.disabled = running;
-    els.stopJob.disabled = !running;
+function setStatus(status, message) {
+    elements.statusBadge.textContent = status;
+    elements.statusBadge.className = `status-badge ${status}`;
+    elements.statusMessage.textContent = message;
 }
 
 function appendLog(line) {
-    const content = els.logOutput.textContent === "idle..." ? "" : els.logOutput.textContent;
-    els.logOutput.textContent = `${content}${content ? "\n" : ""}${line}`;
-    els.logOutput.scrollTop = els.logOutput.scrollHeight;
+    elements.logOutput.textContent += `${line}\n`;
+    elements.logOutput.scrollTop = elements.logOutput.scrollHeight;
 }
 
-function hydrate(saved) {
-    state.inputPaths = Array.isArray(saved?.inputPaths) ? saved.inputPaths : [];
-    state.outputDir = saved?.outputDir ?? "";
-    state.recursive = Boolean(saved?.recursive);
-    state.outputs = new Set(
-        Array.isArray(saved?.outputs) && saved.outputs.length > 0
-            ? saved.outputs
-            : formats.filter((item) => item.checked).map((item) => item.code)
-    );
-
-    els.outputDir.value = state.outputDir;
-    els.recursive.checked = state.recursive;
-    renderFormats();
-    renderInputs();
-    renderPreview();
-}
-
-function persistState() {
-    void invoke("save_state", {
+async function persistState() {
+    await commandBus.invoke("save_state", {
         state: {
             inputPaths: state.inputPaths,
             outputDir: state.outputDir,
             recursive: state.recursive,
-            outputs: Array.from(state.outputs)
+            outputs: [...state.outputs]
         }
-    }).catch(() => {
     });
 }
 
-async function chooseFiles() {
-    const paths = await invoke("pick_raw_files");
-    if (!Array.isArray(paths) || paths.length === 0) return;
-    state.inputPaths = [...new Set([...state.inputPaths, ...paths])];
-    if (!state.outputDir) {
-        state.outputDir = defaultOutDir(paths[0]);
-        els.outputDir.value = state.outputDir;
-    }
-    persistState();
+function mergeInputPaths(nextPaths) {
+    const merged = new Set([...state.inputPaths, ...nextPaths]);
+    state.inputPaths = [...merged];
     renderInputs();
-    renderPreview();
+    void persistState();
 }
 
-async function chooseInputDir() {
-    const path = await invoke("pick_input_dir");
-    if (!path) return;
-    const normalized = trimTrailingSeparators(path);
-    state.inputPaths = [...new Set([...state.inputPaths, normalized])];
-    if (!state.outputDir) {
-        state.outputDir = `${normalized}${pathSeparator(normalized)}out`;
-        els.outputDir.value = state.outputDir;
+async function initialize() {
+    const saved = await commandBus.invoke("load_state");
+    state.inputPaths = Array.isArray(saved.inputPaths) ? saved.inputPaths : [];
+    state.outputDir = typeof saved.outputDir === "string" ? saved.outputDir : "";
+    state.recursive = Boolean(saved.recursive);
+    state.outputs = new Set(Array.isArray(saved.outputs) ? saved.outputs : ["umz", "csv", "txt", "meth"]);
+    renderState();
+}
+
+elements.pickFiles.addEventListener("click", async () => {
+    const paths = await commandBus.invoke("pick_raw_files");
+    if (paths.length > 0) {
+        mergeInputPaths(paths);
     }
-    persistState();
+});
+
+elements.pickFolder.addEventListener("click", async () => {
+    const directory = await commandBus.invoke("pick_input_dir");
+    if (directory) {
+        mergeInputPaths([directory]);
+    }
+});
+
+elements.pickOutput.addEventListener("click", async () => {
+    const directory = await commandBus.invoke("pick_output_dir");
+    if (!directory) return;
+    state.outputDir = directory;
+    renderState();
+    await persistState();
+});
+
+elements.clearInputs.addEventListener("click", async () => {
+    state.inputPaths = [];
     renderInputs();
-    renderPreview();
-}
+    await persistState();
+});
 
-async function chooseOutputDir() {
-    const path = await invoke("pick_output_dir");
-    if (!path) return;
-    state.outputDir = trimTrailingSeparators(path);
-    els.outputDir.value = state.outputDir;
-    persistState();
-    renderPreview();
-}
+elements.outputDir.addEventListener("change", async (event) => {
+    state.outputDir = event.target.value.trim();
+    await persistState();
+});
 
-async function runJob() {
-    if (state.inputPaths.length === 0) {
-        setStatus("error", "At least one RAW file or folder is required.");
-        return;
-    }
-    if (state.outputs.size === 0) {
-        setStatus("error", "Select at least one export format.");
-        return;
-    }
+elements.recursive.addEventListener("change", async (event) => {
+    state.recursive = event.target.checked;
+    await persistState();
+});
 
-    els.logOutput.textContent = "";
-    setRunning(true);
-    setStatus("running", "ThermoRawRead is streaming logs from the CLI backend.");
+elements.outputOptions.forEach((option) => {
+    option.addEventListener("change", async (event) => {
+        if (event.target.checked) {
+            state.outputs.add(event.target.value);
+        } else {
+            state.outputs.delete(event.target.value);
+        }
+
+        renderOutputs();
+        await persistState();
+    });
+});
+
+elements.startJob.addEventListener("click", async () => {
+    elements.logOutput.textContent = "";
+    state.running = true;
+    renderState();
 
     try {
-        await invoke("run_job", {
+        await commandBus.invoke("run_job", {
             request: {
                 inputPaths: state.inputPaths,
-                outputDir: state.outputDir.trim(),
+                outputDir: state.outputDir,
                 recursive: state.recursive,
-                outputs: Array.from(state.outputs)
+                outputs: [...state.outputs]
             }
         });
     } catch (error) {
-        setRunning(false);
-        appendLog(String(error));
-        setStatus("error", String(error));
+        state.running = false;
+        renderState();
+        setStatus("error", error.message);
     }
-}
+});
 
-async function stopJob() {
-    try {
-        await invoke("stop_job");
-    } catch (error) {
-        appendLog(String(error));
-        setStatus("error", String(error));
-    }
-}
+elements.stopJob.addEventListener("click", async () => {
+    await commandBus.invoke("stop_job");
+});
 
-async function bootstrap() {
-    renderFormats();
-    renderInputs();
-    renderPreview();
+commandBus.on("job-status", ({status, message}) => {
+    state.running = status === "running";
+    renderState();
+    setStatus(status, message);
+});
 
-    els.outputDir.addEventListener("input", () => {
-        state.outputDir = els.outputDir.value;
-        persistState();
-        renderPreview();
-    });
+commandBus.on("job-log", ({line}) => {
+    appendLog(line);
+});
 
-    els.recursive.addEventListener("change", () => {
-        state.recursive = els.recursive.checked;
-        persistState();
-        renderPreview();
-    });
-
-    els.pickFiles.addEventListener("click", () => void chooseFiles());
-    els.pickInputDir.addEventListener("click", () => void chooseInputDir());
-    els.pickOutputDir.addEventListener("click", () => void chooseOutputDir());
-    els.runJob.addEventListener("click", () => void runJob());
-    els.stopJob.addEventListener("click", () => void stopJob());
-    els.clearLog.addEventListener("click", () => {
-        els.logOutput.textContent = "Waiting for a run.";
-    });
-    els.clearInputs.addEventListener("click", () => {
-        state.inputPaths = [];
-        persistState();
-        renderInputs();
-        renderPreview();
-    });
-
-    await listen("job-log", (event) => appendLog(event.payload.line));
-    await listen("job-status", (event) => {
-        const {status, message} = event.payload;
-        if (status === "running") {
-            setRunning(true);
-            setStatus("running", message);
-            return;
-        }
-        if (status === "success") {
-            setRunning(false);
-            setStatus("success", message);
-            return;
-        }
-        if (status === "stopped") {
-            setRunning(false);
-            setStatus("stopped", message);
-            return;
-        }
-        setRunning(false);
-        setStatus("error", message);
-    });
-
-    try {
-        const saved = await invoke("load_state");
-        hydrate(saved);
-    } catch {
-        hydrate({});
-    }
-
-    if (!tauriCore?.invoke) {
-        setStatus("error", "Static preview mode only. Launch through Tauri to enable dialogs and conversion.");
-    }
-}
-
-void bootstrap();
+void initialize().catch((error) => {
+    setStatus("error", error.message);
+});
