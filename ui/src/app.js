@@ -8,13 +8,13 @@ const state = {
 };
 
 const elements = {
-    clearInputs: document.querySelector("#clear-inputs"),
-    inputList: document.querySelector("#input-list"),
-    outputDir: document.querySelector("#output-dir"),
     pickFiles: document.querySelector("#pick-files"),
     pickFolder: document.querySelector("#pick-folder"),
-    pickOutput: document.querySelector("#pick-output"),
+    clearInputs: document.querySelector("#clear-inputs"),
     recursive: document.querySelector("#recursive"),
+    pickOutput: document.querySelector("#pick-output"),
+    inputList: document.querySelector("#input-list"),
+    outputDir: document.querySelector("#output-dir"),
     outputOptions: [...document.querySelectorAll("#output-options input[type='checkbox']")],
     startJob: document.querySelector("#start-job"),
     stopJob: document.querySelector("#stop-job"),
