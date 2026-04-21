@@ -265,21 +265,9 @@ button:disabled {
     line-height: 1;
 }
 
-.option-card > input {
-    grid-column: 1 / 2;
-    grid-row: 1 / 2;
-}
-
-.option-card > strong {
-    grid-column: 2 / 3;
-    grid-row: 1 / 2;
-}
-
 .option-card > small {
-    grid-column: 1 / 3;
-    grid-row: 2 / 3;
+    grid-column: span 2;
 }
-
 
 /* list */
 .path-list {
