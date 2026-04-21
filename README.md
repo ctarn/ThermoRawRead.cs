@@ -4,13 +4,13 @@
 
 ## Backend
 
-Build the converter first:
+Build the standalone converter with:
 
 ```bash
 dotnet build src/ThermoRawRead.csproj -c Release -o tmp/build/$(uname -m).$(uname -s)
 ```
 
-That produces the CLI binary consumed by the Electron UI.
+That produces the CLI binary directly under `tmp/build/<arch>.<OS>/`.
 
 ## Electron UI
 
@@ -22,19 +22,28 @@ npm install
 npm start
 ```
 
+`npm start`, `npm run package`, and `npm run make` now let Electron Forge drive the full build pipeline. Forge builds the C# backend, stages it into `tmp/build-ui/backend`, prepares Forge icon assets under `tmp/build-ui/icon`, and writes GUI intermediates to `tmp/build-ui/<version>/gui-build`.
+
+The release version comes from [`ui/package.json`](./ui/package.json).
 If the backend binary is not in `tmp/build/<arch>.<OS>/ThermoRawRead`, set `THERMO_RAW_READ_BIN` before launching Electron.
-Electron build artifacts are written to `tmp/build-ui/<version>/gui-build`.
-Before `start` / `package` / `make`, [`ui/prepare-assets.mjs`](./ui/prepare-assets.mjs) stages the CLI bundle into `tmp/build-ui/backend` and prepares Forge icon assets under `tmp/build-ui/icon`.
 
 ## Release Packaging
 
-Use the platform build script in `util/` to produce all three release artifacts together:
+Use Electron Forge directly:
+
+```bash
+cd ui
+npm install
+npm run make
+```
+
+Or call the thin platform wrapper in `util/`, which now just delegates to `npm run make`.
+
+Forge writes the final release artifacts to `tmp/release/<version>/`:
 
 - `cli.zip`
 - `gui.zip`
 - `installer`
-
-They are written under `tmp/release/<version>/`.
 
 ## CI Release
 

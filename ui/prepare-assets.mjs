@@ -1,19 +1,24 @@
-import {cp, mkdir, rm, stat, writeFile} from "node:fs/promises";
-import {execFile} from "node:child_process";
-import path, {dirname, join} from "node:path";
+import {spawn} from "node:child_process";
+import {copyFile, cp, mkdir, mkdtemp, rm, stat, writeFile} from "node:fs/promises";
+import os from "node:os";
+import path, {join} from "node:path";
 import {fileURLToPath} from "node:url";
-import {promisify} from "node:util";
 
 import pngToIco from "png-to-ico";
+import {
+    backendBuildDir,
+    backendOutputDir,
+    iconOutputDir,
+    iconsetOutputDir,
+    legacyIconOutputDir,
+    productName,
+    releaseDir,
+    releaseSuffix,
+    releaseVersion,
+    repoRoot,
+    sourcePng
+} from "./meta.mjs";
 
-const execFileAsync = promisify(execFile);
-const uiRoot = dirname(fileURLToPath(import.meta.url));
-const repoRoot = join(uiRoot, "..");
-const backendOutputDir = join(repoRoot, "tmp", "build-ui", "backend");
-const iconOutputDir = join(repoRoot, "tmp", "build-ui", "icon");
-const iconsetOutputDir = join(iconOutputDir, "icon.iconset");
-const sourcePng = join(repoRoot, "fig", "ThermoRawRead.png");
-const legacyIconOutputDir = join(repoRoot, "tmp", "build-ui", "icons");
 const iconsetSpecs = [
     ["icon_16x16.png", 16, 16],
     ["icon_16x16@2x.png", 32, 32],
@@ -27,28 +32,84 @@ const iconsetSpecs = [
     ["icon_512x512@2x.png", 1024, 1024]
 ];
 
-function hostArch() {
-    return {x64: "x86_64", arm64: "arm64"}[process.arch] ?? process.arch;
+function runCommand(command, args, cwd = repoRoot) {
+    return new Promise((resolve, reject) => {
+        const child = spawn(command, args, {
+            cwd,
+            stdio: "inherit"
+        });
+
+        child.once("error", reject);
+        child.once("close", (code) => {
+            if (code === 0) {
+                resolve();
+                return;
+            }
+
+            reject(new Error(`${command} exited with status ${code ?? "unknown"}`));
+        });
+    });
 }
 
-function hostOs() {
-    return {darwin: "Darwin", linux: "Linux", win32: "Windows"}[process.platform] ?? process.platform;
+function quotePowerShellString(value) {
+    return `'${value.replace(/'/g, "''")}'`;
 }
 
-async function stageBackend() {
-    const backendSourceDir = join(repoRoot, "tmp", "build", `${hostArch()}.${hostOs()}`);
+function installerExtensions(platform) {
+    if (platform === "darwin") return ["dmg", "pkg"];
+    if (platform === "linux") return ["deb", "rpm", "AppImage"];
+    if (platform === "win32") return ["exe", "msi"];
+    return [];
+}
+
+function isGuiZipArtifact(artifact) {
+    return artifact.toLowerCase().endsWith(".zip");
+}
+
+function isInstallerArtifact(platform, artifact) {
+    const lowerArtifact = artifact.toLowerCase();
+    return installerExtensions(platform).some((extension) => lowerArtifact.endsWith(`.${extension.toLowerCase()}`));
+}
+
+async function removeIfExists(target) {
+    await rm(target, {recursive: true, force: true});
+}
+
+async function prepareReleaseTargets(platform, arch) {
+    const suffix = releaseSuffix(platform, arch);
+    const cliZip = join(releaseDir, `${productName}-cli-${releaseVersion}.${suffix}.zip`);
+    const guiZip = join(releaseDir, `${productName}-gui-${releaseVersion}.${suffix}.zip`);
+
+    await mkdir(releaseDir, {recursive: true});
+    await removeIfExists(cliZip);
+    await removeIfExists(guiZip);
+
+    for (const extension of installerExtensions(platform)) {
+        await removeIfExists(join(releaseDir, `${productName}-installer-${releaseVersion}.${suffix}.${extension}`));
+    }
+
+    return {cliZip, guiZip, suffix};
+}
+
+async function copyReleaseArtifact(source, destination) {
+    await mkdir(path.dirname(destination), {recursive: true});
+    await removeIfExists(destination);
+    await copyFile(source, destination);
+}
+
+async function stageBackend(platform = process.platform, arch = process.arch) {
+    const sourceDir = backendBuildDir(platform, arch);
 
     try {
-        await stat(backendSourceDir);
+        await stat(sourceDir);
     } catch {
         throw new Error(
-            `missing backend build at ${backendSourceDir}. Run dotnet build src/ThermoRawRead.csproj -c Release -o tmp/build/${hostArch()}.${hostOs()} first.`
+            `missing backend build at ${sourceDir}. Run npm run package or build src/${productName}.csproj first.`
         );
     }
 
     await rm(backendOutputDir, {recursive: true, force: true});
-    await mkdir(backendOutputDir, {recursive: true});
-    await cp(backendSourceDir, backendOutputDir, {recursive: true});
+    await cp(sourceDir, backendOutputDir, {recursive: true});
 }
 
 async function prepareIcns() {
@@ -58,7 +119,7 @@ async function prepareIcns() {
     await mkdir(iconsetOutputDir, {recursive: true});
 
     for (const [name, width, height] of iconsetSpecs) {
-        await execFileAsync("sips", [
+        await runCommand("sips", [
             "-z",
             String(width),
             String(height),
@@ -68,7 +129,7 @@ async function prepareIcns() {
         ]);
     }
 
-    await execFileAsync("iconutil", [
+    await runCommand("iconutil", [
         "--convert",
         "icns",
         iconsetOutputDir,
@@ -87,12 +148,111 @@ async function prepareIcons() {
     await prepareIcns();
 }
 
-async function main() {
-    await stageBackend();
+export async function buildBackend(platform = process.platform, arch = process.arch) {
+    await runCommand("dotnet", [
+        "build",
+        join("src", `${productName}.csproj`),
+        "-c",
+        "Release",
+        "-o",
+        backendBuildDir(platform, arch)
+    ]);
+}
+
+export async function prepareAssets(platform = process.platform, arch = process.arch) {
+    await stageBackend(platform, arch);
     await prepareIcons();
 }
 
-main().catch((error) => {
-    console.error(error);
-    process.exit(1);
-});
+export async function buildAndPrepareAssets(platform = process.platform, arch = process.arch) {
+    await buildBackend(platform, arch);
+    await prepareAssets(platform, arch);
+}
+
+async function createCliZip(platform, arch, destination) {
+    const sourceDir = backendBuildDir(platform, arch);
+    const stagingRoot = await mkdtemp(join(os.tmpdir(), `${productName}-cli-`));
+    const cliStageDir = join(stagingRoot, "cli");
+
+    try {
+        await cp(sourceDir, cliStageDir, {recursive: true});
+
+        if (platform === "win32") {
+            await runCommand("powershell", [
+                "-NoProfile",
+                "-Command",
+                `Compress-Archive -Path ${quotePowerShellString(`${cliStageDir}\\*`)} -DestinationPath ${quotePowerShellString(destination)} -Force`
+            ]);
+        } else {
+            await runCommand("zip", ["-qry", destination, "cli"], stagingRoot);
+        }
+    } finally {
+        await rm(stagingRoot, {recursive: true, force: true});
+    }
+
+    return destination;
+}
+
+export async function organizeReleaseArtifacts(makeResults) {
+    const cliDone = new Set();
+    const releaseTargetsBySuffix = new Map();
+    const rewrittenResults = [];
+
+    for (const result of makeResults) {
+        const {platform, arch} = result;
+        const suffix = releaseSuffix(platform, arch);
+        let releaseTargets = releaseTargetsBySuffix.get(suffix);
+
+        if (!releaseTargets) {
+            releaseTargets = await prepareReleaseTargets(platform, arch);
+            releaseTargetsBySuffix.set(suffix, releaseTargets);
+        }
+
+        const rewrittenArtifacts = [];
+        let installerCopied = false;
+
+        if (!cliDone.has(releaseTargets.suffix)) {
+            rewrittenArtifacts.push(await createCliZip(platform, arch, releaseTargets.cliZip));
+            cliDone.add(releaseTargets.suffix);
+        }
+
+        for (const artifact of result.artifacts) {
+            if (isGuiZipArtifact(artifact)) {
+                await copyReleaseArtifact(artifact, releaseTargets.guiZip);
+                rewrittenArtifacts.push(releaseTargets.guiZip);
+                continue;
+            }
+
+            if (!installerCopied && isInstallerArtifact(platform, artifact)) {
+                const installerDestination = join(
+                    releaseDir,
+                    `${productName}-installer-${releaseVersion}.${releaseTargets.suffix}${path.extname(artifact)}`
+                );
+
+                await copyReleaseArtifact(artifact, installerDestination);
+                rewrittenArtifacts.push(installerDestination);
+                installerCopied = true;
+            }
+        }
+
+        if (rewrittenArtifacts.length > 0) {
+            rewrittenResults.push({
+                ...result,
+                artifacts: rewrittenArtifacts
+            });
+        }
+    }
+
+    return rewrittenResults;
+}
+
+async function main() {
+    await buildAndPrepareAssets();
+}
+
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+    main().catch((error) => {
+        console.error(error);
+        process.exit(1);
+    });
+}

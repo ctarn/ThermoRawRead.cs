@@ -15,17 +15,26 @@ jobs:
         include:
           - label: macos
             runner: macos-latest
-            script: bash util/build_macos.sh
+            script: |
+              cd ui
+              npm install
+              npm run make
             shell: bash
             artifact: release-macos
           - label: linux
             runner: ubuntu-22.04
-            script: bash util/build_linux.sh
+            script: |
+              cd ui
+              npm install
+              npm run make
             shell: bash
             artifact: release-linux
           - label: windows
             runner: windows-latest
-            script: util\\build_windows.bat
+            script: |
+              cd ui
+              npm install
+              npm run make
             shell: cmd
             artifact: release-windows
 

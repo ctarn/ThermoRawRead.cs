@@ -1,6 +1,5 @@
 import fs from "node:fs";
 import fsp from "node:fs/promises";
-import os from "node:os";
 import path from "node:path";
 import readline from "node:readline";
 import {spawn} from "node:child_process";
@@ -8,6 +7,13 @@ import {fileURLToPath} from "node:url";
 
 import electron from "electron";
 import squirrelStartup from "electron-squirrel-startup";
+import {
+    backendBuildDir,
+    backendExecutableName,
+    preloadEntry,
+    repoRoot,
+    uiStatePath
+} from "./meta.mjs";
 
 const {app, BrowserWindow, dialog, ipcMain} = electron;
 
@@ -17,8 +23,6 @@ if (squirrelStartup) {
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const repoRoot = path.join(__dirname, "..");
-const preloadEntry = path.join(__dirname, "preload.mjs");
 const defaultSavedState = Object.freeze({
     inputPaths: [],
     outputDir: "",
@@ -29,22 +33,6 @@ const defaultSavedState = Object.freeze({
 let mainWindow = null;
 let currentJob = null;
 let stopRequested = false;
-
-function fileName() {
-    return process.platform === "win32" ? "ThermoRawRead.exe" : "ThermoRawRead";
-}
-
-function hostArch() {
-    return {x64: "x86_64", arm64: "arm64"}[process.arch] ?? process.arch;
-}
-
-function hostOs() {
-    return {darwin: "Darwin", linux: "Linux", win32: "Windows"}[process.platform] ?? process.platform;
-}
-
-function statePath() {
-    return path.join(os.homedir(), ".ThermoRawRead", "v1.5", "ui-state.json");
-}
 
 function send(channel, payload) {
     if (!mainWindow || mainWindow.isDestroyed()) return;
@@ -91,9 +79,11 @@ function resolveBackendExecutable() {
         candidates.push(process.env.THERMO_RAW_READ_BIN);
     }
 
-    candidates.push(path.join(repoRoot, "tmp", "build", `${hostArch()}.${hostOs()}`, fileName()));
-    candidates.push(path.join(process.resourcesPath, "artifacts", fileName()));
-    candidates.push(path.join(path.dirname(process.execPath), "artifacts", fileName()));
+    candidates.push(path.join(backendBuildDir(), backendExecutableName()));
+    candidates.push(path.join(process.resourcesPath, "backend", backendExecutableName()));
+    candidates.push(path.join(path.dirname(process.execPath), "backend", backendExecutableName()));
+    candidates.push(path.join(process.resourcesPath, "artifacts", backendExecutableName()));
+    candidates.push(path.join(path.dirname(process.execPath), "artifacts", backendExecutableName()));
 
     const resolved = candidates.find((candidate) => fs.existsSync(candidate));
     if (resolved) return resolved;
@@ -195,7 +185,7 @@ function stopJob() {
 }
 
 async function loadState() {
-    const target = statePath();
+    const target = uiStatePath();
 
     try {
         const content = await fsp.readFile(target, "utf8");
@@ -213,7 +203,7 @@ async function loadState() {
 }
 
 async function saveState(state) {
-    const target = statePath();
+    const target = uiStatePath();
     await fsp.mkdir(path.dirname(target), {recursive: true});
     await fsp.writeFile(target, JSON.stringify(state, null, 2), "utf8");
 }

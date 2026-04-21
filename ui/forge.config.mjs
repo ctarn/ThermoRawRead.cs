@@ -1,18 +1,14 @@
-import fs from "node:fs";
 import path from "node:path";
-import {fileURLToPath} from "node:url";
+import {
+    backendOutputDir,
+    forgeOutDir,
+    iconRoot,
+    packageJson,
+    productName,
+    repoRoot
+} from "./meta.mjs";
+import {buildAndPrepareAssets, organizeReleaseArtifacts} from "./prepare-assets.mjs";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const packageJson = JSON.parse(fs.readFileSync(path.join(__dirname, "package.json"), "utf8"));
-
-const repoRoot = path.resolve(__dirname, "..");
-const tmpRoot = path.join(repoRoot, "tmp");
-const buildUiRoot = path.join(tmpRoot, "build-ui");
-const iconRoot = path.join(buildUiRoot, "icon", "icon");
-const backendRoot = path.join(buildUiRoot, "backend");
-const forgeOutDir = path.join(buildUiRoot, packageJson.version, "gui-build");
-const productName = packageJson.productName;
 const maker = (name, platforms, config) => ({
     name,
     platforms,
@@ -21,13 +17,22 @@ const maker = (name, platforms, config) => ({
 
 export default {
     outDir: forgeOutDir,
+    hooks: {
+        preStart: async () => {
+            await buildAndPrepareAssets();
+        },
+        prePackage: async (_forgeConfig, platform, arch) => {
+            await buildAndPrepareAssets(platform, arch);
+        },
+        postMake: async (_forgeConfig, makeResults) => organizeReleaseArtifacts(makeResults)
+    },
     packagerConfig: {
         appBundleId: "io.ctarn.thermorawread",
         appCategoryType: "public.app-category.utilities",
         appCopyright: "Copyright © Tarn Yeong Ching",
         asar: true,
         executableName: productName,
-        extraResource: [backendRoot],
+        extraResource: [backendOutputDir],
         icon: iconRoot,
         name: productName,
         overwrite: true

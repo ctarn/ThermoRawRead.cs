@@ -12,10 +12,7 @@
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
-    "publish": "electron-forge publish",
-    "prestart": "npm run prepare-assets",
-    "prepackage": "npm run prepare-assets",
-    "premake": "npm run prepare-assets"
+    "publish": "electron-forge publish"
   },
   "config": {
     "forge": "./forge.config.mjs"

@@ -3,10 +3,7 @@
 set -euo pipefail
 shopt -s nullglob
 
-arch="$(uname -m)"
-os="$(uname -s)"
-content="tmp/build/${arch}.${os}"
-version="$(cat "${content}/VERSION")"
+version="$(node -p "require('./ui/package.json').version")"
 tag="v${version}"
 files=(tmp/release/"${version}"/*)
 

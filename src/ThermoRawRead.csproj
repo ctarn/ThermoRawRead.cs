@@ -23,9 +23,4 @@
         <Content Include="..\fig\ThermoRawRead.pdf" Link="ThermoRawRead.pdf" CopyToOutputDirectory="Always"/>
         <Content Include="..\fig\ThermoRawRead.png" Link="ThermoRawRead.png" CopyToOutputDirectory="Always"/>
     </ItemGroup>
-
-    <Target Name="WriteVersionFile" AfterTargets="Build">
-        <WriteLinesToFile File="$(TargetDir)VERSION" Lines="$(Version)" Overwrite="true"/>
-    </Target>
-
 </Project>
