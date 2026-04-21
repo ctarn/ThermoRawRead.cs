@@ -176,7 +176,7 @@ function setBridgeEnabled(enabled) {
         elements.outputPath,
         elements.inputRecursive,
         elements.inputAddFile,
-        elements.pickFolder,
+        elements.inputAddFolder,
         elements.outputPick,
         elements.startJob,
         elements.inputClear
@@ -341,7 +341,7 @@ async function initialize() {
         void chooseFiles();
     });
 
-    elements.pickFolder.addEventListener("click", () => {
+    elements.inputAddFolder.addEventListener("click", () => {
         void chooseInputDir();
     });
 
