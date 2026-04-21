@@ -40,12 +40,55 @@
                 <h3>Export Formats</h3>
                 <small>Choose one or more</small>
             </header>
-            <div class="option-grid" id="format-grid"></div>
+            <div class="option-grid" id="format-grid">
+                <label class="option-card">
+                    <input checked type="checkbox" value="umz"/>
+                    <div>
+                        <strong>UMZ</strong>
+                        <small>Unified binary spectrum format</small>
+                    </div>
+                </label>
+                <label class="option-card">
+                    <input checked type="checkbox" value="csv"/>
+                    <div>
+                        <strong>CSV</strong>
+                        <small>Scan list without peaks</small>
+                    </div>
+                </label>
+                <label class="option-card">
+                    <input checked type="checkbox" value="txt"/>
+                    <div>
+                        <strong>TXT</strong>
+                        <small>Run metadata</small>
+                    </div>
+                </label>
+                <label class="option-card">
+                    <input checked type="checkbox" value="meth"/>
+                    <div>
+                        <strong>METH</strong>
+                        <small>Instrument method file</small>
+                    </div>
+                </label>
+                <label class="option-card">
+                    <input type="checkbox" value="ms1"/>
+                    <div>
+                        <strong>MS1</strong>
+                        <small>Text spectrum format</small>
+                    </div>
+                </label>
+                <label class="option-card">
+                    <input type="checkbox" value="ms2"/>
+                    <div>
+                        <strong>MS2</strong>
+                        <small>Text spectrum format</small>
+                    </div>
+                </label>
+            </div>
         </section>
 
         <section class="button-row">
-            <button class="primary-btn" id="start-job" type="button">Run</button>
-            <button class="danger-btn" disabled id="stop-job" type="button">Stop</button>
+            <button class="primary-btn" id="task-start" type="button">Run</button>
+            <button class="danger-btn" disabled id="task-stop" type="button">Stop</button>
         </section>
 
         <section class="stack status">

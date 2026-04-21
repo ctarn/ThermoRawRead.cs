@@ -2,33 +2,12 @@ import {defaultOutDir, pathSeparator, quoteArg, trimTrailingSeparators} from "./
 
 const commandBus = window.thermoRawRead ?? null;
 
-const outputFormats = [
-    {value: "umz", label: "UMZ", description: "Unified binary spectrum format", checked: true},
-    {value: "csv", label: "CSV", description: "Scan list without peaks", checked: true},
-    {value: "txt", label: "TXT", description: "Run metadata", checked: true},
-    {value: "meth", label: "METH", description: "Instrument method file", checked: true},
-    {value: "ms1", label: "MS1", description: "Text spectrum format", checked: false},
-    {value: "ms2", label: "MS2", description: "Text spectrum format", checked: false}
-];
-
-const defaultOutputs = outputFormats
-    .filter((format) => format.checked)
-    .map((format) => format.value);
-
 const statusMeta = {
     idle: {badgeClass: "badge badge-muted", badgeText: "Idle"},
     running: {badgeClass: "badge", badgeText: "Running"},
     stopped: {badgeClass: "badge badge-muted", badgeText: "Stopped"},
     success: {badgeClass: "badge", badgeText: "Finished"},
     error: {badgeClass: "badge badge-error", badgeText: "Failed"}
-};
-
-const state = {
-    inputPaths: [],
-    outputDir: "",
-    recursive: false,
-    outputs: new Set(defaultOutputs),
-    running: false
 };
 
 const elements = {
@@ -57,52 +36,34 @@ const elements = {
     logOutput: document.querySelector("#log-output"),
 };
 
+const missingElements = Object.entries(elements)
+    .filter(([, element]) => !element)
+    .map(([name]) => name);
+
+if (missingElements.length > 0) {
+    throw new Error(`missing UI elements: ${missingElements.join(", ")}`);
+}
+
 const bridgeErrorMessage = "Desktop bridge is unavailable. Restart the app to reload the preload script.";
+const formatInputs = Array.from(elements.formatGrid.querySelectorAll("input[type='checkbox']"));
+const allowedOutputs = new Set(formatInputs.map((input) => input.value));
+const defaultOutputs = formatInputs
+    .filter((input) => input.checked)
+    .map((input) => input.value);
+const state = {
+    inputPaths: [],
+    outputDir: "",
+    recursive: false,
+    outputs: new Set(defaultOutputs),
+    running: false
+};
 
 function validOutputs(values) {
-    const allowed = new Set(outputFormats.map(({value}) => value));
-    return values.filter((value) => allowed.has(value));
+    return values.filter((value) => allowedOutputs.has(value));
 }
 
 function selectedOutputs() {
     return validOutputs(Array.from(state.outputs));
-}
-
-function renderFormatOptions() {
-    elements.formatGrid.replaceChildren();
-
-    outputFormats.forEach(({value, label, description}) => {
-        const card = document.createElement("label");
-        card.className = "option-card";
-
-        const input = document.createElement("input");
-        input.type = "checkbox";
-        input.value = value;
-        input.checked = state.outputs.has(value);
-        input.addEventListener("change", async () => {
-            if (input.checked) {
-                state.outputs.add(value);
-            } else {
-                state.outputs.delete(value);
-            }
-
-            renderFormatGrid();
-            renderCommandPreview();
-            await persistState();
-        });
-
-        const text = document.createElement("div");
-
-        const title = document.createElement("strong");
-        title.textContent = label;
-
-        const detail = document.createElement("small");
-        detail.textContent = description;
-
-        text.append(title, detail);
-        card.append(input, text);
-        elements.formatGrid.append(card);
-    });
 }
 
 function renderInput() {
@@ -128,7 +89,7 @@ function renderInput() {
 
 function renderFormatGrid() {
     const selected = state.outputs;
-    elements.formatGrid.querySelectorAll("input[type='checkbox']").forEach((input) => {
+    formatInputs.forEach((input) => {
         input.checked = selected.has(input.value);
     });
 }
@@ -174,7 +135,7 @@ function setRunning(running) {
 function setBridgeEnabled(enabled) {
     [
         elements.outputInput,
-        elements.inputRecursive,
+        elements.inputIsRecursive,
         elements.inputAddFile,
         elements.inputAddFolder,
         elements.outputPick,
@@ -183,7 +144,7 @@ function setBridgeEnabled(enabled) {
     ].forEach((element) => {
         element.disabled = !enabled;
     });
-    elements.formatGrid.querySelectorAll("input").forEach((input) => {
+    formatInputs.forEach((input) => {
         input.disabled = !enabled;
     });
     elements.taskStop.disabled = true;
@@ -200,7 +161,7 @@ function renderState() {
     renderFormatGrid();
     renderCommandPreview();
     elements.outputInput.value = state.outputDir;
-    elements.inputRecursive.checked = state.recursive;
+    elements.inputIsRecursive.checked = state.recursive;
     setRunning(state.running);
 }
 
@@ -313,8 +274,8 @@ async function stopJob() {
 }
 
 async function initialize() {
-    renderFormatOptions();
     renderInput();
+    renderFormatGrid();
     renderCommandPreview();
     setRunning(false);
 
@@ -331,10 +292,24 @@ async function initialize() {
         void persistState();
     });
 
-    elements.inputRecursive.addEventListener("change", () => {
-        state.recursive = elements.inputRecursive.checked;
+    elements.inputIsRecursive.addEventListener("change", () => {
+        state.recursive = elements.inputIsRecursive.checked;
         renderCommandPreview();
         void persistState();
+    });
+
+    formatInputs.forEach((input) => {
+        input.addEventListener("change", async () => {
+            if (input.checked) {
+                state.outputs.add(input.value);
+            } else {
+                state.outputs.delete(input.value);
+            }
+
+            renderFormatGrid();
+            renderCommandPreview();
+            await persistState();
+        });
     });
 
     elements.inputAddFile.addEventListener("click", () => {
