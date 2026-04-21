@@ -109,7 +109,7 @@ function renderInputs() {
     elements.inputList.replaceChildren();
 
     const count = state.inputPaths.length;
-    elements.inputCount.textContent = `${count} entr${count === 1 ? "y" : "ies"}`;
+    elements.inputCount.textContent = `${count} entr${count <= 1 ? "y" : "ies"}`;
 
     if (count === 0) {
         const empty = document.createElement("li");
