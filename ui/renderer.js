@@ -16,11 +16,11 @@ const defaultOutputs = outputFormats
     .map((format) => format.value);
 
 const statusMeta = {
-    idle: {badgeClass: "badge badge-muted", badgeText: "Backend idle"},
-    running: {badgeClass: "badge", badgeText: "Conversion running"},
-    stopped: {badgeClass: "badge badge-muted", badgeText: "Conversion stopped"},
-    success: {badgeClass: "badge", badgeText: "Conversion finished"},
-    error: {badgeClass: "badge badge-error", badgeText: "Conversion failed"}
+    idle: {badgeClass: "badge badge-muted", badgeText: "Idle"},
+    running: {badgeClass: "badge", badgeText: "Running"},
+    stopped: {badgeClass: "badge badge-muted", badgeText: "Stopped"},
+    success: {badgeClass: "badge", badgeText: "Finished"},
+    error: {badgeClass: "badge badge-error", badgeText: "Failed"}
 };
 
 const state = {
