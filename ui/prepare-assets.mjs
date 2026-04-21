@@ -14,6 +14,18 @@ const iconOutputDir = join(repoRoot, "tmp", "build-ui", "icon");
 const iconsetOutputDir = join(iconOutputDir, "icon.iconset");
 const sourcePng = join(repoRoot, "fig", "ThermoRawRead.png");
 const legacyIconOutputDir = join(repoRoot, "tmp", "build-ui", "icons");
+const iconsetSpecs = [
+    ["icon_16x16.png", 16, 16],
+    ["icon_16x16@2x.png", 32, 32],
+    ["icon_32x32.png", 32, 32],
+    ["icon_32x32@2x.png", 64, 64],
+    ["icon_128x128.png", 128, 128],
+    ["icon_128x128@2x.png", 256, 256],
+    ["icon_256x256.png", 256, 256],
+    ["icon_256x256@2x.png", 512, 512],
+    ["icon_512x512.png", 512, 512],
+    ["icon_512x512@2x.png", 1024, 1024]
+];
 
 function hostArch() {
     return {x64: "x86_64", arm64: "arm64"}[process.arch] ?? process.arch;
@@ -43,23 +55,25 @@ async function prepareIcns() {
     if (process.platform !== "darwin") return;
 
     await rm(iconsetOutputDir, {recursive: true, force: true});
+    await mkdir(iconsetOutputDir, {recursive: true});
 
-    await execFileAsync("/bin/zsh", [
-        "-lc",
-        [
-            `mkdir -p ${JSON.stringify(`${iconsetOutputDir}/`)}`,
-            `sips -z 16 16 ${JSON.stringify(sourcePng)} --out ${JSON.stringify(join(iconsetOutputDir, "icon_16x16.png"))}`,
-            `sips -z 32 32 ${JSON.stringify(sourcePng)} --out ${JSON.stringify(join(iconsetOutputDir, "icon_16x16@2x.png"))}`,
-            `sips -z 32 32 ${JSON.stringify(sourcePng)} --out ${JSON.stringify(join(iconsetOutputDir, "icon_32x32.png"))}`,
-            `sips -z 64 64 ${JSON.stringify(sourcePng)} --out ${JSON.stringify(join(iconsetOutputDir, "icon_32x32@2x.png"))}`,
-            `sips -z 128 128 ${JSON.stringify(sourcePng)} --out ${JSON.stringify(join(iconsetOutputDir, "icon_128x128.png"))}`,
-            `sips -z 256 256 ${JSON.stringify(sourcePng)} --out ${JSON.stringify(join(iconsetOutputDir, "icon_128x128@2x.png"))}`,
-            `sips -z 256 256 ${JSON.stringify(sourcePng)} --out ${JSON.stringify(join(iconsetOutputDir, "icon_256x256.png"))}`,
-            `sips -z 512 512 ${JSON.stringify(sourcePng)} --out ${JSON.stringify(join(iconsetOutputDir, "icon_256x256@2x.png"))}`,
-            `sips -z 512 512 ${JSON.stringify(sourcePng)} --out ${JSON.stringify(join(iconsetOutputDir, "icon_512x512.png"))}`,
-            `sips -z 1024 1024 ${JSON.stringify(sourcePng)} --out ${JSON.stringify(join(iconsetOutputDir, "icon_512x512@2x.png"))}`,
-            `iconutil --convert icns ${JSON.stringify(iconsetOutputDir)} --output ${JSON.stringify(join(iconOutputDir, "icon.icns"))}`
-        ].join("\n")
+    for (const [name, width, height] of iconsetSpecs) {
+        await execFileAsync("sips", [
+            "-z",
+            String(width),
+            String(height),
+            sourcePng,
+            "--out",
+            join(iconsetOutputDir, name)
+        ]);
+    }
+
+    await execFileAsync("iconutil", [
+        "--convert",
+        "icns",
+        iconsetOutputDir,
+        "--output",
+        join(iconOutputDir, "icon.icns")
     ]);
 }
 
