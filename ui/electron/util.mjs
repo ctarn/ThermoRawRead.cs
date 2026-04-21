@@ -55,7 +55,7 @@ export const sourcePng = join(repoRoot, "fig", "ThermoRawRead.png");
 export const preloadEntry = join(electronRoot, "preload.mjs");
 
 export function rendererEntry() {
-    return join(uiRoot, "src", "index.html");
+    return join(uiRoot, "src", "main.html");
 }
 
 export function backendBuildDir(platform = process.platform, arch = process.arch) {

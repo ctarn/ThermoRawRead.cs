@@ -1,4 +1,26 @@
-import {defaultOutDir, pathSeparator, quoteArg, trimTrailingSeparators} from "./util.mjs";
+function quoteArg(value) {
+    if (value === "") return '""';
+    return /\s/.test(value) ? JSON.stringify(value) : value;
+}
+
+function pathSeparator(path) {
+    return path.includes("\\") ? "\\" : "/";
+}
+
+function trimTrailingSeparators(path) {
+    return path.replace(/[\\/]+$/, "");
+}
+
+function defaultOutDir(path) {
+    const normalized = trimTrailingSeparators(path);
+    const separator = pathSeparator(normalized);
+    const index = normalized.lastIndexOf(separator);
+
+    if (index < 0) return `${normalized}${separator}out`;
+    if (index === 0) return `${separator}out`;
+
+    return `${normalized.slice(0, index)}${separator}out`;
+}
 
 const commandBus = window.thermoRawRead ?? null;
 
