@@ -27,16 +27,16 @@ export function quoteArg(value) {
     return /\s/.test(value) ? JSON.stringify(value) : value;
 }
 
-export function pathSeparator(targetPath) {
-    return targetPath.includes("\\") ? "\\" : "/";
+export function pathSeparator(path) {
+    return path.includes("\\") ? "\\" : "/";
 }
 
-export function trimTrailingSeparators(targetPath) {
-    return targetPath.replace(/[\\/]+$/, "");
+export function trimTrailingSeparators(path) {
+    return path.replace(/[\\/]+$/, "");
 }
 
-export function defaultOutDir(targetPath) {
-    const normalized = trimTrailingSeparators(targetPath);
+export function defaultOutDir(path) {
+    const normalized = trimTrailingSeparators(path);
     const separator = pathSeparator(normalized);
     const index = normalized.lastIndexOf(separator);
 
