@@ -3,7 +3,7 @@
   "productName": "ThermoRawRead",
   "private": true,
   "version": "2.0.0",
-  "description": "Electron desktop UI for the ThermoRawRead CLI converter.",
+  "description": "Desktop UI for ThermoRawRead.",
   "author": "Tarn Yeong Ching",
   "type": "module",
   "main": "main.mjs",
