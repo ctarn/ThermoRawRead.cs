@@ -37,8 +37,6 @@ npm install
 npm run make
 ```
 
-Or call the thin platform wrapper in `util/`, which now just delegates to `npm run make`.
-
 Forge writes the final release artifacts to `tmp/release/<version>/`:
 
 - `cli.zip`
