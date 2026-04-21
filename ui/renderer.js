@@ -40,7 +40,7 @@ const elements = {
     clearInput: document.querySelector("#clear-input"),
     recursive: document.querySelector("#recursive"),
     // output
-    outputDir: document.querySelector("#output-dir"),
+    outputPath: document.querySelector("#output-path"),
     pickOutput: document.querySelector("#pick-output"),
     // format
     formatGrid: document.querySelector("#format-grid"),
@@ -173,7 +173,7 @@ function setRunning(running) {
 
 function setBridgeEnabled(enabled) {
     [
-        elements.outputDir,
+        elements.outputPath,
         elements.recursive,
         elements.pickFile,
         elements.pickFolder,
@@ -199,7 +199,7 @@ function renderState() {
     renderInputs();
     renderOutputs();
     renderCommandPreview();
-    elements.outputDir.value = state.outputDir;
+    elements.outputPath.value = state.outputDir;
     elements.recursive.checked = state.recursive;
     setRunning(state.running);
 }
@@ -325,8 +325,8 @@ async function initialize() {
         return;
     }
 
-    elements.outputDir.addEventListener("input", () => {
-        state.outputDir = elements.outputDir.value;
+    elements.outputPath.addEventListener("input", () => {
+        state.outputDir = elements.outputPath.value;
         renderCommandPreview();
         void persistState();
     });
