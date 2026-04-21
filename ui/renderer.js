@@ -86,7 +86,7 @@ function renderFormatOptions() {
                 state.outputs.delete(value);
             }
 
-            renderOutputs();
+            renderFormatGrid();
             renderCommandPreview();
             await persistState();
         });
@@ -126,7 +126,7 @@ function renderInputs() {
     });
 }
 
-function renderOutputs() {
+function renderFormatGrid() {
     const selected = state.outputs;
     elements.formatGrid.querySelectorAll("input[type='checkbox']").forEach((input) => {
         input.checked = selected.has(input.value);
@@ -197,7 +197,7 @@ function appendLog(line) {
 
 function renderState() {
     renderInputs();
-    renderOutputs();
+    renderFormatGrid();
     renderCommandPreview();
     elements.outputInput.value = state.outputDir;
     elements.inputRecursive.checked = state.recursive;
