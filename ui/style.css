@@ -113,7 +113,9 @@ section.stack {
 }
 
 section.status {
+    align-content: start;
     gap: 0;
+    min-width: 0;
     padding: 9px 12px;
     border: 1px solid rgba(250, 128, 114, 0.14);
     border-radius: 12px;
@@ -138,6 +140,14 @@ section.status {
     word-break: break-all;
     padding: 12px;
     border-radius: 12px;
+}
+
+#status-text {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
 }
 
 /* button */
