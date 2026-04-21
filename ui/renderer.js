@@ -40,8 +40,8 @@ const elements = {
     clearInput: document.querySelector("#clear-input"),
     recursive: document.querySelector("#recursive"),
     // output
-    pickOutput: document.querySelector("#pick-output"),
     outputDir: document.querySelector("#output-dir"),
+    pickOutput: document.querySelector("#pick-output"),
     // format
     formatGrid: document.querySelector("#format-grid"),
     // command
