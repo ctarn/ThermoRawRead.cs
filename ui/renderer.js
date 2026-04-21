@@ -32,7 +32,7 @@ const state = {
 };
 
 const elements = {
-    backendBadge: document.querySelector("#backend-badge"),
+    statusBadge: document.querySelector("#status-badge"),
     statusText: document.querySelector("#status-text"),
     outputDir: document.querySelector("#output-dir"),
     recursive: document.querySelector("#recursive"),
@@ -153,8 +153,8 @@ function renderCommandPreview() {
 
 function setStatus(status, message) {
     const meta = statusMeta[status] ?? statusMeta.idle;
-    elements.backendBadge.className = meta.badgeClass;
-    elements.backendBadge.textContent = meta.badgeText;
+    elements.statusBadge.className = meta.badgeClass;
+    elements.statusBadge.textContent = meta.badgeText;
     elements.statusText.textContent = message ?? "";
 }
 
