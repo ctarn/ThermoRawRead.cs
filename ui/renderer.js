@@ -47,13 +47,13 @@ const elements = {
     // command
     commandPreview: document.querySelector("#command-preview"),
     // control
-    taskStart: document.querySelector("#start-job"),
-    taskStop: document.querySelector("#stop-job"),
+    taskStart: document.querySelector("#task-start"),
+    taskStop: document.querySelector("#task-stop"),
     // status
     statusBadge: document.querySelector("#status-badge"),
     statusText: document.querySelector("#status-text"),
     // log
-    clearLog: document.querySelector("#clear-log"),
+    logClear: document.querySelector("#log-clear"),
     logOutput: document.querySelector("#log-output"),
 };
 
@@ -357,7 +357,7 @@ async function initialize() {
         void stopJob();
     });
 
-    elements.clearLog.addEventListener("click", () => {
+    elements.logClear.addEventListener("click", () => {
         elements.logOutput.textContent = "idle...";
     });
 
