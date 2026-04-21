@@ -14,7 +14,7 @@ That produces the CLI binary consumed by the Electron UI.
 
 ## Electron UI
 
-The Electron app lives in `ui/` and talks to the existing CLI instead of re-implementing the conversion pipeline. The desktop build pipeline is managed by Electron Forge via [`ui/forge.config.cjs`](./ui/forge.config.cjs).
+The Electron app lives in `ui/` and talks to the existing CLI instead of re-implementing the conversion pipeline. The desktop build pipeline is managed by Electron Forge via [`ui/forge.config.mjs`](./ui/forge.config.mjs).
 
 ```bash
 cd ui
@@ -46,7 +46,7 @@ GitHub Actions builds release artifacts on macOS, Linux, and Windows via [`.gith
 ## Layout
 
 - `src/`: Thermo RAW reader and exporters
-- `ui/main.cjs`: Electron main process
-- `ui/preload.cjs`: Electron preload bridge
-- `ui/index.html`, `ui/renderer.js`, `ui/styles.css`: desktop UI renderer
+- `ui/main.mjs`: Electron main process
+- `ui/preload.mjs`: Electron preload bridge
+- `ui/index.html`, `ui/renderer.js`, `ui/style.css`: desktop UI renderer
 - `ui/prepare-assets.mjs`: stage backend and icon assets for Forge

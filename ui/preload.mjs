@@ -1,4 +1,6 @@
-const {contextBridge, ipcRenderer} = require("electron");
+import electron from "electron";
+
+const {contextBridge, ipcRenderer} = electron;
 
 contextBridge.exposeInMainWorld("thermoRawRead", {
     invoke(command, payload = {}) {

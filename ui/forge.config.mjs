@@ -1,6 +1,10 @@
-const path = require("node:path");
+import fs from "node:fs";
+import path from "node:path";
+import {fileURLToPath} from "node:url";
 
-const packageJson = require("./package.json");
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const packageJson = JSON.parse(fs.readFileSync(path.join(__dirname, "package.json"), "utf8"));
 
 const repoRoot = path.resolve(__dirname, "..");
 const tmpRoot = path.join(repoRoot, "tmp");
@@ -15,7 +19,7 @@ const maker = (name, platforms, config) => ({
     ...(config ? {config} : {})
 });
 
-module.exports = {
+export default {
     outDir: releaseOutDir,
     packagerConfig: {
         appBundleId: "io.ctarn.thermorawread",

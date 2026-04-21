@@ -6,7 +6,7 @@
   "description": "Electron desktop UI for the ThermoRawRead CLI converter.",
   "author": "Tarn Yeong Ching",
   "type": "module",
-  "main": "main.cjs",
+  "main": "main.mjs",
   "scripts": {
     "prepare-assets": "node ./prepare-assets.mjs",
     "start": "electron-forge start",
@@ -18,7 +18,7 @@
     "premake": "npm run prepare-assets"
   },
   "config": {
-    "forge": "./forge.config.cjs"
+    "forge": "./forge.config.mjs"
   },
   "dependencies": {
     "electron-squirrel-startup": "^1.0.1"

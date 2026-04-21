@@ -1,18 +1,24 @@
-const fs = require("node:fs");
-const fsp = require("node:fs/promises");
-const os = require("node:os");
-const path = require("node:path");
-const readline = require("node:readline");
-const {spawn} = require("node:child_process");
+import fs from "node:fs";
+import fsp from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
+import readline from "node:readline";
+import {spawn} from "node:child_process";
+import {fileURLToPath} from "node:url";
 
-const {app, BrowserWindow, dialog, ipcMain} = require("electron");
+import electron from "electron";
+import squirrelStartup from "electron-squirrel-startup";
 
-if (require("electron-squirrel-startup")) {
+const {app, BrowserWindow, dialog, ipcMain} = electron;
+
+if (squirrelStartup) {
     app.quit();
 }
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const repoRoot = path.join(__dirname, "..");
-const preloadEntry = path.join(__dirname, "preload.cjs");
+const preloadEntry = path.join(__dirname, "preload.mjs");
 const defaultSavedState = Object.freeze({
     inputPaths: [],
     outputDir: "",
@@ -238,18 +244,13 @@ ipcMain.handle("pick_output_dir", () => chooseFolder("Select output folder"));
 ipcMain.handle("run_job", (_event, payload) => runJob(payload.request));
 ipcMain.handle("stop_job", () => stopJob());
 
-app.setAppUserModelId("io.ctarn.thermorawread");
-
-app.on("before-quit", () => {
-    stopJob();
-});
-
 app.whenReady().then(() => {
     mainWindow = createMainWindow();
 
     app.on("activate", () => {
-        const existingWindow = BrowserWindow.getAllWindows()[0];
-        mainWindow = existingWindow ?? createMainWindow();
+        if (BrowserWindow.getAllWindows().length === 0) {
+            mainWindow = createMainWindow();
+        }
     });
 });
 
