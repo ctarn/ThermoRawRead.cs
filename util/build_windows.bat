@@ -13,7 +13,7 @@ dotnet build src\%product_name%.csproj -c Release -o %backend_dir%
 echo [3/9] Read version and prepare release directories
 set /p version=<%backend_dir%\VERSION
 set release_dir=tmp\release\%version%
-set gui_build_dir=%release_dir%\gui-build
+set gui_build_dir=tmp\build-ui\%version%\gui-build
 set cli_stage_dir=%release_dir%\cli
 set cli_zip=%release_dir%\%product_name%-cli-%version%.%platform_arch%.%platform_os%.zip
 set gui_zip=%release_dir%\%product_name%-gui-%version%.%platform_arch%.%platform_os%.zip

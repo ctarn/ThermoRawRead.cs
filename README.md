@@ -23,7 +23,7 @@ npm start
 ```
 
 If the backend binary is not in `tmp/build/<arch>.<OS>/ThermoRawRead`, set `THERMO_RAW_READ_BIN` before launching Electron.
-Electron build artifacts are written to `tmp/release/<version>/gui-build`.
+Electron build artifacts are written to `tmp/build-ui/<version>/gui-build`.
 Before `start` / `package` / `make`, [`ui/prepare-assets.mjs`](./ui/prepare-assets.mjs) stages the CLI bundle into `tmp/build-ui/backend` and prepares Forge icon assets under `tmp/build-ui/icon`.
 
 ## Release Packaging

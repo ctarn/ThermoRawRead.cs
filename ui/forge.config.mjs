@@ -11,7 +11,7 @@ const tmpRoot = path.join(repoRoot, "tmp");
 const buildUiRoot = path.join(tmpRoot, "build-ui");
 const iconRoot = path.join(buildUiRoot, "icon", "icon");
 const backendRoot = path.join(buildUiRoot, "backend");
-const releaseOutDir = path.join(tmpRoot, "release", packageJson.version, "gui-build");
+const forgeOutDir = path.join(buildUiRoot, packageJson.version, "gui-build");
 const productName = packageJson.productName;
 const maker = (name, platforms, config) => ({
     name,
@@ -20,7 +20,7 @@ const maker = (name, platforms, config) => ({
 });
 
 export default {
-    outDir: releaseOutDir,
+    outDir: forgeOutDir,
     packagerConfig: {
         appBundleId: "io.ctarn.thermorawread",
         appCategoryType: "public.app-category.utilities",
