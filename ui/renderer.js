@@ -41,7 +41,7 @@ const elements = {
     inputRecursive: document.querySelector("#input-recursive"),
     // output
     outputPath: document.querySelector("#output-path"),
-    pickOutput: document.querySelector("#pick-output"),
+    outputPick: document.querySelector("#output-pick"),
     // format
     formatGrid: document.querySelector("#format-grid"),
     // command
@@ -177,7 +177,7 @@ function setBridgeEnabled(enabled) {
         elements.inputRecursive,
         elements.inputAddFile,
         elements.pickFolder,
-        elements.pickOutput,
+        elements.outputPick,
         elements.startJob,
         elements.inputClear
     ].forEach((element) => {
@@ -345,7 +345,7 @@ async function initialize() {
         void chooseInputDir();
     });
 
-    elements.pickOutput.addEventListener("click", () => {
+    elements.outputPick.addEventListener("click", () => {
         void chooseOutputDir();
     });
 
