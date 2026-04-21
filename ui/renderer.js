@@ -32,22 +32,29 @@ const state = {
 };
 
 const elements = {
-    statusBadge: document.querySelector("#status-badge"),
-    statusText: document.querySelector("#status-text"),
-    outputDir: document.querySelector("#output-dir"),
-    recursive: document.querySelector("#recursive"),
+    // input
     inputList: document.querySelector("#input-list"),
-    inputCount: document.querySelector("#input-count"),
-    formatGrid: document.querySelector("#format-grid"),
-    commandPreview: document.querySelector("#command-preview"),
-    startJob: document.querySelector("#start-job"),
-    stopJob: document.querySelector("#stop-job"),
-    clearInputs: document.querySelector("#clear-inputs"),
-    clearLog: document.querySelector("#clear-log"),
-    logOutput: document.querySelector("#log-output"),
     pickFiles: document.querySelector("#pick-files"),
     pickFolder: document.querySelector("#pick-folder"),
-    pickOutput: document.querySelector("#pick-output")
+    clearInputs: document.querySelector("#clear-inputs"),
+    recursive: document.querySelector("#recursive"),
+    inputCount: document.querySelector("#input-count"),
+    // output
+    pickOutput: document.querySelector("#pick-output"),
+    outputDir: document.querySelector("#output-dir"),
+    // format
+    formatGrid: document.querySelector("#format-grid"),
+    // command
+    commandPreview: document.querySelector("#command-preview"),
+    // control
+    startJob: document.querySelector("#start-job"),
+    stopJob: document.querySelector("#stop-job"),
+    // status
+    statusBadge: document.querySelector("#status-badge"),
+    statusText: document.querySelector("#status-text"),
+    // log
+    clearLog: document.querySelector("#clear-log"),
+    logOutput: document.querySelector("#log-output"),
 };
 
 const bridgeErrorMessage = "Desktop bridge is unavailable. Restart the app to reload the preload script.";
