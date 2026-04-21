@@ -35,10 +35,10 @@ const elements = {
     // input
     inputList: document.querySelector("#input-list"),
     inputCount: document.querySelector("#input-count"),
-    pickFile: document.querySelector("#pick-file"),
-    pickFolder: document.querySelector("#pick-folder"),
-    clearInput: document.querySelector("#clear-input"),
-    recursive: document.querySelector("#recursive"),
+    inputAddFile: document.querySelector("#input-add-file"),
+    inputAddFolder: document.querySelector("#input-add-folder"),
+    inputClear: document.querySelector("#input-clear"),
+    inputRecursive: document.querySelector("#input-recursive"),
     // output
     outputPath: document.querySelector("#output-path"),
     pickOutput: document.querySelector("#pick-output"),
@@ -174,12 +174,12 @@ function setRunning(running) {
 function setBridgeEnabled(enabled) {
     [
         elements.outputPath,
-        elements.recursive,
-        elements.pickFile,
+        elements.inputRecursive,
+        elements.inputAddFile,
         elements.pickFolder,
         elements.pickOutput,
         elements.startJob,
-        elements.clearInput
+        elements.inputClear
     ].forEach((element) => {
         element.disabled = !enabled;
     });
@@ -200,7 +200,7 @@ function renderState() {
     renderOutputs();
     renderCommandPreview();
     elements.outputPath.value = state.outputDir;
-    elements.recursive.checked = state.recursive;
+    elements.inputRecursive.checked = state.recursive;
     setRunning(state.running);
 }
 
@@ -331,13 +331,13 @@ async function initialize() {
         void persistState();
     });
 
-    elements.recursive.addEventListener("change", () => {
-        state.recursive = elements.recursive.checked;
+    elements.inputRecursive.addEventListener("change", () => {
+        state.recursive = elements.inputRecursive.checked;
         renderCommandPreview();
         void persistState();
     });
 
-    elements.pickFile.addEventListener("click", () => {
+    elements.inputAddFile.addEventListener("click", () => {
         void chooseFiles();
     });
 
@@ -361,7 +361,7 @@ async function initialize() {
         elements.logOutput.textContent = "idle...";
     });
 
-    elements.clearInput.addEventListener("click", () => {
+    elements.inputClear.addEventListener("click", () => {
         state.inputPaths = [];
         renderInputs();
         renderCommandPreview();
