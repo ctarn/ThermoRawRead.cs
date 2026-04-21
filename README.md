@@ -24,7 +24,7 @@ npm start
 
 If the backend binary is not in `tmp/build/<arch>.<OS>/ThermoRawRead`, set `THERMO_RAW_READ_BIN` before launching Electron.
 Electron build artifacts are written to `tmp/release/<version>/gui-build`.
-Before `start` / `package` / `make`, [`ui/prepare-assets.mjs`](./ui/prepare-assets.mjs) stages the CLI bundle into `tmp/build-ui/backend` and prepares Forge icon assets under `tmp/build-ui/icons`.
+Before `start` / `package` / `make`, [`ui/prepare-assets.mjs`](./ui/prepare-assets.mjs) stages the CLI bundle into `tmp/build-ui/backend` and prepares Forge icon assets under `tmp/build-ui/icon`.
 
 ## Release Packaging
 
@@ -46,7 +46,7 @@ GitHub Actions builds release artifacts on macOS, Linux, and Windows via [`.gith
 ## Layout
 
 - `src/`: Thermo RAW reader and exporters
-- `ui/src/main.cjs`: Electron main process
-- `ui/src/preload.cjs`: Electron preload bridge
-- `ui/src/index.html`, `ui/src/app.js`, `ui/src/styles.css`: desktop UI renderer
+- `ui/main.cjs`: Electron main process
+- `ui/preload.cjs`: Electron preload bridge
+- `ui/index.html`, `ui/app.js`, `ui/styles.css`: desktop UI renderer
 - `ui/prepare-assets.mjs`: stage backend and icon assets for Forge
