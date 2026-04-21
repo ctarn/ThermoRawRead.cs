@@ -61,6 +61,11 @@ input:focus {
 }
 
 /* layout */
+body {
+    display: grid;
+    align-content: start;
+}
+
 header, main, footer {
     width: 100%;
     max-width: 1200px;
