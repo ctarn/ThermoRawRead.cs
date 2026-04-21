@@ -70,6 +70,7 @@ function createMainWindow() {
         webPreferences: {
             contextIsolation: true,
             nodeIntegration: false,
+            sandbox: false,
             preload: preloadEntry
         }
     });

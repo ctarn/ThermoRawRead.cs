@@ -1,4 +1,4 @@
-const commandBus = window.thermoRawRead;
+const commandBus = window.thermoRawRead ?? null;
 
 const outputFormats = [
     {value: "umz", label: "UMZ", description: "Unified binary spectrum format", checked: true},
@@ -47,6 +47,8 @@ const elements = {
     pickFolder: document.querySelector("#pick-folder"),
     pickOutput: document.querySelector("#pick-output")
 };
+
+const bridgeErrorMessage = "Desktop bridge is unavailable. Restart the app to reload the preload script.";
 
 function quoteArg(value) {
     if (value === "") return '""';
@@ -184,6 +186,24 @@ function setRunning(running) {
     elements.stopJob.disabled = !running;
 }
 
+function setBridgeEnabled(enabled) {
+    [
+        elements.outputDir,
+        elements.recursive,
+        elements.pickFiles,
+        elements.pickFolder,
+        elements.pickOutput,
+        elements.startJob,
+        elements.clearInputs
+    ].forEach((element) => {
+        element.disabled = !enabled;
+    });
+    elements.formatGrid.querySelectorAll("input").forEach((input) => {
+        input.disabled = !enabled;
+    });
+    elements.stopJob.disabled = true;
+}
+
 function appendLog(line) {
     const content = elements.logOutput.textContent === "idle..." ? "" : elements.logOutput.textContent;
     elements.logOutput.textContent = `${content}${content ? "\n" : ""}${line}`;
@@ -214,6 +234,10 @@ function hydrate(saved = {}) {
 }
 
 function persistState() {
+    if (!commandBus) {
+        return Promise.resolve();
+    }
+
     return commandBus.invoke("save_state", {
         state: {
             inputPaths: state.inputPaths,
@@ -308,6 +332,13 @@ async function initialize() {
     renderInputs();
     renderCommandPreview();
     setRunning(false);
+
+    if (!commandBus) {
+        setBridgeEnabled(false);
+        setStatus("error", bridgeErrorMessage);
+        appendLog(bridgeErrorMessage);
+        return;
+    }
 
     elements.outputDir.addEventListener("input", () => {
         state.outputDir = elements.outputDir.value;
