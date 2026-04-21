@@ -35,8 +35,8 @@ const elements = {
     // input
     inputList: document.querySelector("#input-list"),
     inputCount: document.querySelector("#input-count"),
-    pickFiles: document.querySelector("#add-files"),
-    pickFolder: document.querySelector("#add-folder"),
+    addFiles: document.querySelector("#add-files"),
+    addFolder: document.querySelector("#add-folder"),
     clearInputs: document.querySelector("#clear-inputs"),
     recursive: document.querySelector("#recursive"),
     // output
@@ -175,7 +175,7 @@ function setBridgeEnabled(enabled) {
     [
         elements.outputDir,
         elements.recursive,
-        elements.pickFiles,
+        elements.addFiles,
         elements.pickFolder,
         elements.pickOutput,
         elements.startJob,
@@ -337,7 +337,7 @@ async function initialize() {
         void persistState();
     });
 
-    elements.pickFiles.addEventListener("click", () => {
+    elements.addFiles.addEventListener("click", () => {
         void chooseFiles();
     });
 
