@@ -1,4 +1,4 @@
-import {defaultOutDir, quoteArg} from "./util.mjs";
+import {defaultOutDir, pathSeparator, quoteArg, trimTrailingSeparators} from "./util.mjs";
 
 const commandBus = window.thermoRawRead ?? null;
 
