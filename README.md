@@ -56,4 +56,5 @@ GitHub Actions builds release artifacts on macOS, Linux, and Windows via [`.gith
 - `ui/main.mjs`: Electron main process
 - `ui/preload.mjs`: Electron preload bridge
 - `ui/index.html`, `ui/renderer.js`, `ui/style.css`: desktop UI renderer
-- `ui/prepare-assets.mjs`: stage backend and icon assets for Forge
+- `ui/forge.config.mjs`: Forge hooks for backend/icon preparation and release artifact staging
+- `ui/util.mjs`: shared utility helpers for UI and build scripts
