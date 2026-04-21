@@ -38,7 +38,7 @@ const elements = {
     inputAddFile: document.querySelector("#input-add-file"),
     inputAddFolder: document.querySelector("#input-add-folder"),
     inputClear: document.querySelector("#input-clear"),
-    inputRecursive: document.querySelector("#input-recursive"),
+    inputIsRecursive: document.querySelector("#input-is-recursive"),
     // output
     outputPath: document.querySelector("#output-path"),
     outputPick: document.querySelector("#output-pick"),
