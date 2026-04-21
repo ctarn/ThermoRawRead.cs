@@ -11,7 +11,7 @@ if (require("electron-squirrel-startup")) {
     app.quit();
 }
 
-const repoRoot = path.join(__dirname, "..", "..");
+const repoRoot = path.join(__dirname, "..");
 const preloadEntry = path.join(__dirname, "preload.cjs");
 const defaultSavedState = Object.freeze({
     inputPaths: [],

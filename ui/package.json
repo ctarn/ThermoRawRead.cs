@@ -6,7 +6,7 @@
   "description": "Electron desktop UI for the ThermoRawRead CLI converter.",
   "author": "Tarn Yeong Ching",
   "type": "module",
-  "main": "src/main.cjs",
+  "main": "main.cjs",
   "scripts": {
     "prepare-assets": "node ./prepare-assets.mjs",
     "start": "electron-forge start",
