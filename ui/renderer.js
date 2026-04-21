@@ -47,8 +47,8 @@ const elements = {
     // command
     commandPreview: document.querySelector("#command-preview"),
     // control
-    startJob: document.querySelector("#start-job"),
-    stopJob: document.querySelector("#stop-job"),
+    taskStart: document.querySelector("#start-job"),
+    taskStop: document.querySelector("#stop-job"),
     // status
     statusBadge: document.querySelector("#status-badge"),
     statusText: document.querySelector("#status-text"),
@@ -167,8 +167,8 @@ function setStatus(status, message) {
 
 function setRunning(running) {
     state.running = running;
-    elements.startJob.disabled = running;
-    elements.stopJob.disabled = !running;
+    elements.taskStart.disabled = running;
+    elements.taskStop.disabled = !running;
 }
 
 function setBridgeEnabled(enabled) {
@@ -178,7 +178,7 @@ function setBridgeEnabled(enabled) {
         elements.inputAddFile,
         elements.inputAddFolder,
         elements.outputPick,
-        elements.startJob,
+        elements.taskStart,
         elements.inputClear
     ].forEach((element) => {
         element.disabled = !enabled;
@@ -186,7 +186,7 @@ function setBridgeEnabled(enabled) {
     elements.formatGrid.querySelectorAll("input").forEach((input) => {
         input.disabled = !enabled;
     });
-    elements.stopJob.disabled = true;
+    elements.taskStop.disabled = true;
 }
 
 function appendLog(line) {
@@ -349,11 +349,11 @@ async function initialize() {
         void chooseOutputDir();
     });
 
-    elements.startJob.addEventListener("click", () => {
+    elements.taskStart.addEventListener("click", () => {
         void runJob();
     });
 
-    elements.stopJob.addEventListener("click", () => {
+    elements.taskStop.addEventListener("click", () => {
         void stopJob();
     });
 
