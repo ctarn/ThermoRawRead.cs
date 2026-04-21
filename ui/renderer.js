@@ -34,11 +34,11 @@ const state = {
 const elements = {
     // input
     inputList: document.querySelector("#input-list"),
-    pickFiles: document.querySelector("#pick-files"),
-    pickFolder: document.querySelector("#pick-folder"),
+    inputCount: document.querySelector("#input-count"),
+    pickFiles: document.querySelector("#add-files"),
+    pickFolder: document.querySelector("#add-folder"),
     clearInputs: document.querySelector("#clear-inputs"),
     recursive: document.querySelector("#recursive"),
-    inputCount: document.querySelector("#input-count"),
     // output
     pickOutput: document.querySelector("#pick-output"),
     outputDir: document.querySelector("#output-dir"),
