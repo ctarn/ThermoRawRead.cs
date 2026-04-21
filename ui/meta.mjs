@@ -2,6 +2,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path, {dirname, join} from "node:path";
 import {fileURLToPath} from "node:url";
+import {backendExecutableName, normalizeArch, normalizePlatform} from "./util.mjs";
 
 const uiRoot = dirname(fileURLToPath(import.meta.url));
 
@@ -29,26 +30,14 @@ export const releaseDir = join(releaseRoot, releaseVersion);
 export const sourcePng = join(repoRoot, "fig", "ThermoRawRead.png");
 export const preloadEntry = join(uiRoot, "preload.mjs");
 
-export function normalizeArch(arch = process.arch) {
-    return {x64: "x86_64", arm64: "arm64"}[arch] ?? arch;
-}
-
-export function normalizePlatform(platform = process.platform) {
-    return {darwin: "Darwin", linux: "Linux", win32: "Windows"}[platform] ?? platform;
-}
-
 export function backendBuildDir(platform = process.platform, arch = process.arch) {
     return join(buildRoot, `${normalizeArch(arch)}.${normalizePlatform(platform)}`);
 }
 
-export function releaseSuffix(platform = process.platform, arch = process.arch) {
-    return `${normalizeArch(arch)}.${normalizePlatform(platform)}`;
-}
-
-export function backendExecutableName(platform = process.platform) {
-    return platform === "win32" ? `${productName}.exe` : productName;
-}
-
 export function uiStatePath() {
     return path.join(os.homedir(), ".ThermoRawRead", uiStateVersion, "ui-state.json");
+}
+
+export function bundledBackendExecutablePath(baseDir, platform = process.platform) {
+    return join(baseDir, "backend", backendExecutableName(productName, platform));
 }

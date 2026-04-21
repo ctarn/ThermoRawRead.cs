@@ -9,11 +9,13 @@ import electron from "electron";
 import squirrelStartup from "electron-squirrel-startup";
 import {
     backendBuildDir,
-    backendExecutableName,
+    bundledBackendExecutablePath,
     preloadEntry,
+    productName,
     repoRoot,
     uiStatePath
 } from "./meta.mjs";
+import {backendExecutableName} from "./util.mjs";
 
 const {app, BrowserWindow, dialog, ipcMain} = electron;
 
@@ -79,11 +81,11 @@ function resolveBackendExecutable() {
         candidates.push(process.env.THERMO_RAW_READ_BIN);
     }
 
-    candidates.push(path.join(backendBuildDir(), backendExecutableName()));
-    candidates.push(path.join(process.resourcesPath, "backend", backendExecutableName()));
-    candidates.push(path.join(path.dirname(process.execPath), "backend", backendExecutableName()));
-    candidates.push(path.join(process.resourcesPath, "artifacts", backendExecutableName()));
-    candidates.push(path.join(path.dirname(process.execPath), "artifacts", backendExecutableName()));
+    candidates.push(path.join(backendBuildDir(), backendExecutableName(productName)));
+    candidates.push(bundledBackendExecutablePath(process.resourcesPath));
+    candidates.push(bundledBackendExecutablePath(path.dirname(process.execPath)));
+    candidates.push(path.join(process.resourcesPath, "artifacts", backendExecutableName(productName)));
+    candidates.push(path.join(path.dirname(process.execPath), "artifacts", backendExecutableName(productName)));
 
     const resolved = candidates.find((candidate) => fs.existsSync(candidate));
     if (resolved) return resolved;

@@ -1,3 +1,5 @@
+import {defaultOutDir, quoteArg} from "./util.mjs";
+
 const commandBus = window.thermoRawRead ?? null;
 
 const outputFormats = [
@@ -49,30 +51,6 @@ const elements = {
 };
 
 const bridgeErrorMessage = "Desktop bridge is unavailable. Restart the app to reload the preload script.";
-
-function quoteArg(value) {
-    if (value === "") return '""';
-    return /\s/.test(value) ? JSON.stringify(value) : value;
-}
-
-function pathSeparator(path) {
-    return path.includes("\\") ? "\\" : "/";
-}
-
-function trimTrailingSeparators(path) {
-    return path.replace(/[\\/]+$/, "");
-}
-
-function defaultOutDir(path) {
-    const normalized = trimTrailingSeparators(path);
-    const separator = pathSeparator(normalized);
-    const index = normalized.lastIndexOf(separator);
-
-    if (index < 0) return `${normalized}${separator}out`;
-    if (index === 0) return `${separator}out`;
-
-    return `${normalized.slice(0, index)}${separator}out`;
-}
 
 function validOutputs(values) {
     const allowed = new Set(outputFormats.map(({value}) => value));

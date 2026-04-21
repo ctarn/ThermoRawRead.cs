@@ -13,11 +13,11 @@ import {
     legacyIconOutputDir,
     productName,
     releaseDir,
-    releaseSuffix,
     releaseVersion,
     repoRoot,
     sourcePng
 } from "./meta.mjs";
+import {quotePowerShellString, releaseSuffix} from "./util.mjs";
 
 const iconsetSpecs = [
     ["icon_16x16.png", 16, 16],
@@ -49,10 +49,6 @@ function runCommand(command, args, cwd = repoRoot) {
             reject(new Error(`${command} exited with status ${code ?? "unknown"}`));
         });
     });
-}
-
-function quotePowerShellString(value) {
-    return `'${value.replace(/'/g, "''")}'`;
 }
 
 function installerExtensions(platform) {
