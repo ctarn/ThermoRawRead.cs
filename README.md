@@ -48,5 +48,5 @@ GitHub Actions builds release artifacts on macOS, Linux, and Windows via [`.gith
 - `src/`: Thermo RAW reader and exporters
 - `ui/main.cjs`: Electron main process
 - `ui/preload.cjs`: Electron preload bridge
-- `ui/index.html`, `ui/app.js`, `ui/styles.css`: desktop UI renderer
+- `ui/index.html`, `ui/renderer.js`, `ui/styles.css`: desktop UI renderer
 - `ui/prepare-assets.mjs`: stage backend and icon assets for Forge
