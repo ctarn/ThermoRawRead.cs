@@ -105,7 +105,7 @@ function renderFormatOptions() {
     });
 }
 
-function renderInputs() {
+function renderInput() {
     elements.inputList.replaceChildren();
 
     const count = state.inputPaths.length;
@@ -196,7 +196,7 @@ function appendLog(line) {
 }
 
 function renderState() {
-    renderInputs();
+    renderInput();
     renderFormatGrid();
     renderCommandPreview();
     elements.outputInput.value = state.outputDir;
@@ -314,7 +314,7 @@ async function stopJob() {
 
 async function initialize() {
     renderFormatOptions();
-    renderInputs();
+    renderInput();
     renderCommandPreview();
     setRunning(false);
 
@@ -363,7 +363,7 @@ async function initialize() {
 
     elements.inputClear.addEventListener("click", () => {
         state.inputPaths = [];
-        renderInputs();
+        renderInput();
         renderCommandPreview();
         void persistState();
     });
