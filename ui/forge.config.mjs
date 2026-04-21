@@ -18,10 +18,7 @@ const maker = (name, platforms, config) => ({
 export default {
     outDir: forgeOutDir,
     hooks: {
-        preStart: async () => {
-            await buildAndPrepareAssets();
-        },
-        prePackage: async (_forgeConfig, platform, arch) => {
+        generateAssets: async (_forgeConfig, platform, arch) => {
             await buildAndPrepareAssets(platform, arch);
         },
         postMake: async (_forgeConfig, makeResults) => organizeReleaseArtifacts(makeResults)
