@@ -9,13 +9,13 @@ import electron from "electron";
 import squirrelStartup from "electron-squirrel-startup";
 import {
     backendBuildDir,
+    backendExecutableName,
     bundledBackendExecutablePath,
     preloadEntry,
     productName,
     repoRoot,
     uiStatePath
-} from "./meta.mjs";
-import {backendExecutableName} from "./util.mjs";
+} from "./util.mjs";
 
 const {app, BrowserWindow, dialog, ipcMain} = electron;
 

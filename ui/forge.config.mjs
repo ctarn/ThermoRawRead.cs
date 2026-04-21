@@ -13,12 +13,13 @@ import {
     legacyIconOutputDir,
     packageJson,
     productName,
+    quotePowerShellString,
     releaseDir,
+    releaseSuffix,
     releaseVersion,
     repoRoot,
     sourcePng
-} from "./meta.mjs";
-import {quotePowerShellString, releaseSuffix} from "./util.mjs";
+} from "./util.mjs";
 
 const maker = (name, platforms, config) => ({
     name,
