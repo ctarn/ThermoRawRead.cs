@@ -37,7 +37,7 @@ const elements = {
     inputCount: document.querySelector("#input-count"),
     addFiles: document.querySelector("#add-files"),
     addFolder: document.querySelector("#add-folder"),
-    clearInputs: document.querySelector("#clear-inputs"),
+    clearInput: document.querySelector("#clear-input"),
     recursive: document.querySelector("#recursive"),
     // output
     pickOutput: document.querySelector("#pick-output"),
@@ -179,7 +179,7 @@ function setBridgeEnabled(enabled) {
         elements.pickFolder,
         elements.pickOutput,
         elements.startJob,
-        elements.clearInputs
+        elements.clearInput
     ].forEach((element) => {
         element.disabled = !enabled;
     });
@@ -361,7 +361,7 @@ async function initialize() {
         elements.logOutput.textContent = "idle...";
     });
 
-    elements.clearInputs.addEventListener("click", () => {
+    elements.clearInput.addEventListener("click", () => {
         state.inputPaths = [];
         renderInputs();
         renderCommandPreview();
