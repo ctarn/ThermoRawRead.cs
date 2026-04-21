@@ -14,7 +14,7 @@
     "publish": "electron-forge publish"
   },
   "config": {
-      "forge": "./electron/forge.config.mjs"
+      "forge": "./electron/forge.mjs"
   },
   "dependencies": {
     "electron-squirrel-startup": "^1.0.1"
