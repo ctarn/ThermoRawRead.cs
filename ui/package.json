@@ -6,7 +6,7 @@
   "description": "Desktop UI for ThermoRawRead.",
   "author": "Tarn Yeong Ching",
   "type": "module",
-  "main": "main.mjs",
+  "main": "electron/main.mjs",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
@@ -14,7 +14,7 @@
     "publish": "electron-forge publish"
   },
   "config": {
-    "forge": "./forge.config.mjs"
+      "forge": "./electron/forge.config.mjs"
   },
   "dependencies": {
     "electron-squirrel-startup": "^1.0.1"

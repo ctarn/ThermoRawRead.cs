@@ -11,27 +11,20 @@ const statusMeta = {
 };
 
 const elements = {
-    // input
     inputList: document.querySelector("#input-list"),
     inputCount: document.querySelector("#input-count"),
     inputAddFile: document.querySelector("#input-add-file"),
     inputAddFolder: document.querySelector("#input-add-folder"),
     inputClear: document.querySelector("#input-clear"),
     inputIsRecursive: document.querySelector("#input-is-recursive"),
-    // output
     outputInput: document.querySelector("#output-input"),
     outputPick: document.querySelector("#output-pick"),
-    // format
     formatGrid: document.querySelector("#format-grid"),
-    // command
     commandPreview: document.querySelector("#command-preview"),
-    // control
     taskStart: document.querySelector("#task-start"),
     taskStop: document.querySelector("#task-stop"),
-    // status
     statusBadge: document.querySelector("#status-badge"),
     statusText: document.querySelector("#status-text"),
-    // log
     logClear: document.querySelector("#log-clear"),
     logOutput: document.querySelector("#log-output"),
 };

@@ -27,7 +27,8 @@ export function backendExecutableName(productName, platform = currentPlatform())
     return platform === "win32" ? `${productName}.exe` : productName;
 }
 
-const uiRoot = dirname(fileURLToPath(import.meta.url));
+const electronRoot = dirname(fileURLToPath(import.meta.url));
+const uiRoot = join(electronRoot, "..");
 
 export const packageJsonPath = join(uiRoot, "package.json");
 export const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
@@ -51,7 +52,11 @@ export const forgeOutDir = join(buildUiRoot, releaseVersion, "gui-build");
 export const releaseDir = join(releaseRoot, releaseVersion);
 
 export const sourcePng = join(repoRoot, "fig", "ThermoRawRead.png");
-export const preloadEntry = join(uiRoot, "preload.mjs");
+export const preloadEntry = join(electronRoot, "preload.mjs");
+
+export function rendererEntry() {
+    return join(uiRoot, "src", "index.html");
+}
 
 export function backendBuildDir(platform = process.platform, arch = process.arch) {
     return join(buildRoot, `${normalizeArch(arch)}.${normalizePlatform(platform)}`);
@@ -63,30 +68,6 @@ export function uiStatePath() {
 
 export function bundledBackendExecutablePath(baseDir, platform = process.platform) {
     return join(baseDir, "backend", backendExecutableName(productName, platform));
-}
-
-export function quoteArg(value) {
-    if (value === "") return '""';
-    return /\s/.test(value) ? JSON.stringify(value) : value;
-}
-
-export function pathSeparator(path) {
-    return path.includes("\\") ? "\\" : "/";
-}
-
-export function trimTrailingSeparators(path) {
-    return path.replace(/[\\/]+$/, "");
-}
-
-export function defaultOutDir(path) {
-    const normalized = trimTrailingSeparators(path);
-    const separator = pathSeparator(normalized);
-    const index = normalized.lastIndexOf(separator);
-
-    if (index < 0) return `${normalized}${separator}out`;
-    if (index === 0) return `${separator}out`;
-
-    return `${normalized.slice(0, index)}${separator}out`;
 }
 
 export function quotePowerShellString(value) {

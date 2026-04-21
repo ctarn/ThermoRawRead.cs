@@ -3,7 +3,6 @@ import fsp from "node:fs/promises";
 import path from "node:path";
 import readline from "node:readline";
 import {spawn} from "node:child_process";
-import {fileURLToPath} from "node:url";
 
 import electron from "electron";
 import squirrelStartup from "electron-squirrel-startup";
@@ -13,6 +12,7 @@ import {
     bundledBackendExecutablePath,
     preloadEntry,
     productName,
+    rendererEntry,
     repoRoot,
     uiStatePath
 } from "./util.mjs";
@@ -23,8 +23,6 @@ if (squirrelStartup) {
     app.quit();
 }
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 const defaultSavedState = Object.freeze({
     inputPaths: [],
     outputDir: "",
@@ -65,7 +63,7 @@ function createMainWindow() {
         }
     });
 
-    void window.loadFile(path.join(__dirname, "index.html"));
+    void window.loadFile(rendererEntry());
     window.on("closed", () => {
         if (mainWindow === window) {
             mainWindow = null;
