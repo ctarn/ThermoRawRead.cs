@@ -40,7 +40,7 @@ const elements = {
     inputClear: document.querySelector("#input-clear"),
     inputIsRecursive: document.querySelector("#input-is-recursive"),
     // output
-    outputPath: document.querySelector("#output-path"),
+    outputInput: document.querySelector("#output-input"),
     outputPick: document.querySelector("#output-pick"),
     // format
     formatGrid: document.querySelector("#format-grid"),
@@ -173,7 +173,7 @@ function setRunning(running) {
 
 function setBridgeEnabled(enabled) {
     [
-        elements.outputPath,
+        elements.outputInput,
         elements.inputRecursive,
         elements.inputAddFile,
         elements.inputAddFolder,
@@ -199,7 +199,7 @@ function renderState() {
     renderInputs();
     renderOutputs();
     renderCommandPreview();
-    elements.outputPath.value = state.outputDir;
+    elements.outputInput.value = state.outputDir;
     elements.inputRecursive.checked = state.recursive;
     setRunning(state.running);
 }
@@ -325,8 +325,8 @@ async function initialize() {
         return;
     }
 
-    elements.outputPath.addEventListener("input", () => {
-        state.outputDir = elements.outputPath.value;
+    elements.outputInput.addEventListener("input", () => {
+        state.outputDir = elements.outputInput.value;
         renderCommandPreview();
         void persistState();
     });
