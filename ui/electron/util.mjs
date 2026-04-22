@@ -40,9 +40,6 @@ export const buildRoot = join(repoRoot, "tmp", "build");
 export const buildUiRoot = join(repoRoot, "tmp", "build-ui");
 
 export const backendOutputDir = join(buildUiRoot, "backend");
-export const iconOutputDir = join(buildUiRoot, "icon");
-export const iconRoot = join(iconOutputDir, "icon");
-export const iconsetOutputDir = join(iconOutputDir, "icon.iconset");
 export const forgeOutDir = join(buildUiRoot, version, "gui-build");
 export const releaseDir = join(repoRoot, "tmp", "release", version);
 

@@ -8,9 +8,6 @@ import {
     backendBuildDir,
     backendOutputDir,
     forgeOutDir,
-    iconOutputDir,
-    iconRoot,
-    iconsetOutputDir,
     packageJson,
     productName,
     quotePowerShellString,
@@ -21,6 +18,10 @@ import {
     sourcePng,
     removeIfExists
 } from "./util.mjs";
+
+const iconOutputDir = join(buildUiRoot, "icon");
+const iconRoot = join(iconOutputDir, "icon");
+const iconsetOutputDir = join(iconOutputDir, "icon.iconset");
 
 const iconsetSpecs = [
     ["icon_16x16.png", 16, 16],
