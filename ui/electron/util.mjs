@@ -4,24 +4,10 @@ import os from "node:os";
 import path, {dirname, join} from "node:path";
 import {fileURLToPath} from "node:url";
 
-function currentArch() {
-    return typeof process === "undefined" ? undefined : process.arch;
-}
-
-function currentPlatform() {
-    return typeof process === "undefined" ? undefined : process.platform;
-}
-
-function normalizeArch(arch = currentArch()) {
-    return {x64: "x86_64", arm64: "arm64"}[arch] ?? arch;
-}
-
-function normalizePlatform(platform = currentPlatform()) {
-    return {darwin: "Darwin", linux: "Linux", win32: "Windows"}[platform] ?? platform;
-}
-
 export function releaseSuffix(platform = currentPlatform(), arch = currentArch()) {
-    return `${normalizeArch(arch)}.${normalizePlatform(platform)}`;
+    arch = {x64: "x86_64", arm64: "arm64"}[process.arch] ?? process.arch;
+    platform = {darwin: "Darwin", linux: "Linux", win32: "Windows"}[process.platform] ?? process.platform;
+    return `${arch}.${platform}`;
 }
 
 export const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
