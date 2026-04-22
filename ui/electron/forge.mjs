@@ -17,7 +17,6 @@ import {
     removeIfExists
 } from "./util.mjs";
 
-const sourcePng = join(repoRoot, "fig", `${productName}.png`);
 const iconDir = join(buildUiRoot, "icon");
 
 function runCommand(command, args, cwd = repoRoot) {
@@ -94,6 +93,7 @@ async function stageBackend(platform = process.platform, arch = process.arch) {
 
 
 async function prepareIcons() {
+    const sourcePng = join(repoRoot, "fig", `${productName}.png`);
     await stat(sourcePng);
     await removeIfExists(iconDir);
     await mkdir(iconDir, {recursive: true});
