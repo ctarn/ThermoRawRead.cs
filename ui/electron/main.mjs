@@ -9,7 +9,7 @@ import { fileURLToPath } from 'url';
 import electron from "electron";
 import squirrelStartup from "electron-squirrel-startup";
 
-const productName = "ThermoRawRead";
+const name = "ThermoRawRead";
 
 const {app, BrowserWindow, dialog, ipcMain} = electron;
 
@@ -78,8 +78,8 @@ function resolveBackendExecutable() {
         candidates.push(process.env.THERMO_RAW_READ_BIN);
     }
 
-    candidates.push(path.join(process.resourcesPath, "artifacts", backendExecutableName(productName)));
-    candidates.push(path.join(path.dirname(process.execPath), "artifacts", backendExecutableName(productName)));
+    candidates.push(path.join(process.resourcesPath, "artifacts", backendExecutableName(name)));
+    candidates.push(path.join(path.dirname(process.execPath), "artifacts", backendExecutableName(name)));
 
     const resolved = candidates.find((candidate) => fs.existsSync(candidate));
     if (resolved) return resolved;
@@ -180,7 +180,7 @@ function stopJob() {
     currentJob.kill();
 }
 
-const statePath = path.join(os.homedir(), `.${productName}`, "ui-state.json");
+const statePath = path.join(os.homedir(), `.${name}`, "ui-state.json");
 
 async function loadState() {
     try {
