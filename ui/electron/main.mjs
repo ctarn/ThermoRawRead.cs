@@ -13,9 +13,7 @@ const name = "ThermoRawRead";
 
 const {app, BrowserWindow, dialog, ipcMain} = electron;
 
-if (squirrelStartup) {
-    app.quit();
-}
+if (squirrelStartup) app.quit();
 
 const defaultSavedState = Object.freeze({
     inputPaths: [],
