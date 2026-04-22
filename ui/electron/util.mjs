@@ -47,9 +47,6 @@ export function backendBuildDir(platform = process.platform, arch = process.arch
     return join(buildRoot, `${normalizeArch(arch)}.${normalizePlatform(platform)}`);
 }
 
-export function bundledBackendExecutablePath(baseDir, platform = process.platform) {
-    return join(baseDir, "backend", backendExecutableName(productName, platform));
-}
 
 export function quotePowerShellString(value) {
     return `'${value.replace(/'/g, "''")}'`;

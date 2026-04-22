@@ -9,7 +9,6 @@ import squirrelStartup from "electron-squirrel-startup";
 import {
     backendBuildDir,
     backendExecutableName,
-    bundledBackendExecutablePath,
     electronRoot,
     productName,
     repoRoot,
@@ -69,6 +68,10 @@ function createMainWindow() {
         }
     });
     return window;
+}
+
+export function bundledBackendExecutablePath(baseDir, platform = process.platform) {
+    return join(baseDir, "backend", backendExecutableName(productName, platform));
 }
 
 function resolveBackendExecutable() {
