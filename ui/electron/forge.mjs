@@ -119,14 +119,7 @@ async function prepareIcons() {
     await mkdir(iconsetOutputDir, {recursive: true});
 
     for (const [name, width, height] of iconsetSpecs) {
-        await runCommand("sips", [
-            "-z",
-            String(width),
-            String(height),
-            sourcePng,
-            "--out",
-            path.join(iconsetOutputDir, name)
-        ]);
+        await runCommand("sips", ["-z", String(width), String(height), sourcePng, "--out", path.join(iconsetOutputDir, name)]);
     }
 
     await runCommand("iconutil", [
