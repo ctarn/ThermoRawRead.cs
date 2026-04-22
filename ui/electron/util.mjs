@@ -33,8 +33,7 @@ const uiRoot = join(electronRoot, "..");
 export const packageJson = JSON.parse(fs.readFileSync(join(uiRoot, "package.json"), "utf8"));
 
 export const productName = packageJson.productName;
-export const releaseVersion = packageJson.version;
-export const uiStateVersion = "v1.5";
+export const version = packageJson.version;
 
 export const repoRoot = join(uiRoot, "..");
 export const tmpRoot = join(repoRoot, "tmp");
@@ -45,8 +44,8 @@ export const backendOutputDir = join(buildUiRoot, "backend");
 export const iconOutputDir = join(buildUiRoot, "icon");
 export const iconRoot = join(iconOutputDir, "icon");
 export const iconsetOutputDir = join(iconOutputDir, "icon.iconset");
-export const forgeOutDir = join(buildUiRoot, releaseVersion, "gui-build");
-export const releaseDir = join(tmpRoot, "release", releaseVersion);
+export const forgeOutDir = join(buildUiRoot, version, "gui-build");
+export const releaseDir = join(tmpRoot, "release", version);
 
 export const sourcePng = join(repoRoot, "fig", "ThermoRawRead.png");
 export const preloadEntry = join(electronRoot, "preload.mjs");
@@ -60,7 +59,7 @@ export function backendBuildDir(platform = process.platform, arch = process.arch
 }
 
 export function uiStatePath() {
-    return path.join(os.homedir(), ".ThermoRawRead", releaseVersion, "ui-state.json");
+    return path.join(os.homedir(), ".ThermoRawRead", version, "ui-state.json");
 }
 
 export function bundledBackendExecutablePath(baseDir, platform = process.platform) {
