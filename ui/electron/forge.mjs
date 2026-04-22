@@ -20,7 +20,6 @@ import {
 const sourcePng = join(repoRoot, "fig", `${productName}.png`);
 const iconOutputDir = join(buildUiRoot, "icon");
 const iconRoot = join(iconOutputDir, "icon");
-const iconsetOutputDir = join(iconOutputDir, "icon.iconset");
 
 const iconsetSpecs = [
     ["icon_16x16.png", 16, 16],
@@ -109,7 +108,8 @@ async function stageBackend(platform = process.platform, arch = process.arch) {
 
 async function prepareIcns() {
     if (process.platform !== "darwin") return;
-
+    
+    const iconsetOutputDir = join(iconOutputDir, "icon.iconset");
     await removeIfExists(iconsetOutputDir);
     await mkdir(iconsetOutputDir, {recursive: true});
 
