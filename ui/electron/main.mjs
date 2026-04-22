@@ -8,12 +8,7 @@ import { fileURLToPath } from 'url';
 
 import electron from "electron";
 import squirrelStartup from "electron-squirrel-startup";
-import {
-    buildDir,
-    productName,
-    repoDir,
-    version,
-} from "./util.mjs";
+import {productName, version, repoDir, buildDir} from "./util.mjs";
 
 const {app, BrowserWindow, dialog, ipcMain} = electron;
 
