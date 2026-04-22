@@ -38,7 +38,6 @@ export const version = packageJson.version;
 
 export const repoRoot = join(uiRoot, "..");
 export const buildRoot = join(repoRoot, "tmp", "build", `${normalizeArch()}.${normalizePlatform()}`);
-
 export const releaseDir = join(repoRoot, "tmp", "release", version);
 
 export function quotePowerShellString(value) {
