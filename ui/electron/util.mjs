@@ -29,11 +29,10 @@ export function backendExecutableName(productName, platform = currentPlatform())
 }
 
 export const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
-export const uiRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
 export const buildRoot = join(repoRoot, "tmp", "build", `${normalizeArch()}.${normalizePlatform()}`);
 export const releaseDir = join(repoRoot, "tmp", "release", version);
 
-export const packageJson = JSON.parse(fs.readFileSync(join(uiRoot, "package.json"), "utf8"));
+export const packageJson = JSON.parse(fs.readFileSync(join(repoRoot, "ui", "package.json"), "utf8"));
 
 export const productName = packageJson.productName;
 export const version = packageJson.version;

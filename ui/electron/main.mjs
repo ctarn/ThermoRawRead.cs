@@ -11,7 +11,6 @@ import {
     backendExecutableName,
     productName,
     repoRoot,
-    uiRoot,
 } from "./util.mjs";
 
 const {app, BrowserWindow, dialog, ipcMain} = electron;
@@ -60,7 +59,7 @@ function createMainWindow() {
         }
     });
 
-    void window.loadFile(join(uiRoot, "src", "main.html"));
+    void window.loadFile(join(repoRoot, "ui", "src", "main.html"));
     window.on("closed", () => {
         if (mainWindow === window) {
             mainWindow = null;
