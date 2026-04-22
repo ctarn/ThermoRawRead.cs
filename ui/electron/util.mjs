@@ -29,16 +29,17 @@ export function backendExecutableName(productName, platform = currentPlatform())
 }
 
 const electronRoot = dirname(fileURLToPath(import.meta.url));
-const uiRoot = join(electronRoot, "..");
+export const uiRoot = join(electronRoot, "..");
+export const repoRoot = join(uiRoot, "..");
+export const buildRoot = join(repoRoot, "tmp", "build", `${normalizeArch()}.${normalizePlatform()}`);
+export const releaseDir = join(repoRoot, "tmp", "release", version);
 
 export const packageJson = JSON.parse(fs.readFileSync(join(uiRoot, "package.json"), "utf8"));
 
 export const productName = packageJson.productName;
 export const version = packageJson.version;
 
-export const repoRoot = join(uiRoot, "..");
-export const buildRoot = join(repoRoot, "tmp", "build", `${normalizeArch()}.${normalizePlatform()}`);
-export const releaseDir = join(repoRoot, "tmp", "release", version);
+
 
 export function quotePowerShellString(value) {
     return `'${value.replace(/'/g, "''")}'`;
