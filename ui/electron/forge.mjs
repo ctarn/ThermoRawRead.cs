@@ -18,7 +18,7 @@ import {
 } from "./util.mjs";
 
 const sourcePng = join(repoRoot, "fig", `${productName}.png`);
-const iconOutputDir = join(buildUiRoot, "icon");
+const iconDir = join(buildUiRoot, "icon");
 
 function runCommand(command, args, cwd = repoRoot) {
     return new Promise((resolve, reject) => {
@@ -95,13 +95,13 @@ async function stageBackend(platform = process.platform, arch = process.arch) {
 
 async function prepareIcons() {
     await stat(sourcePng);
-    await removeIfExists(iconOutputDir);
-    await mkdir(iconOutputDir, {recursive: true});
-    await cp(sourcePng, path.join(iconOutputDir, "icon.png"));
-    await writeFile(path.join(iconOutputDir, "icon.ico"), await pngToIco(sourcePng));
+    await removeIfExists(iconDir);
+    await mkdir(iconDir, {recursive: true});
+    await cp(sourcePng, path.join(iconDir, "icon.png"));
+    await writeFile(path.join(iconDir, "icon.ico"), await pngToIco(sourcePng));
 
     if (process.platform !== "darwin") return;
-    const iconsetDir = join(iconOutputDir, "icon.iconset");
+    const iconsetDir = join(iconDir, "icon.iconset");
     await removeIfExists(iconsetDir);
     await mkdir(iconsetDir, {recursive: true});
 
@@ -122,7 +122,7 @@ async function prepareIcons() {
         await runCommand("sips", ["-z", String(w), String(h), sourcePng, "--out", path.join(iconsetDir, name)]);
     }
 
-    await runCommand("iconutil", ["--convert", "icns", iconsetDir, "--output", path.join(iconOutputDir, "icon.icns")]);
+    await runCommand("iconutil", ["--convert", "icns", iconsetDir, "--output", path.join(iconDir, "icon.icns")]);
 }
 
 async function buildBackend(platform = process.platform, arch = process.arch) {
@@ -219,7 +219,7 @@ async function organizeReleaseArtifacts(makeResults) {
     return rewrittenResults;
 }
 
-const iconBasename = join(iconOutputDir, "icon");
+const iconBasename = join(iconDir, "icon");
 
 export default {
     outDir: join(buildUiRoot, version, "forge"),
