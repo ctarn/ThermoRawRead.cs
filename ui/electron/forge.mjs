@@ -7,7 +7,6 @@ import {
     buildRoot,
     packageJson,
     productName,
-    quotePowerShellString,
     releaseDir,
     releaseSuffix,
     version,
@@ -137,6 +136,10 @@ async function buildAndPrepareAssets(platform = process.platform, arch = process
     await buildBackend(platform, arch);
     await stageBackend(platform, arch);
     await prepareIcons();
+}
+
+function quotePowerShellString(value) {
+    return `'${value.replace(/'/g, "''")}'`;
 }
 
 async function createCliZip(platform, arch, destination) {

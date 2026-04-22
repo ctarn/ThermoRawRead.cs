@@ -33,15 +33,8 @@ export const buildRoot = join(repoRoot, "tmp", "build", `${normalizeArch()}.${no
 export const releaseDir = join(repoRoot, "tmp", "release", version);
 
 export const packageJson = JSON.parse(fs.readFileSync(join(repoRoot, "ui", "package.json"), "utf8"));
-
 export const productName = packageJson.productName;
 export const version = packageJson.version;
-
-
-
-export function quotePowerShellString(value) {
-    return `'${value.replace(/'/g, "''")}'`;
-}
 
 export async function removeIfExists(target) {
     await rm(target, {recursive: true, force: true});
