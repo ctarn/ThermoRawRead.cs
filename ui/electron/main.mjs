@@ -15,7 +15,7 @@ const {app, BrowserWindow, dialog, ipcMain} = electron;
 
 if (squirrelStartup) app.quit();
 
-const defaultSavedState = Object.freeze({
+const defaultState = Object.freeze({
     inputPaths: [],
     outputDir: "",
     recursive: false,
@@ -187,8 +187,8 @@ async function loadState() {
     } catch (error) {
         if (error && error.code === "ENOENT") {
             return {
-                ...defaultSavedState,
-                outputs: [...defaultSavedState.outputs]
+                ...defaultState,
+                outputs: [...defaultState.outputs]
             };
         }
 
