@@ -83,15 +83,13 @@ function attachLogStream(stream) {
 
 function buildCommandArgs(request) {
     const args = [];
-
-    request.outputs.forEach(output => args.push(`--${output}`));
-
+    
+    args.push(...request.outputs.map(output => `--${output}`));
+    
     if (request.recursive) args.push("--recursive");
-
-    const outputDir = request.outputDir?.trim?.() ?? "";
-    if (outputDir) {
-        args.push("--out", outputDir);
-    }
+    
+    const output = request.outputDir?.trim?.() ?? "";
+    if (output) args.push("--out", output);
 
     args.push(...request.inputPaths);
     return args;
