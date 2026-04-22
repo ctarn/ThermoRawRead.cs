@@ -28,9 +28,8 @@ export function backendExecutableName(productName, platform = currentPlatform())
     return platform === "win32" ? `${productName}.exe` : productName;
 }
 
-const electronRoot = dirname(fileURLToPath(import.meta.url));
-export const uiRoot = join(electronRoot, "..");
-export const repoRoot = join(uiRoot, "..");
+export const repoRoot = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
+export const uiRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
 export const buildRoot = join(repoRoot, "tmp", "build", `${normalizeArch()}.${normalizePlatform()}`);
 export const releaseDir = join(repoRoot, "tmp", "release", version);
 
