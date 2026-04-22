@@ -16,7 +16,7 @@ import {
     quotePowerShellString,
     releaseDir,
     releaseSuffix,
-    releaseVersion,
+    version,
     repoRoot,
     sourcePng,
     removeIfExists
@@ -78,15 +78,15 @@ async function copyReleaseArtifact(source, destination) {
 
 async function prepareReleaseTargets(platform, arch) {
     const suffix = releaseSuffix(platform, arch);
-    const cliZip = path.join(releaseDir, `${productName}-cli-${releaseVersion}.${suffix}.zip`);
-    const guiZip = path.join(releaseDir, `${productName}-gui-${releaseVersion}.${suffix}.zip`);
+    const cliZip = path.join(releaseDir, `${productName}-cli-${version}.${suffix}.zip`);
+    const guiZip = path.join(releaseDir, `${productName}-gui-${version}.${suffix}.zip`);
 
     await mkdir(releaseDir, {recursive: true});
     await removeIfExists(cliZip);
     await removeIfExists(guiZip);
 
     for (const extension of installerExtensions(platform)) {
-        await removeIfExists(path.join(releaseDir, `${productName}-installer-${releaseVersion}.${suffix}.${extension}`));
+        await removeIfExists(path.join(releaseDir, `${productName}-installer-${version}.${suffix}.${extension}`));
     }
 
     return {cliZip, guiZip, suffix};
@@ -216,7 +216,7 @@ async function organizeReleaseArtifacts(makeResults) {
             if (!installerCopied && isInstallerArtifact(platform, artifact)) {
                 const installerDestination = path.join(
                     releaseDir,
-                    `${productName}-installer-${releaseVersion}.${releaseTargets.suffix}${path.extname(artifact)}`
+                    `${productName}-installer-${version}.${releaseTargets.suffix}${path.extname(artifact)}`
                 );
 
                 await copyReleaseArtifact(artifact, installerDestination);
@@ -237,7 +237,7 @@ async function organizeReleaseArtifacts(makeResults) {
 }
 
 export default {
-    outDir: join(buildUiRoot, releaseVersion, "forge"),
+    outDir: join(buildUiRoot, version, "forge"),
     hooks: {
         generateAssets: async (_forgeConfig, platform, arch) => {
             await buildAndPrepareAssets(platform, arch);
