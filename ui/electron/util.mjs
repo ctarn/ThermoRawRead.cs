@@ -36,16 +36,15 @@ export const productName = packageJson.productName;
 export const version = packageJson.version;
 
 export const repoRoot = join(uiRoot, "..");
-export const tmpRoot = join(repoRoot, "tmp");
-export const buildRoot = join(tmpRoot, "build");
-export const buildUiRoot = join(tmpRoot, "build-ui");
+export const buildRoot = join(repoRoot, "tmp", "build");
+export const buildUiRoot = join(repoRoot, "tmp", "build-ui");
 
 export const backendOutputDir = join(buildUiRoot, "backend");
 export const iconOutputDir = join(buildUiRoot, "icon");
 export const iconRoot = join(iconOutputDir, "icon");
 export const iconsetOutputDir = join(iconOutputDir, "icon.iconset");
 export const forgeOutDir = join(buildUiRoot, version, "gui-build");
-export const releaseDir = join(tmpRoot, "release", version);
+export const releaseDir = join(repoRoot, "tmp", "release", version);
 
 export const sourcePng = join(repoRoot, "fig", "ThermoRawRead.png");
 export const preloadEntry = join(electronRoot, "preload.mjs");
