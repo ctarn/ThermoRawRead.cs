@@ -101,9 +101,9 @@ async function prepareIcons() {
     await writeFile(path.join(iconOutputDir, "icon.ico"), await pngToIco(sourcePng));
 
     if (process.platform !== "darwin") return;
-    const iconsetOutputDir = join(iconOutputDir, "icon.iconset");
-    await removeIfExists(iconsetOutputDir);
-    await mkdir(iconsetOutputDir, {recursive: true});
+    const iconsetDir = join(iconOutputDir, "icon.iconset");
+    await removeIfExists(iconsetDir);
+    await mkdir(iconsetDir, {recursive: true});
 
     const iconsetSpecs = [
         ["icon_16x16.png", 16, 16],
@@ -118,11 +118,11 @@ async function prepareIcons() {
         ["icon_512x512@2x.png", 1024, 1024]
     ];
 
-    for (const [name, width, height] of iconsetSpecs) {
-        await runCommand("sips", ["-z", String(width), String(height), sourcePng, "--out", path.join(iconsetOutputDir, name)]);
+    for (const [name, w, h] of iconsetSpecs) {
+        await runCommand("sips", ["-z", String(w), String(h), sourcePng, "--out", path.join(iconsetDir, name)]);
     }
 
-    await runCommand("iconutil", ["--convert", "icns", iconsetOutputDir, "--output", path.join(iconOutputDir, "icon.icns")]);
+    await runCommand("iconutil", ["--convert", "icns", iconsetDir, "--output", path.join(iconOutputDir, "icon.icns")]);
 }
 
 async function buildBackend(platform = process.platform, arch = process.arch) {
