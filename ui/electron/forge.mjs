@@ -19,7 +19,6 @@ import {
 
 const sourcePng = join(repoRoot, "fig", `${productName}.png`);
 const iconOutputDir = join(buildUiRoot, "icon");
-const iconRoot = join(iconOutputDir, "icon");
 
 const iconsetSpecs = [
     ["icon_16x16.png", 16, 16],
@@ -236,6 +235,8 @@ async function organizeReleaseArtifacts(makeResults) {
     return rewrittenResults;
 }
 
+const iconBasename = join(iconOutputDir, "icon");
+
 export default {
     outDir: join(buildUiRoot, version, "forge"),
     hooks: {
@@ -251,14 +252,14 @@ export default {
         asar: true,
         executableName: productName,
         extraResource: [backendOutputDir],
-        icon: iconRoot,
+        icon: iconBasename,
         name: productName,
         overwrite: true
     },
     makers: [
         {name: "@electron-forge/maker-zip", platforms: ["darwin", "linux", "win32"], config: {}},
         {name: "@electron-forge/maker-dmg", platforms: ["darwin"], config: {
-            icon: `${iconRoot}.icns`
+            icon: `${iconBasename}.icns`
         }},
         {name: "@electron-forge/maker-deb", platforms: ["linux"], config: {
             options: {
@@ -271,7 +272,7 @@ export default {
             authors: packageJson.author,
             description: packageJson.description,
             name: productName,
-            setupIcon: `${iconRoot}.ico`
+            setupIcon: `${iconBasename}.ico`
         }}
     ]
 };
