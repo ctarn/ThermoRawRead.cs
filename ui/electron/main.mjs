@@ -12,8 +12,8 @@ import {
     bundledBackendExecutablePath,
     electronRoot,
     productName,
-    rendererEntry,
     repoRoot,
+    uiRoot,
     uiStatePath
 } from "./util.mjs";
 
@@ -63,7 +63,7 @@ function createMainWindow() {
         }
     });
 
-    void window.loadFile(rendererEntry());
+    void window.loadFile(join(uiRoot, "src", "main.html"));
     window.on("closed", () => {
         if (mainWindow === window) {
             mainWindow = null;
