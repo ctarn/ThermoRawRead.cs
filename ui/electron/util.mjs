@@ -41,7 +41,6 @@ export const repoRoot = join(uiRoot, "..");
 export const tmpRoot = join(repoRoot, "tmp");
 export const buildRoot = join(tmpRoot, "build");
 export const buildUiRoot = join(tmpRoot, "build-ui");
-export const releaseRoot = join(tmpRoot, "release");
 
 export const backendOutputDir = join(buildUiRoot, "backend");
 export const iconOutputDir = join(buildUiRoot, "icon");
@@ -49,7 +48,7 @@ export const iconRoot = join(iconOutputDir, "icon");
 export const iconsetOutputDir = join(iconOutputDir, "icon.iconset");
 export const legacyIconOutputDir = join(buildUiRoot, "icons");
 export const forgeOutDir = join(buildUiRoot, releaseVersion, "gui-build");
-export const releaseDir = join(releaseRoot, releaseVersion);
+export const releaseDir = join(tmpRoot, "release", releaseVersion);
 
 export const sourcePng = join(repoRoot, "fig", "ThermoRawRead.png");
 export const preloadEntry = join(electronRoot, "preload.mjs");
