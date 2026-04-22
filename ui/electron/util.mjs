@@ -43,8 +43,6 @@ export const buildUiRoot = join(repoRoot, "tmp", "build-ui");
 export const backendOutputDir = join(buildUiRoot, "backend");
 export const releaseDir = join(repoRoot, "tmp", "release", version);
 
-export const preloadEntry = join(electronRoot, "preload.mjs");
-
 export function rendererEntry() {
     return join(uiRoot, "src", "main.html");
 }
