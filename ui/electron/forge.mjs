@@ -106,14 +106,14 @@ async function stageBackend(platform = process.platform, arch = process.arch) {
         );
     }
 
-    await rm(backendOutputDir, {recursive: true, force: true});
+    await removeIfExists(backendOutputDir);
     await cp(sourceDir, backendOutputDir, {recursive: true});
 }
 
 async function prepareIcns() {
     if (process.platform !== "darwin") return;
 
-    await rm(iconsetOutputDir, {recursive: true, force: true});
+    await removeIfExists(iconsetOutputDir);
     await mkdir(iconsetOutputDir, {recursive: true});
 
     for (const [name, width, height] of iconsetSpecs) {
@@ -138,7 +138,7 @@ async function prepareIcns() {
 
 async function prepareIcons() {
     await stat(sourcePng);
-    await rm(iconOutputDir, {recursive: true, force: true});
+    await removeIfExists(iconOutputDir);
     await mkdir(iconOutputDir, {recursive: true});
     await cp(sourcePng, path.join(iconOutputDir, "icon.png"));
     await writeFile(path.join(iconOutputDir, "icon.ico"), await pngToIco(sourcePng));
@@ -180,7 +180,7 @@ async function createCliZip(platform, arch, destination) {
             await runCommand("zip", ["-qry", destination, "cli"], stagingRoot);
         }
     } finally {
-        await rm(stagingRoot, {recursive: true, force: true});
+        await removeIfExists(stagingRoot);
     }
 
     return destination;
