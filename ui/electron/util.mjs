@@ -12,11 +12,11 @@ function currentPlatform() {
     return typeof process === "undefined" ? undefined : process.platform;
 }
 
-export function normalizeArch(arch = currentArch()) {
+function normalizeArch(arch = currentArch()) {
     return {x64: "x86_64", arm64: "arm64"}[arch] ?? arch;
 }
 
-export function normalizePlatform(platform = currentPlatform()) {
+function normalizePlatform(platform = currentPlatform()) {
     return {darwin: "Darwin", linux: "Linux", win32: "Windows"}[platform] ?? platform;
 }
 
@@ -30,7 +30,7 @@ export const packageJson = JSON.parse(fs.readFileSync(join(repoRoot, "ui", "pack
 export const productName = packageJson.productName;
 export const version = packageJson.version;
 
-export const buildRoot = join(repoRoot, "tmp", "build", `${normalizeArch()}.${normalizePlatform()}`);
+export const buildRoot = join(repoRoot, "tmp", "build", `${releaseSuffix()}`);
 export const releaseDir = join(repoRoot, "tmp", "release", version);
 
 export async function removeIfExists(target) {
