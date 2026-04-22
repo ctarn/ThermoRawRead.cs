@@ -134,7 +134,7 @@ function runJob(request) {
 
     const backend = resolveBackendExecutable();
     const child = spawn(backend, buildCommandArgs(request), {
-        cwd: repoDir,
+        cwd: dirname(backend),
         stdio: ["ignore", "pipe", "pipe"]
     });
     let finished = false;
