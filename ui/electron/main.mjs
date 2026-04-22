@@ -75,10 +75,7 @@ function resolveBackendExecutable() {
 
     const resolved = candidates.find((candidate) => fs.existsSync(candidate));
     if (resolved) return resolved;
-
-    throw new Error(
-        "ThermoRawRead backend not found. Build src/ThermoRawRead.csproj first or set THERMO_RAW_READ_BIN."
-    );
+    throw new Error("ThermoRawRead backend not found.");
 }
 
 function attachLogStream(stream) {
