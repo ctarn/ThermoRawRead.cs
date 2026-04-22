@@ -47,10 +47,6 @@ export function backendBuildDir(platform = process.platform, arch = process.arch
     return join(buildRoot, `${normalizeArch(arch)}.${normalizePlatform(platform)}`);
 }
 
-export function uiStatePath() {
-    return path.join(os.homedir(), ".ThermoRawRead", version, "ui-state.json");
-}
-
 export function bundledBackendExecutablePath(baseDir, platform = process.platform) {
     return join(baseDir, "backend", backendExecutableName(productName, platform));
 }

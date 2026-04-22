@@ -14,7 +14,6 @@ import {
     productName,
     repoRoot,
     uiRoot,
-    uiStatePath
 } from "./util.mjs";
 
 const {app, BrowserWindow, dialog, ipcMain} = electron;
@@ -184,11 +183,11 @@ function stopJob() {
     currentJob.kill();
 }
 
-async function loadState() {
-    const target = uiStatePath();
+statePath = path.join(os.homedir(), `.${productName}`, version, "ui-state.json");
 
+async function loadState() {
     try {
-        const content = await fsp.readFile(target, "utf8");
+        const content = await fsp.readFile(statePath, "utf8");
         return JSON.parse(content);
     } catch (error) {
         if (error && error.code === "ENOENT") {
@@ -203,9 +202,8 @@ async function loadState() {
 }
 
 async function saveState(state) {
-    const target = uiStatePath();
-    await fsp.mkdir(path.dirname(target), {recursive: true});
-    await fsp.writeFile(target, JSON.stringify(state, null, 2), "utf8");
+    await fsp.mkdir(path.dirname(statePath), {recursive: true});
+    await fsp.writeFile(statePath, JSON.stringify(state, null, 2), "utf8");
 }
 
 async function chooseRawFiles() {
