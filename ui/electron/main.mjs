@@ -11,6 +11,7 @@ import {
     buildRoot,
     productName,
     repoRoot,
+    version,
 } from "./util.mjs";
 
 const {app, BrowserWindow, dialog, ipcMain} = electron;
