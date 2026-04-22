@@ -70,3 +70,7 @@ export function bundledBackendExecutablePath(baseDir, platform = process.platfor
 export function quotePowerShellString(value) {
     return `'${value.replace(/'/g, "''")}'`;
 }
+
+export async function removeIfExists(target) {
+    await rm(target, {recursive: true, force: true});
+}

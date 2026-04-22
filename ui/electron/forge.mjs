@@ -18,7 +18,8 @@ import {
     releaseSuffix,
     releaseVersion,
     repoRoot,
-    sourcePng
+    sourcePng,
+    removeIfExists
 } from "./util.mjs";
 
 const iconsetSpecs = [
@@ -67,10 +68,6 @@ function isGuiZipArtifact(artifact) {
 function isInstallerArtifact(platform, artifact) {
     const lowerArtifact = artifact.toLowerCase();
     return installerExtensions(platform).some((extension) => lowerArtifact.endsWith(`.${extension.toLowerCase()}`));
-}
-
-async function removeIfExists(target) {
-    await rm(target, {recursive: true, force: true});
 }
 
 async function copyReleaseArtifact(source, destination) {
