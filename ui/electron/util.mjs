@@ -37,16 +37,11 @@ export const productName = packageJson.productName;
 export const version = packageJson.version;
 
 export const repoRoot = join(uiRoot, "..");
-export const buildRoot = join(repoRoot, "tmp", "build");
+export const buildRoot = join(repoRoot, "tmp", "build", `${normalizeArch()}.${normalizePlatform()}`);
 export const buildUiRoot = join(repoRoot, "tmp", "build-ui");
 
 export const backendOutputDir = join(buildUiRoot, "backend");
 export const releaseDir = join(repoRoot, "tmp", "release", version);
-
-export function backendBuildDir(platform = process.platform, arch = process.arch) {
-    return join(buildRoot, `${normalizeArch(arch)}.${normalizePlatform(platform)}`);
-}
-
 
 export function quotePowerShellString(value) {
     return `'${value.replace(/'/g, "''")}'`;
