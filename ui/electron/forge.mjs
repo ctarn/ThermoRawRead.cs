@@ -5,7 +5,7 @@ import path, {dirname, join} from "node:path";
 import pngToIco from "png-to-ico";
 import {
     buildUiRoot,
-    backendBuildDir,
+    buildRoot,
     backendOutputDir,
     packageJson,
     productName,
@@ -77,18 +77,16 @@ async function prepareReleaseTargets(platform, arch) {
 }
 
 async function stageBackend(platform = process.platform, arch = process.arch) {
-    const sourceDir = backendBuildDir(platform, arch);
-
     try {
-        await stat(sourceDir);
+        await stat(buildRoot);
     } catch {
         throw new Error(
-            `missing backend build at ${sourceDir}. Run npm run package or build src/${productName}.csproj first.`
+            `missing backend build at ${buildRoot}. Run npm run package or build src/${productName}.csproj first.`
         );
     }
 
     await removeIfExists(backendOutputDir);
-    await cp(sourceDir, backendOutputDir, {recursive: true});
+    await cp(buildRoot, backendOutputDir, {recursive: true});
 }
 
 
@@ -132,7 +130,7 @@ async function buildBackend(platform = process.platform, arch = process.arch) {
         "-c",
         "Release",
         "-o",
-        backendBuildDir(platform, arch)
+        buildRoot
     ]);
 }
 
@@ -143,12 +141,11 @@ async function buildAndPrepareAssets(platform = process.platform, arch = process
 }
 
 async function createCliZip(platform, arch, destination) {
-    const sourceDir = backendBuildDir(platform, arch);
     const stagingRoot = await mkdtemp(path.join(os.tmpdir(), `${productName}-cli-`));
     const cliStageDir = path.join(stagingRoot, "cli");
 
     try {
-        await cp(sourceDir, cliStageDir, {recursive: true});
+        await cp(buildRoot, cliStageDir, {recursive: true});
 
         if (platform === "win32") {
             await runCommand("powershell", [
