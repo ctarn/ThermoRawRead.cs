@@ -70,10 +70,6 @@ function backendExecutableName(productName, platform = currentPlatform()) {
     return platform === "win32" ? `${productName}.exe` : productName;
 }
 
-function bundledBackendExecutablePath(baseDir, platform = process.platform) {
-    return join(baseDir, "backend", backendExecutableName(productName, platform));
-}
-
 function resolveBackendExecutable() {
     const candidates = [];
 
@@ -82,8 +78,6 @@ function resolveBackendExecutable() {
     }
 
     candidates.push(path.join(buildDir, backendExecutableName(productName)));
-    candidates.push(bundledBackendExecutablePath(process.resourcesPath));
-    candidates.push(bundledBackendExecutablePath(path.dirname(process.execPath)));
     candidates.push(path.join(process.resourcesPath, "artifacts", backendExecutableName(productName)));
     candidates.push(path.join(path.dirname(process.execPath), "artifacts", backendExecutableName(productName)));
 
