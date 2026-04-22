@@ -42,7 +42,6 @@ export const buildUiRoot = join(repoRoot, "tmp", "build-ui");
 export const backendOutputDir = join(buildUiRoot, "backend");
 export const releaseDir = join(repoRoot, "tmp", "release", version);
 
-export const sourcePng = join(repoRoot, "fig", "ThermoRawRead.png");
 export const preloadEntry = join(electronRoot, "preload.mjs");
 
 export function rendererEntry() {

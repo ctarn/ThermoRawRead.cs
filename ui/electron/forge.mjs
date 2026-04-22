@@ -14,10 +14,10 @@ import {
     releaseSuffix,
     version,
     repoRoot,
-    sourcePng,
     removeIfExists
 } from "./util.mjs";
 
+const sourcePng = join(repoRoot, "fig", `${productName}.png`);
 const iconOutputDir = join(buildUiRoot, "icon");
 const iconRoot = join(iconOutputDir, "icon");
 const iconsetOutputDir = join(iconOutputDir, "icon.iconset");
