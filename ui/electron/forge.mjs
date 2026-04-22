@@ -59,7 +59,7 @@ async function copyReleaseArtifact(source, destination) {
 }
 
 async function prepareReleaseTargets(platform, arch) {
-    const suffix = releaseSuffix(platform, arch);
+    const suffix = releaseSuffix;
     const cliZip = path.join(releaseDir, `${productName}-cli-${version}.${suffix}.zip`);
     const guiZip = path.join(releaseDir, `${productName}-gui-${version}.${suffix}.zip`);
 
@@ -172,7 +172,7 @@ async function organizeReleaseArtifacts(makeResults) {
 
     for (const result of makeResults) {
         const {platform, arch} = result;
-        const suffix = releaseSuffix(platform, arch);
+        const suffix = releaseSuffix;
         let releaseTargets = releaseTargetsBySuffix.get(suffix);
 
         if (!releaseTargets) {
