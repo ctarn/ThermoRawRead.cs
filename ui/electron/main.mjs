@@ -56,7 +56,7 @@ function createMainWindow() {
         }
     });
 
-    void window.loadFile(join(repoDir, "ui", "src", "main.html"));
+    void window.loadFile(join(dirname(fileURLToPath(import.meta.url)), "..", "main.html"));
     window.on("closed", () => {
         if (mainWindow === window) {
             mainWindow = null;
