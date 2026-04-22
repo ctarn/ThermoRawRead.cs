@@ -9,7 +9,6 @@ import squirrelStartup from "electron-squirrel-startup";
 import {
     buildRoot,
     backendExecutableName,
-    electronRoot,
     productName,
     repoRoot,
     uiRoot,
