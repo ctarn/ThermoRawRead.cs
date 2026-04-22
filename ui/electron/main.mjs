@@ -190,7 +190,7 @@ function stopJob() {
     currentJob.kill();
 }
 
-statePath = path.join(os.homedir(), `.${productName}`, version, "ui-state.json");
+const statePath = path.join(os.homedir(), `.${productName}`, version, "ui-state.json");
 
 async function loadState() {
     try {
