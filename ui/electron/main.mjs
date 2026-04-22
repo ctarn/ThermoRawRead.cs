@@ -68,9 +68,7 @@ function backendExecutableName(productName) {
 function resolveBackendExecutable() {
     const candidates = [];
 
-    if (process.env.THERMO_RAW_READ_BIN) {
-        candidates.push(process.env.THERMO_RAW_READ_BIN);
-    }
+    if (process.env.THERMORAWREAD_BACKEND) candidates.push(process.env.THERMORAWREAD_BACKEND);
 
     candidates.push(path.join(process.resourcesPath, "artifacts", backendExecutableName(name)));
     candidates.push(path.join(path.dirname(process.execPath), "artifacts", backendExecutableName(name)));
