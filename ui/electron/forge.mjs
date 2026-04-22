@@ -3,15 +3,7 @@ import {copyFile, cp, mkdir, mkdtemp, rm, stat, writeFile} from "node:fs/promise
 import os from "node:os";
 import path, {dirname, join} from "node:path";
 import pngToIco from "png-to-ico";
-import {
-    buildDir,
-    packageJson,
-    productName,
-    releaseDir,
-    rid,
-    version,
-    repoDir,
-} from "./util.mjs";
+import {productName, version, rid, packageJson, repoDir, buildDir, releaseDir} from "./util.mjs";
 
 const iconDir = join(repoDir, "tmp", "icon");
 const artifactsDir = join(repoDir, "tmp", "artifacts");
