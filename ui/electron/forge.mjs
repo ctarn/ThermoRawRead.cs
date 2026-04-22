@@ -4,6 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import pngToIco from "png-to-ico";
 import {
+    buildUiRoot,
     backendBuildDir,
     backendOutputDir,
     forgeOutDir,
@@ -245,7 +246,7 @@ async function organizeReleaseArtifacts(makeResults) {
 }
 
 export default {
-    outDir: forgeOutDir,
+    outDir: join(buildUiRoot, releaseVersion, "forge"),
     hooks: {
         generateAssets: async (_forgeConfig, platform, arch) => {
             await buildAndPrepareAssets(platform, arch);
