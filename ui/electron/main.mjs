@@ -8,7 +8,7 @@ import { fileURLToPath } from 'url';
 
 import electron from "electron";
 import squirrelStartup from "electron-squirrel-startup";
-import {productName, version, repoDir, buildDir} from "./util.mjs";
+import {productName, version, repoDir} from "./util.mjs";
 
 const {app, BrowserWindow, dialog, ipcMain} = electron;
 
@@ -77,7 +77,6 @@ function resolveBackendExecutable() {
         candidates.push(process.env.THERMO_RAW_READ_BIN);
     }
 
-    candidates.push(path.join(buildDir, backendExecutableName(productName)));
     candidates.push(path.join(process.resourcesPath, "artifacts", backendExecutableName(productName)));
     candidates.push(path.join(path.dirname(process.execPath), "artifacts", backendExecutableName(productName)));
 
