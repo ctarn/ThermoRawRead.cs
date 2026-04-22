@@ -20,19 +20,6 @@ import {
 const sourcePng = join(repoRoot, "fig", `${productName}.png`);
 const iconOutputDir = join(buildUiRoot, "icon");
 
-const iconsetSpecs = [
-    ["icon_16x16.png", 16, 16],
-    ["icon_16x16@2x.png", 32, 32],
-    ["icon_32x32.png", 32, 32],
-    ["icon_32x32@2x.png", 64, 64],
-    ["icon_128x128.png", 128, 128],
-    ["icon_128x128@2x.png", 256, 256],
-    ["icon_256x256.png", 256, 256],
-    ["icon_256x256@2x.png", 512, 512],
-    ["icon_512x512.png", 512, 512],
-    ["icon_512x512@2x.png", 1024, 1024]
-];
-
 function runCommand(command, args, cwd = repoRoot) {
     return new Promise((resolve, reject) => {
         const child = spawn(command, args, {
@@ -117,6 +104,19 @@ async function prepareIcons() {
     const iconsetOutputDir = join(iconOutputDir, "icon.iconset");
     await removeIfExists(iconsetOutputDir);
     await mkdir(iconsetOutputDir, {recursive: true});
+
+    const iconsetSpecs = [
+        ["icon_16x16.png", 16, 16],
+        ["icon_16x16@2x.png", 32, 32],
+        ["icon_32x32.png", 32, 32],
+        ["icon_32x32@2x.png", 64, 64],
+        ["icon_128x128.png", 128, 128],
+        ["icon_128x128@2x.png", 256, 256],
+        ["icon_256x256.png", 256, 256],
+        ["icon_256x256@2x.png", 512, 512],
+        ["icon_512x512.png", 512, 512],
+        ["icon_512x512@2x.png", 1024, 1024]
+    ];
 
     for (const [name, width, height] of iconsetSpecs) {
         await runCommand("sips", ["-z", String(width), String(height), sourcePng, "--out", path.join(iconsetOutputDir, name)]);
