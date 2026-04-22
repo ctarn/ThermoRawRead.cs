@@ -10,7 +10,7 @@ import {
     backendBuildDir,
     backendExecutableName,
     bundledBackendExecutablePath,
-    preloadEntry,
+    electronRoot,
     productName,
     rendererEntry,
     repoRoot,
@@ -59,7 +59,7 @@ function createMainWindow() {
             contextIsolation: true,
             nodeIntegration: false,
             sandbox: false,
-            preload: preloadEntry
+            preload: "preload.mjs"
         }
     });
 
