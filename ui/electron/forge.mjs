@@ -6,7 +6,6 @@ import pngToIco from "png-to-ico";
 import {
     buildUiRoot,
     buildRoot,
-    artifactsDir,
     packageJson,
     productName,
     quotePowerShellString,
@@ -17,7 +16,8 @@ import {
     removeIfExists
 } from "./util.mjs";
 
-const iconDir = join(buildUiRoot, "icon");
+const iconDir = join(repoRoot, "tmp", "icon");
+const artifactsDir = join(repoRoot, "tmp", "artifacts");
 
 function runCommand(command, args, cwd = repoRoot) {
     return new Promise((resolve, reject) => {
