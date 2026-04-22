@@ -11,11 +11,14 @@ import {
     rid,
     version,
     repoRoot,
-    removeIfExists
 } from "./util.mjs";
 
 const iconDir = join(repoRoot, "tmp", "icon");
 const artifactsDir = join(repoRoot, "tmp", "artifacts");
+
+async function removeIfExists(target) {
+    await rm(target, {recursive: true, force: true});
+}
 
 function runCommand(command, args, cwd = repoRoot) {
     return new Promise((resolve, reject) => {

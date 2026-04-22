@@ -16,7 +16,3 @@ export const version = packageJson.version;
 
 export const buildRoot = join(repoRoot, "tmp", "build", rid);
 export const releaseDir = join(repoRoot, "tmp", "release", version);
-
-export async function removeIfExists(target) {
-    await rm(target, {recursive: true, force: true});
-}
