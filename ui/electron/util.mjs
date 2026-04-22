@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import {copyFile, cp, mkdir, mkdtemp, rm, stat, writeFile} from "node:fs/promises";
 import os from "node:os";
 import path, {dirname, join} from "node:path";
 import {fileURLToPath} from "node:url";
