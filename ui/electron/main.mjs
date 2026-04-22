@@ -8,7 +8,7 @@ import { fileURLToPath } from 'url';
 
 import electron from "electron";
 import squirrelStartup from "electron-squirrel-startup";
-import {productName, version, repoDir} from "./util.mjs";
+import {productName} from "./util.mjs";
 
 const {app, BrowserWindow, dialog, ipcMain} = electron;
 
@@ -179,7 +179,7 @@ function stopJob() {
     currentJob.kill();
 }
 
-const statePath = path.join(os.homedir(), `.${productName}`, version, "ui-state.json");
+const statePath = path.join(os.homedir(), `.${productName}`, "ui-state.json");
 
 async function loadState() {
     try {
