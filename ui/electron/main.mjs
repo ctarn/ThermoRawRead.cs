@@ -4,7 +4,7 @@ import path, {dirname, join} from "node:path";
 import os from "node:os";
 import readline from "node:readline";
 import {spawn} from "node:child_process";
-import { fileURLToPath } from 'url';
+import {fileURLToPath} from 'url';
 
 import electron from "electron";
 import squirrelStartup from "electron-squirrel-startup";
