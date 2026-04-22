@@ -2,7 +2,7 @@ import electron from "electron";
 
 const {contextBridge, ipcRenderer} = electron;
 
-contextBridge.exposeInMainWorld("thermoRawRead", {
+contextBridge.exposeInMainWorld("thermorawread", {
     invoke(command, payload = {}) {
         return ipcRenderer.invoke(command, payload);
     },
