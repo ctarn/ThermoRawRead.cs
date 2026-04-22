@@ -6,7 +6,7 @@ import pngToIco from "png-to-ico";
 import {
     buildUiRoot,
     buildRoot,
-    backendOutputDir,
+    artifactsDir,
     packageJson,
     productName,
     quotePowerShellString,
@@ -85,8 +85,8 @@ async function stageBackend(platform = process.platform, arch = process.arch) {
         );
     }
 
-    await removeIfExists(backendOutputDir);
-    await cp(buildRoot, backendOutputDir, {recursive: true});
+    await removeIfExists(artifactsDir);
+    await cp(buildRoot, artifactsDir, {recursive: true});
 }
 
 
@@ -232,7 +232,7 @@ export default {
         appCopyright: "Copyright © Tarn Yeong Ching",
         asar: true,
         executableName: productName,
-        extraResource: [backendOutputDir],
+        extraResource: [artifactsDir],
         icon: iconBasename,
         name: productName,
         overwrite: true
