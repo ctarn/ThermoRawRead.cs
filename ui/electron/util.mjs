@@ -30,8 +30,7 @@ export function backendExecutableName(productName, platform = currentPlatform())
 const electronRoot = dirname(fileURLToPath(import.meta.url));
 const uiRoot = join(electronRoot, "..");
 
-export const packageJsonPath = join(uiRoot, "package.json");
-export const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
+export const packageJson = JSON.parse(fs.readFileSync(join(uiRoot, "package.json"), "utf8"));
 
 export const productName = packageJson.productName;
 export const releaseVersion = packageJson.version;
