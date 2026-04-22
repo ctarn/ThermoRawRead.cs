@@ -10,7 +10,6 @@ import {
     iconOutputDir,
     iconRoot,
     iconsetOutputDir,
-    legacyIconOutputDir,
     packageJson,
     productName,
     quotePowerShellString,
@@ -144,7 +143,6 @@ async function prepareIcns() {
 
 async function prepareIcons() {
     await stat(sourcePng);
-    await rm(legacyIconOutputDir, {recursive: true, force: true});
     await rm(iconOutputDir, {recursive: true, force: true});
     await mkdir(iconOutputDir, {recursive: true});
     await cp(sourcePng, path.join(iconOutputDir, "icon.png"));

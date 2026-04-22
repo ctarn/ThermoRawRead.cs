@@ -46,7 +46,6 @@ export const backendOutputDir = join(buildUiRoot, "backend");
 export const iconOutputDir = join(buildUiRoot, "icon");
 export const iconRoot = join(iconOutputDir, "icon");
 export const iconsetOutputDir = join(iconOutputDir, "icon.iconset");
-export const legacyIconOutputDir = join(buildUiRoot, "icons");
 export const forgeOutDir = join(buildUiRoot, releaseVersion, "gui-build");
 export const releaseDir = join(tmpRoot, "release", releaseVersion);
 
