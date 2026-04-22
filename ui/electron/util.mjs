@@ -40,7 +40,6 @@ export const buildRoot = join(repoRoot, "tmp", "build");
 export const buildUiRoot = join(repoRoot, "tmp", "build-ui");
 
 export const backendOutputDir = join(buildUiRoot, "backend");
-export const forgeOutDir = join(buildUiRoot, version, "gui-build");
 export const releaseDir = join(repoRoot, "tmp", "release", version);
 
 export const sourcePng = join(repoRoot, "fig", "ThermoRawRead.png");

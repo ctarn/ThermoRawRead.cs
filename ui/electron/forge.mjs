@@ -7,7 +7,6 @@ import {
     buildUiRoot,
     backendBuildDir,
     backendOutputDir,
-    forgeOutDir,
     packageJson,
     productName,
     quotePowerShellString,
