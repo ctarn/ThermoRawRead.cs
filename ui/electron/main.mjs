@@ -56,11 +56,7 @@ function createMainWindow() {
     });
 
     void window.loadFile(join(dirname(fileURLToPath(import.meta.url)), "..", "main.html"));
-    window.on("closed", () => {
-        if (mainWindow === window) {
-            mainWindow = null;
-        }
-    });
+    window.on("closed", () => {if (mainWindow === window) mainWindow = null;});
     return window;
 }
 
