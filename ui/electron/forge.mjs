@@ -105,9 +105,15 @@ async function stageBackend(platform = process.platform, arch = process.arch) {
     await cp(sourceDir, backendOutputDir, {recursive: true});
 }
 
-async function prepareIcns() {
+
+async function prepareIcons() {
+    await stat(sourcePng);
+    await removeIfExists(iconOutputDir);
+    await mkdir(iconOutputDir, {recursive: true});
+    await cp(sourcePng, path.join(iconOutputDir, "icon.png"));
+    await writeFile(path.join(iconOutputDir, "icon.ico"), await pngToIco(sourcePng));
+
     if (process.platform !== "darwin") return;
-    
     const iconsetOutputDir = join(iconOutputDir, "icon.iconset");
     await removeIfExists(iconsetOutputDir);
     await mkdir(iconsetOutputDir, {recursive: true});
@@ -130,15 +136,6 @@ async function prepareIcns() {
         "--output",
         path.join(iconOutputDir, "icon.icns")
     ]);
-}
-
-async function prepareIcons() {
-    await stat(sourcePng);
-    await removeIfExists(iconOutputDir);
-    await mkdir(iconOutputDir, {recursive: true});
-    await cp(sourcePng, path.join(iconOutputDir, "icon.png"));
-    await writeFile(path.join(iconOutputDir, "icon.ico"), await pngToIco(sourcePng));
-    await prepareIcns();
 }
 
 async function buildBackend(platform = process.platform, arch = process.arch) {
