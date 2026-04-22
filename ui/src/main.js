@@ -22,7 +22,7 @@ function defaultOutDir(path) {
     return `${normalized.slice(0, index)}${separator}out`;
 }
 
-const commandBus = window.thermorawread ?? null;
+const commandBus = window.commandbus ?? null;
 
 const statusMeta = {
     idle: {badgeClass: "badge badge-muted", badgeText: "Idle"},
