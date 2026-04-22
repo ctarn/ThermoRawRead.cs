@@ -21,8 +21,6 @@ import {
     sourcePng
 } from "./util.mjs";
 
-const maker = (name, platforms, config) => ({name, platforms, ...(config ? {config} : {})});
-
 const iconsetSpecs = [
     ["icon_16x16.png", 16, 16],
     ["icon_16x16@2x.png", 32, 32],
