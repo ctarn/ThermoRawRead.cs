@@ -8,7 +8,7 @@ import {productName, version, rid, packageJson, repoDir, buildDir, releaseDir} f
 const iconDir = join(repoDir, "tmp", "icon");
 const artifactsDir = join(repoDir, "tmp", "artifacts");
 
-async function removeIfExists(target) {
+async function rmRF(target) {
     await rm(target, {recursive: true, force: true});
 }
 
@@ -49,7 +49,7 @@ function isInstallerArtifact(platform, artifact) {
 
 async function copyReleaseArtifact(source, destination) {
     await mkdir(path.dirname(destination), {recursive: true});
-    await removeIfExists(destination);
+    await rmRF(destination);
     await copyFile(source, destination);
 }
 
@@ -58,11 +58,11 @@ async function prepareReleaseTargets(platform, arch) {
     const guiZip = path.join(releaseDir, `${productName}-gui-${version}.${rid}.zip`);
 
     await mkdir(releaseDir, {recursive: true});
-    await removeIfExists(cliZip);
-    await removeIfExists(guiZip);
+    await rmRF(cliZip);
+    await rmRF(guiZip);
 
     for (const extension of installerExtensions(platform)) {
-        await removeIfExists(path.join(releaseDir, `${productName}-installer-${version}.${rid}.${extension}`));
+        await rmRF(path.join(releaseDir, `${productName}-installer-${version}.${rid}.${extension}`));
     }
 
     return {cliZip, guiZip, suffix: rid};
@@ -77,7 +77,7 @@ async function stageBackend(platform = process.platform, arch = process.arch) {
         );
     }
 
-    await removeIfExists(artifactsDir);
+    await rmRF(artifactsDir);
     await cp(buildDir, artifactsDir, {recursive: true});
 }
 
@@ -85,14 +85,14 @@ async function stageBackend(platform = process.platform, arch = process.arch) {
 async function prepareIcons() {
     const sourcePng = join(repoDir, "fig", `${productName}.png`);
     await stat(sourcePng);
-    await removeIfExists(iconDir);
+    await rmRF(iconDir);
     await mkdir(iconDir, {recursive: true});
     await cp(sourcePng, path.join(iconDir, "icon.png"));
     await writeFile(path.join(iconDir, "icon.ico"), await pngToIco(sourcePng));
 
     if (process.platform !== "darwin") return;
     const iconsetDir = join(iconDir, "icon.iconset");
-    await removeIfExists(iconsetDir);
+    await rmRF(iconsetDir);
     await mkdir(iconsetDir, {recursive: true});
 
     const iconsetSpecs = [
@@ -153,7 +153,7 @@ async function createCliZip(platform, arch, destination) {
             await runCommand("zip", ["-qry", destination, "cli"], stagingRoot);
         }
     } finally {
-        await removeIfExists(stagingRoot);
+        await rmRF(stagingRoot);
     }
 
     return destination;
