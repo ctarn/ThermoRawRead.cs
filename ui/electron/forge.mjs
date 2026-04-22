@@ -261,18 +261,18 @@ export default {
         overwrite: true
     },
     makers: [
-        maker("@electron-forge/maker-zip", ["darwin", "linux", "win32"]),
-        maker("@electron-forge/maker-dmg", ["darwin"], {
+        ("@electron-forge/maker-zip", ["darwin", "linux", "win32"], {}),
+        ("@electron-forge/maker-dmg", ["darwin"], {
             icon: `${iconRoot}.icns`
         }),
-        maker("@electron-forge/maker-deb", ["linux"], {
+        ("@electron-forge/maker-deb", ["linux"], {
             options: {
                 homepage: "http://ctarn.io",
                 icon: path.join(repoRoot, "fig", "ThermoRawRead.png"),
                 maintainer: packageJson.author
             }
         }),
-        maker("@electron-forge/maker-squirrel", ["win32"], {
+        ("@electron-forge/maker-squirrel", ["win32"], {
             authors: packageJson.author,
             description: packageJson.description,
             name: productName,
