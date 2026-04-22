@@ -4,7 +4,7 @@ import os from "node:os";
 import path, {dirname, join} from "node:path";
 import {fileURLToPath} from "node:url";
 
-export function releaseSuffix(platform = currentPlatform(), arch = currentArch()) {
+export function releaseSuffix() {
     arch = {x64: "x86_64", arm64: "arm64"}[process.arch] ?? process.arch;
     platform = {darwin: "Darwin", linux: "Linux", win32: "Windows"}[process.platform] ?? process.platform;
     return `${arch}.${platform}`;
