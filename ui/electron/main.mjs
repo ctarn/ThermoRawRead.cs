@@ -7,7 +7,7 @@ import {spawn} from "node:child_process";
 import electron from "electron";
 import squirrelStartup from "electron-squirrel-startup";
 import {
-    backendBuildDir,
+    buildRoot,
     backendExecutableName,
     electronRoot,
     productName,
@@ -81,7 +81,7 @@ function resolveBackendExecutable() {
         candidates.push(process.env.THERMO_RAW_READ_BIN);
     }
 
-    candidates.push(path.join(backendBuildDir(), backendExecutableName(productName)));
+    candidates.push(path.join(buildRoot, backendExecutableName(productName)));
     candidates.push(bundledBackendExecutablePath(process.resourcesPath));
     candidates.push(bundledBackendExecutablePath(path.dirname(process.execPath)));
     candidates.push(path.join(process.resourcesPath, "artifacts", backendExecutableName(productName)));
