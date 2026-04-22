@@ -59,19 +59,18 @@ async function copyReleaseArtifact(source, destination) {
 }
 
 async function prepareReleaseTargets(platform, arch) {
-    const suffix = releaseSuffix;
-    const cliZip = path.join(releaseDir, `${productName}-cli-${version}.${suffix}.zip`);
-    const guiZip = path.join(releaseDir, `${productName}-gui-${version}.${suffix}.zip`);
+    const cliZip = path.join(releaseDir, `${productName}-cli-${version}.${releaseSuffix}.zip`);
+    const guiZip = path.join(releaseDir, `${productName}-gui-${version}.${releaseSuffix}.zip`);
 
     await mkdir(releaseDir, {recursive: true});
     await removeIfExists(cliZip);
     await removeIfExists(guiZip);
 
     for (const extension of installerExtensions(platform)) {
-        await removeIfExists(path.join(releaseDir, `${productName}-installer-${version}.${suffix}.${extension}`));
+        await removeIfExists(path.join(releaseDir, `${productName}-installer-${version}.${releaseSuffix}.${extension}`));
     }
 
-    return {cliZip, guiZip, suffix};
+    return {cliZip, guiZip, suffix: releaseSuffix};
 }
 
 async function stageBackend(platform = process.platform, arch = process.arch) {
@@ -172,12 +171,11 @@ async function organizeReleaseArtifacts(makeResults) {
 
     for (const result of makeResults) {
         const {platform, arch} = result;
-        const suffix = releaseSuffix;
-        let releaseTargets = releaseTargetsBySuffix.get(suffix);
+        let releaseTargets = releaseTargetsBySuffix.get(releaseSuffix);
 
         if (!releaseTargets) {
             releaseTargets = await prepareReleaseTargets(platform, arch);
-            releaseTargetsBySuffix.set(suffix, releaseTargets);
+            releaseTargetsBySuffix.set(releaseSuffix, releaseTargets);
         }
 
         const rewrittenArtifacts = [];
