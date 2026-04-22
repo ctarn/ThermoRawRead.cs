@@ -122,13 +122,7 @@ async function prepareIcons() {
         await runCommand("sips", ["-z", String(width), String(height), sourcePng, "--out", path.join(iconsetOutputDir, name)]);
     }
 
-    await runCommand("iconutil", [
-        "--convert",
-        "icns",
-        iconsetOutputDir,
-        "--output",
-        path.join(iconOutputDir, "icon.icns")
-    ]);
+    await runCommand("iconutil", ["--convert", "icns", iconsetOutputDir, "--output", path.join(iconOutputDir, "icon.icns")]);
 }
 
 async function buildBackend(platform = process.platform, arch = process.arch) {
