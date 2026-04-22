@@ -9,9 +9,9 @@ import { fileURLToPath } from 'url';
 import electron from "electron";
 import squirrelStartup from "electron-squirrel-startup";
 import {
-    buildRoot,
+    buildDir,
     productName,
-    repoRoot,
+    repoDir,
     version,
 } from "./util.mjs";
 
@@ -61,7 +61,7 @@ function createMainWindow() {
         }
     });
 
-    void window.loadFile(join(repoRoot, "ui", "src", "main.html"));
+    void window.loadFile(join(repoDir, "ui", "src", "main.html"));
     window.on("closed", () => {
         if (mainWindow === window) {
             mainWindow = null;
@@ -86,7 +86,7 @@ function resolveBackendExecutable() {
         candidates.push(process.env.THERMO_RAW_READ_BIN);
     }
 
-    candidates.push(path.join(buildRoot, backendExecutableName(productName)));
+    candidates.push(path.join(buildDir, backendExecutableName(productName)));
     candidates.push(bundledBackendExecutablePath(process.resourcesPath));
     candidates.push(bundledBackendExecutablePath(path.dirname(process.execPath)));
     candidates.push(path.join(process.resourcesPath, "artifacts", backendExecutableName(productName)));
@@ -146,7 +146,7 @@ function runJob(request) {
 
     const backend = resolveBackendExecutable();
     const child = spawn(backend, buildCommandArgs(request), {
-        cwd: repoRoot,
+        cwd: repoDir,
         stdio: ["ignore", "pipe", "pipe"]
     });
     let finished = false;

@@ -4,23 +4,23 @@ import os from "node:os";
 import path, {dirname, join} from "node:path";
 import pngToIco from "png-to-ico";
 import {
-    buildRoot,
+    buildDir,
     packageJson,
     productName,
     releaseDir,
     rid,
     version,
-    repoRoot,
+    repoDir,
 } from "./util.mjs";
 
-const iconDir = join(repoRoot, "tmp", "icon");
-const artifactsDir = join(repoRoot, "tmp", "artifacts");
+const iconDir = join(repoDir, "tmp", "icon");
+const artifactsDir = join(repoDir, "tmp", "artifacts");
 
 async function removeIfExists(target) {
     await rm(target, {recursive: true, force: true});
 }
 
-function runCommand(command, args, cwd = repoRoot) {
+function runCommand(command, args, cwd = repoDir) {
     return new Promise((resolve, reject) => {
         const child = spawn(command, args, {
             cwd,
@@ -78,20 +78,20 @@ async function prepareReleaseTargets(platform, arch) {
 
 async function stageBackend(platform = process.platform, arch = process.arch) {
     try {
-        await stat(buildRoot);
+        await stat(buildDir);
     } catch {
         throw new Error(
-            `missing backend build at ${buildRoot}. Run npm run package or build src/${productName}.csproj first.`
+            `missing backend build at ${buildDir}. Run npm run package or build src/${productName}.csproj first.`
         );
     }
 
     await removeIfExists(artifactsDir);
-    await cp(buildRoot, artifactsDir, {recursive: true});
+    await cp(buildDir, artifactsDir, {recursive: true});
 }
 
 
 async function prepareIcons() {
-    const sourcePng = join(repoRoot, "fig", `${productName}.png`);
+    const sourcePng = join(repoDir, "fig", `${productName}.png`);
     await stat(sourcePng);
     await removeIfExists(iconDir);
     await mkdir(iconDir, {recursive: true});
@@ -130,7 +130,7 @@ async function buildBackend(platform = process.platform, arch = process.arch) {
         "-c",
         "Release",
         "-o",
-        buildRoot
+        buildDir
     ]);
 }
 
@@ -149,7 +149,7 @@ async function createCliZip(platform, arch, destination) {
     const cliStageDir = path.join(stagingRoot, "cli");
 
     try {
-        await cp(buildRoot, cliStageDir, {recursive: true});
+        await cp(buildDir, cliStageDir, {recursive: true});
 
         if (platform === "win32") {
             await runCommand("powershell", [
@@ -222,7 +222,7 @@ async function organizeReleaseArtifacts(makeResults) {
 const iconBasename = join(iconDir, "icon");
 
 export default {
-    outDir: join(repoRoot, "tmp", "forge"),
+    outDir: join(repoDir, "tmp", "forge"),
     hooks: {
         generateAssets: async (_forgeConfig, platform, arch) => {
             await buildAndPrepareAssets(platform, arch);
@@ -248,7 +248,7 @@ export default {
         {name: "@electron-forge/maker-deb", platforms: ["linux"], config: {
             options: {
                 homepage: "http://ctarn.io",
-                icon: path.join(repoRoot, "fig", "ThermoRawRead.png"),
+                icon: path.join(repoDir, "fig", "ThermoRawRead.png"),
                 maintainer: packageJson.author
             }
         }},
