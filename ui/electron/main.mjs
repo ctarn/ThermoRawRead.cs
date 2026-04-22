@@ -8,7 +8,6 @@ import electron from "electron";
 import squirrelStartup from "electron-squirrel-startup";
 import {
     buildRoot,
-    backendExecutableName,
     productName,
     repoRoot,
 } from "./util.mjs";
@@ -68,7 +67,12 @@ function createMainWindow() {
     return window;
 }
 
-export function bundledBackendExecutablePath(baseDir, platform = process.platform) {
+
+function backendExecutableName(productName, platform = currentPlatform()) {
+    return platform === "win32" ? `${productName}.exe` : productName;
+}
+
+function bundledBackendExecutablePath(baseDir, platform = process.platform) {
     return join(baseDir, "backend", backendExecutableName(productName, platform));
 }
 
