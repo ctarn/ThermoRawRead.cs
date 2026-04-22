@@ -4,7 +4,6 @@ import os from "node:os";
 import path, {dirname, join} from "node:path";
 import pngToIco from "png-to-ico";
 import {
-    buildUiRoot,
     buildRoot,
     packageJson,
     productName,
@@ -219,7 +218,7 @@ async function organizeReleaseArtifacts(makeResults) {
 const iconBasename = join(iconDir, "icon");
 
 export default {
-    outDir: join(buildUiRoot, version, "forge"),
+    outDir: join(repoRoot, "tmp", "forge"),
     hooks: {
         generateAssets: async (_forgeConfig, platform, arch) => {
             await buildAndPrepareAssets(platform, arch);
