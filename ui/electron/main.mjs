@@ -4,6 +4,7 @@ import path, {dirname, join} from "node:path";
 import os from "node:os";
 import readline from "node:readline";
 import {spawn} from "node:child_process";
+import { fileURLToPath } from 'url';
 
 import electron from "electron";
 import squirrelStartup from "electron-squirrel-startup";
@@ -56,7 +57,7 @@ function createMainWindow() {
             contextIsolation: true,
             nodeIntegration: false,
             sandbox: false,
-            preload: join(__dirname, 'preload.js'),
+            preload: join(dirname(fileURLToPath(import.meta.url)), 'preload.js'),
         }
     });
 
