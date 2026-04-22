@@ -8,7 +8,8 @@ import { fileURLToPath } from 'url';
 
 import electron from "electron";
 import squirrelStartup from "electron-squirrel-startup";
-import {productName} from "./util.mjs";
+
+const productName = "ThermoRawRead";
 
 const {app, BrowserWindow, dialog, ipcMain} = electron;
 
