@@ -256,22 +256,22 @@ export default {
         overwrite: true
     },
     makers: [
-        ("@electron-forge/maker-zip", ["darwin", "linux", "win32"], {}),
-        ("@electron-forge/maker-dmg", ["darwin"], {
+        {name: "@electron-forge/maker-zip", platforms: ["darwin", "linux", "win32"], config: {}},
+        {name: "@electron-forge/maker-dmg", platforms: ["darwin"], config: {
             icon: `${iconRoot}.icns`
-        }),
-        ("@electron-forge/maker-deb", ["linux"], {
+        }},
+        {name: "@electron-forge/maker-deb", platforms: ["linux"], config: {
             options: {
                 homepage: "http://ctarn.io",
                 icon: path.join(repoRoot, "fig", "ThermoRawRead.png"),
                 maintainer: packageJson.author
             }
-        }),
-        ("@electron-forge/maker-squirrel", ["win32"], {
+        }},
+        {name: "@electron-forge/maker-squirrel", platforms: ["win32"], config: {
             authors: packageJson.author,
             description: packageJson.description,
             name: productName,
             setupIcon: `${iconRoot}.ico`
-        })
+        }}
     ]
 };
