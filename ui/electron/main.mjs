@@ -56,7 +56,7 @@ function createMainWindow() {
             contextIsolation: true,
             nodeIntegration: false,
             sandbox: false,
-            preload: "preload.mjs"
+            preload: join(__dirname, 'preload.js'),
         }
     });
 
