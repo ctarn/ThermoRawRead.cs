@@ -115,12 +115,8 @@ async function prepareIcons() {
     await runCommand("iconutil", ["--convert", "icns", iconsetDir, "--output", `${iconBasename}.icns`]);
 }
 
-async function buildBackend() {
-    await runCommand("dotnet", ["build", path.join("src", `${productName}.csproj`), "-c", "Release", "-o", buildDir]);
-}
-
 async function generateAssets() {
-    await buildBackend();
+    await runCommand("dotnet", ["build", path.join("src", `${productName}.csproj`), "-c", "Release", "-o", buildDir]);
     await stageBackend();
     await prepareIcons();
 }
