@@ -51,14 +51,14 @@ async function copyReleaseArtifact(src, dst) {
 
 async function prepareReleaseTargets(platform, arch) {
     const cliZip = path.join(releaseDir, `${productName}-cli-${version}.${rid}.zip`);
-    const guiZip = path.join(releaseDir, `${productName}-gui-${version}.${rid}.zip`);
+    const guiZip = path.join(releaseDir, `${productName}-${version}.${rid}.zip`);
 
     await mkdir(releaseDir, {recursive: true});
     await rmRF(cliZip);
     await rmRF(guiZip);
 
     for (const extension of installerExtensions(platform)) {
-        await rmRF(path.join(releaseDir, `${productName}-installer-${version}.${rid}.${extension}`));
+        await rmRF(path.join(releaseDir, `${productName}-${version}.${rid}.${extension}`));
     }
 
     return {cliZip, guiZip, suffix: rid};
