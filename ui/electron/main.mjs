@@ -62,13 +62,13 @@ function runCommand(request) {
     const id = normalizeTaskId(request?.task_id);
     if (tasks.has(id)) throw new Error(`task ${id} is already running`);
 
-    const command = request?.command?.trim?.();
-    if (!command) throw new Error("command is required");
+    const cmd = request?.command?.trim?.();
+    if (!cmd) throw new Error("command is required");
 
     if (!Array.isArray(request?.args)) throw new Error("command arguments are required");
     if (request.args.some(arg => typeof arg !== "string")) throw new Error("command arguments must be strings");
 
-    const exe = resolveExecutable(command, id);
+    const exe = resolveExecutable(cmd, id);
     const args = [...request.args];
 
     const proc = spawn(exe, args, {cwd: dirname(exe), stdio: ["ignore", "pipe", "pipe"]});
