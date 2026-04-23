@@ -12,14 +12,24 @@ const packageJson = JSON.parse(fs.readFileSync(join(repoDir, "ui", "package.json
 const productName = packageJson.productName;
 const version = packageJson.version;
 
-const arch = {x64: "x86_64", arm64: "arm64"}[process.arch] ?? process.arch;
-const platform = {darwin: "Darwin", linux: "Linux", win32: "Windows"}[process.platform] ?? process.platform;
-const rid = `${arch}.${platform}`;
+const ARCH_NAMES = {x64: "x86_64", arm64: "arm64"};
+const PLATFORM_NAMES = {darwin: "Darwin", linux: "Linux", win32: "Windows"};
+const INSTALLER_EXTENSIONS = {
+    darwin: ["dmg", "pkg"],
+    linux: ["deb", "rpm", "AppImage"],
+    win32: ["exe", "msi"]
+};
+
+const releaseSuffix = (platform = process.platform, arch = process.arch) =>
+    `${ARCH_NAMES[arch] ?? arch}.${PLATFORM_NAMES[platform] ?? platform}`;
+const rid = releaseSuffix();
 
 const buildDir = join(repoDir, "tmp", "build", rid);
 const releaseDir = join(repoDir, "tmp", "release", version);
 const iconDir = join(repoDir, "tmp", "icon");
 const artifactsDir = join(repoDir, "tmp", "artifacts");
+const sourceIcon = join(repoDir, "fig", `${productName}.png`);
+const iconBasename = join(iconDir, "icon");
 
 const rmrf = (target) => rm(target, { recursive: true, force: true });
 const mkdirs = (target) => mkdir(target, { recursive: true });
@@ -33,10 +43,7 @@ function runCommand(cmd, args, cwd = repoDir) {
 }
 
 function installerExtensions(platform) {
-    if (platform === "darwin") return ["dmg", "pkg"];
-    if (platform === "linux") return ["deb", "rpm", "AppImage"];
-    if (platform === "win32") return ["exe", "msi"];
-    return [];
+    return INSTALLER_EXTENSIONS[platform] ?? [];
 }
 
 function isInstallerArtifact(platform, artifact) {
@@ -51,25 +58,28 @@ async function copyReleaseArtifact(src, dst) {
 }
 
 async function prepareReleaseTargets(platform, arch) {
-    const zip = path.join(releaseDir, `${productName}-${version}.${rid}.zip`);
-    const cliZip = path.join(releaseDir, `${productName}-cli-${version}.${rid}.zip`);
+    const suffix = releaseSuffix(platform, arch);
+    const guiZip = path.join(releaseDir, `${productName}-${version}.${suffix}.zip`);
+    const cliZip = path.join(releaseDir, `${productName}-cli-${version}.${suffix}.zip`);
 
     await mkdirs(releaseDir);
-    await rmrf(zip);
+    await rmrf(guiZip);
     await rmrf(cliZip);
 
     for (const ext of installerExtensions(platform)) {
-        await rmrf(path.join(releaseDir, `${productName}-${version}.${rid}.${ext}`));
+        await rmrf(path.join(releaseDir, `${productName}-${version}.${suffix}.${ext}`));
     }
 
-    return {cliZip, guiZip: zip, suffix: rid};
+    return {cliZip, guiZip, suffix};
 }
 
 async function stageBackend() {
     try {
         await stat(buildDir);
     } catch {
-        throw new Error(`missing backend build at ${buildDir}`);
+        throw new Error(
+            `missing backend build at ${buildDir}. Run npm run package or build src/${productName}.csproj first.`
+        );
     }
 
     await rmrf(artifactsDir);
@@ -77,12 +87,11 @@ async function stageBackend() {
 }
 
 async function prepareIcons() {
-    const src = join(repoDir, "fig", `${productName}.png`);
-    await stat(src);
+    await stat(sourceIcon);
     await rmrf(iconDir);
     await mkdirs(iconDir);
-    await cp(src, path.join(iconDir, "icon.png"));
-    await writeFile(path.join(iconDir, "icon.ico"), await pngToIco(src));
+    await cp(sourceIcon, `${iconBasename}.png`);
+    await writeFile(`${iconBasename}.ico`, await pngToIco(sourceIcon));
 
     if (process.platform !== "darwin") return;
 
@@ -104,17 +113,17 @@ async function prepareIcons() {
     ];
 
     for (const [name, w, h] of iconsetSpecs)
-        await runCommand("sips", ["-z", String(w), String(h), src, "--out", path.join(iconsetDir, name)]);
-    await runCommand("iconutil", ["--convert", "icns", iconsetDir, "--output", path.join(iconDir, "icon.icns")]);
+        await runCommand("sips", ["-z", String(w), String(h), sourceIcon, "--out", path.join(iconsetDir, name)]);
+    await runCommand("iconutil", ["--convert", "icns", iconsetDir, "--output", `${iconBasename}.icns`]);
 }
 
 async function buildBackend() {
     await runCommand("dotnet", ["build", path.join("src", `${productName}.csproj`), "-c", "Release", "-o", buildDir]);
 }
 
-async function buildAndPrepareAssets(platform = process.platform, arch = process.arch) {
-    await buildBackend(platform, arch);
-    await stageBackend(platform, arch);
+async function buildAndPrepareAssets() {
+    await buildBackend();
+    await stageBackend();
     await prepareIcons();
 }
 
@@ -122,7 +131,7 @@ function quotePowerShellString(value) {
     return `'${value.replace(/'/g, "''")}'`;
 }
 
-async function createCliZip(platform, arch, destination) {
+async function createCliZip(platform, destination) {
     const stagingRoot = await mkdtemp(path.join(os.tmpdir(), `${productName}-cli-`));
     const cliStageDir = path.join(stagingRoot, "cli");
 
@@ -152,18 +161,19 @@ async function organizeReleaseArtifacts(makeResults) {
 
     for (const result of makeResults) {
         const {platform, arch} = result;
-        let releaseTargets = releaseTargetsBySuffix.get(rid);
+        const suffix = releaseSuffix(platform, arch);
+        let releaseTargets = releaseTargetsBySuffix.get(suffix);
 
         if (!releaseTargets) {
             releaseTargets = await prepareReleaseTargets(platform, arch);
-            releaseTargetsBySuffix.set(rid, releaseTargets);
+            releaseTargetsBySuffix.set(suffix, releaseTargets);
         }
 
         const rewrittenArtifacts = [];
         let installerCopied = false;
 
         if (!cliDone.has(releaseTargets.suffix)) {
-            rewrittenArtifacts.push(await createCliZip(platform, arch, releaseTargets.cliZip));
+            rewrittenArtifacts.push(await createCliZip(platform, releaseTargets.cliZip));
             cliDone.add(releaseTargets.suffix);
         }
 
@@ -197,14 +207,10 @@ async function organizeReleaseArtifacts(makeResults) {
     return rewrittenResults;
 }
 
-const iconBasename = join(iconDir, "icon");
-
 export default {
     outDir: join(repoDir, "tmp", "forge"),
     hooks: {
-        generateAssets: async (_forgeConfig, platform, arch) => {
-            await buildAndPrepareAssets(platform, arch);
-        },
+        generateAssets: async () => buildAndPrepareAssets(),
         postMake: async (_forgeConfig, makeResults) => organizeReleaseArtifacts(makeResults)
     },
     packagerConfig: {
@@ -226,7 +232,7 @@ export default {
         {name: "@electron-forge/maker-deb", platforms: ["linux"], config: {
             options: {
                 homepage: "http://ctarn.io",
-                icon: path.join(repoDir, "fig", "ThermoRawRead.png"),
+                icon: sourceIcon,
                 maintainer: packageJson.author
             }
         }},
