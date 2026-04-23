@@ -9,7 +9,7 @@ import {fileURLToPath} from 'url';
 import electron from "electron";
 import squirrelStartup from "electron-squirrel-startup";
 
-const name = "ThermoRawRead";
+const APPLICATION = "ThermoRawRead";
 
 const {app, BrowserWindow, dialog, ipcMain} = electron;
 
@@ -36,7 +36,7 @@ const emitLog = (line) => send("job-log", { line });
 
 function createMainWindow() {
     const window = new BrowserWindow({
-        title: name,
+        title: APPLICATION,
         width: 1360,
         height: 920,
         minWidth: 1024,
@@ -69,7 +69,7 @@ function buildCommandArgs(request) {
     return args;
 }
 
-const statePath = path.join(os.homedir(), `.${name}`, "ui-state.json");
+const statePath = path.join(os.homedir(), `.${APPLICATION}`, "ui-state.json");
 
 async function loadState() {
     try {
@@ -106,7 +106,7 @@ function runJob(request) {
         throw new Error("a task is already running");
     }
 
-    const exe = resolveExecutable(name);
+    const exe = resolveExecutable(APPLICATION);
     const child = spawn(exe, buildCommandArgs(request), {cwd: dirname(exe), stdio: ["ignore", "pipe", "pipe"]});
     let finished = false;
 
@@ -171,7 +171,7 @@ app.on("window-all-closed", () => {
     }
 });
 
-function resolveExecutable(name = name) {
+function resolveExecutable(name = APPLICATION) {
     const paths = [];
     if (process.env[`${name.toUpperCase()}_BACKEND`]) paths.push(process.env[`${name.toUpperCase()}_BACKEND`]);
     paths.push(path.join(process.resourcesPath, "artifacts", name));
