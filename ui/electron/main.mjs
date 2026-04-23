@@ -72,11 +72,6 @@ function resolveBackendExecutable() {
     throw new Error("ThermoRawRead backend not found.");
 }
 
-function attachLogStream(stream) {
-    if (!stream) return;
-    readline.createInterface({input: stream}).on("line", line => send("job-log", {line}));
-}
-
 function buildCommandArgs(request) {
     const args = [];
     
@@ -146,8 +141,8 @@ function runJob(request) {
     stopRequested = false;
     emitStatus("running", `Running ${backend}`);
 
-    attachLogStream(child.stdout);
-    attachLogStream(child.stderr);
+    if (child.stdout) readline.createInterface({input: child.stdout}).on("line", line => send("job-log", {line}));
+    if (child.stderr) readline.createInterface({input: child.stderr}).on("line", line => send("job-log", {line}));
 
     child.once("error", (error) => finalize("error", `Failed to launch ${backend}: ${error.message}`));
 
