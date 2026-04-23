@@ -63,17 +63,17 @@ public class Reader
         idx = InitTrailerExtraHeaderIndex();
     }
 
-    public void Run(HashSet<string> outputs)
+    public void Run(HashSet<string> formats)
     {
         var path = Path.Combine(path_out, Path.GetFileNameWithoutExtension(path_in));
         if (!Directory.Exists(path_out)) Directory.CreateDirectory(path_out);
 
-        var write_umz = outputs.Contains("umz");
-        var write_ms1 = outputs.Contains("ms1");
-        var write_ms2 = outputs.Contains("ms2");
-        var write_txt = outputs.Contains("txt");
-        var write_csv = outputs.Contains("csv");
-        var write_meth = outputs.Contains("meth");
+        var write_umz = formats.Contains("umz");
+        var write_ms1 = formats.Contains("ms1");
+        var write_ms2 = formats.Contains("ms2");
+        var write_txt = formats.Contains("txt");
+        var write_csv = formats.Contains("csv");
+        var write_meth = formats.Contains("meth");
 
         try
         {

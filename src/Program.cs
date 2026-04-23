@@ -8,13 +8,13 @@ internal static class Program
         { "umz", "ms1", "ms2", "meth", "txt", "csv" };
 
     private static bool TryParseCommandLine(string[] args, out List<string> paths_in, out string path_out,
-        out HashSet<string> outputs, out bool recursive, out string error)
+        out HashSet<string> formats, out bool recursive, out string error)
     {
         paths_in = [];
         path_out = "";
         recursive = false;
         error = "";
-        outputs = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        formats = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         for (var i = 0; i < args.Length; i++)
         {
@@ -52,8 +52,8 @@ internal static class Program
             output = output[2..];
             if (output.Equals("msx", StringComparison.OrdinalIgnoreCase))
             {
-                outputs.Add("ms1");
-                outputs.Add("ms2");
+                formats.Add("ms1");
+                formats.Add("ms2");
                 continue;
             }
             if (!SupportedOutputs.Contains(output))
@@ -61,7 +61,7 @@ internal static class Program
                 error = $"unknown argument: --{output}";
                 return false;
             }
-            outputs.Add(output);
+            formats.Add(output);
         }
 
         if (paths_in.Count == 0)
@@ -70,12 +70,12 @@ internal static class Program
             return false;
         }
 
-        if (outputs.Count != 0) return outputs.Count > 0;
+        if (formats.Count != 0) return formats.Count > 0;
 
-        outputs.Add("umz");
-        outputs.Add("meth");
-        outputs.Add("txt");
-        outputs.Add("csv");
+        formats.Add("umz");
+        formats.Add("meth");
+        formats.Add("txt");
+        formats.Add("csv");
         return true;
     }
 
@@ -119,7 +119,7 @@ internal static class Program
     public static int Main(string[] args)
     {
         Console.OutputEncoding = Encoding.UTF8;
-        if (!TryParseCommandLine(args, out var paths_in, out var path_out, out var outputs, out var recursive,
+        if (!TryParseCommandLine(args, out var paths_in, out var path_out, out var formats, out var recursive,
                 out var error)
             || !TryResolveInputPaths(paths_in, recursive, out var files_in, out error))
         {
@@ -131,7 +131,7 @@ internal static class Program
         foreach (var path_in in files_in)
         {
             var out_dir = path_out != "" ? path_out : Path.GetDirectoryName(path_in) ?? ".";
-            new Reader(path_in, out_dir).Run(outputs);
+            new Reader(path_in, out_dir).Run(formats);
         }
         return 0;
     }

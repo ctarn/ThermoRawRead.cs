@@ -19,7 +19,7 @@ const defaultState = Object.freeze({
     inputPaths: [],
     outputDir: "",
     recursive: false,
-    outputs: ["umz", "csv", "txt", "meth"]
+    formats: ["umz", "csv", "txt", "meth"]
 });
 
 let mainWindow = null;
@@ -84,7 +84,7 @@ function attachLogStream(stream) {
 function buildCommandArgs(request) {
     const args = [];
     
-    args.push(...request.outputs.map(output => `--${output}`));
+    args.push(...request.formats.map(output => `--${output}`));
     
     if (request.recursive) args.push("--recursive");
     
@@ -104,7 +104,7 @@ function runJob(request) {
     if (!Array.isArray(request?.inputPaths) || request.inputPaths.length === 0) {
         throw new Error("at least one input path is required");
     }
-    if (!Array.isArray(request?.outputs) || request.outputs.length === 0) {
+    if (!Array.isArray(request?.formats) || request.formats.length === 0) {
         throw new Error("at least one output format is required");
     }
     if (currentJob) {
@@ -168,7 +168,7 @@ async function loadState() {
         if (error && error.code === "ENOENT") {
             return {
                 ...defaultState,
-                outputs: [...defaultState.outputs]
+                formats: [...defaultState.formats]
             };
         }
 

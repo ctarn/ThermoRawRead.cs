@@ -69,7 +69,7 @@ const state = {
     inputPaths: [],
     outputDir: "",
     recursive: false,
-    outputs: new Set(defaultOutputs),
+    formats: new Set(defaultOutputs),
     running: false
 };
 
@@ -78,7 +78,7 @@ function validOutputs(values) {
 }
 
 function selectedOutputs() {
-    return validOutputs(Array.from(state.outputs));
+    return validOutputs(Array.from(state.formats));
 }
 
 function renderInput() {
@@ -103,7 +103,7 @@ function renderInput() {
 }
 
 function renderFormatGrid() {
-    const selected = state.outputs;
+    const selected = state.formats;
     formatInputs.forEach((input) => {
         input.checked = selected.has(input.value);
     });
@@ -181,14 +181,14 @@ function renderState() {
 }
 
 function hydrate(saved = {}) {
-    const savedOutputs = Array.isArray(saved.outputs) && saved.outputs.length > 0
-        ? validOutputs(saved.outputs)
+    const savedOutputs = Array.isArray(saved.formats) && saved.formats.length > 0
+        ? validOutputs(saved.formats)
         : defaultOutputs;
 
     state.inputPaths = Array.isArray(saved.inputPaths) ? saved.inputPaths : [];
     state.outputDir = typeof saved.outputDir === "string" ? saved.outputDir : "";
     state.recursive = Boolean(saved.recursive);
-    state.outputs = new Set(savedOutputs.length > 0 ? savedOutputs : defaultOutputs);
+    state.formats = new Set(savedOutputs.length > 0 ? savedOutputs : defaultOutputs);
     state.running = false;
 
     renderState();
@@ -204,7 +204,7 @@ function persistState() {
             inputPaths: state.inputPaths,
             outputDir: state.outputDir,
             recursive: state.recursive,
-            outputs: selectedOutputs()
+            formats: selectedOutputs()
         }
     }).catch(() => {
     });
@@ -254,7 +254,7 @@ async function runJob() {
         return;
     }
 
-    if (state.outputs.size === 0) {
+    if (state.formats.size === 0) {
         setStatus("error", "Select at least one export format.");
         return;
     }
@@ -269,7 +269,7 @@ async function runJob() {
                 inputPaths: state.inputPaths,
                 outputDir: state.outputDir.trim(),
                 recursive: state.recursive,
-                outputs: selectedOutputs()
+                formats: selectedOutputs()
             }
         });
     } catch (error) {
@@ -316,9 +316,9 @@ async function initialize() {
     formatInputs.forEach((input) => {
         input.addEventListener("change", async () => {
             if (input.checked) {
-                state.outputs.add(input.value);
+                state.formats.add(input.value);
             } else {
-                state.outputs.delete(input.value);
+                state.formats.delete(input.value);
             }
 
             renderFormatGrid();
