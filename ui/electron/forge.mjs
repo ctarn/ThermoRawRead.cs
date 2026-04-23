@@ -74,41 +74,42 @@ async function prepareReleaseTargets(platform, arch) {
 }
 
 async function prepareIcons() {
-    await stat(sourceIcon);
-    await rmrf(iconDir);
-    await mkdirs(iconDir);
-    await cp(sourceIcon, `${iconBasename}.png`);
-    await writeFile(`${iconBasename}.ico`, await pngToIco(sourceIcon));
 
-    if (process.platform !== "darwin") return;
-
-    const iconsetDir = join(iconDir, "icon.iconset");
-    await rmrf(iconsetDir);
-    await mkdirs(iconsetDir);
-
-    const iconsetSpecs = [
-        ["icon_16x16.png", 16, 16],
-        ["icon_16x16@2x.png", 32, 32],
-        ["icon_32x32.png", 32, 32],
-        ["icon_32x32@2x.png", 64, 64],
-        ["icon_128x128.png", 128, 128],
-        ["icon_128x128@2x.png", 256, 256],
-        ["icon_256x256.png", 256, 256],
-        ["icon_256x256@2x.png", 512, 512],
-        ["icon_512x512.png", 512, 512],
-        ["icon_512x512@2x.png", 1024, 1024]
-    ];
-
-    for (const [name, w, h] of iconsetSpecs)
-        await runCommand("sips", ["-z", String(w), String(h), sourceIcon, "--out", path.join(iconsetDir, name)]);
-    await runCommand("iconutil", ["--convert", "icns", iconsetDir, "--output", `${iconBasename}.icns`]);
 }
 
 async function generateAssets() {
     await runCommand("dotnet", ["build", path.join("src", `${productName}.csproj`), "-c", "Release", "-o", buildDir]);
     await rmrf(artifactsDir);
     await cp(buildDir, artifactsDir, {recursive: true});
-    await prepareIcons();
+
+    await stat(sourceIcon);
+    await rmrf(iconDir);
+    await mkdirs(iconDir);
+    await cp(sourceIcon, `${iconBasename}.png`);
+    await writeFile(`${iconBasename}.ico`, await pngToIco(sourceIcon));
+
+    if (process.platform === "darwin") {
+        const iconsetDir = join(iconDir, "icon.iconset");
+        await rmrf(iconsetDir);
+        await mkdirs(iconsetDir);
+
+        const iconsetSpecs = [
+            ["icon_16x16.png", 16, 16],
+            ["icon_16x16@2x.png", 32, 32],
+            ["icon_32x32.png", 32, 32],
+            ["icon_32x32@2x.png", 64, 64],
+            ["icon_128x128.png", 128, 128],
+            ["icon_128x128@2x.png", 256, 256],
+            ["icon_256x256.png", 256, 256],
+            ["icon_256x256@2x.png", 512, 512],
+            ["icon_512x512.png", 512, 512],
+            ["icon_512x512@2x.png", 1024, 1024]
+        ];
+
+        for (const [name, w, h] of iconsetSpecs)
+            await runCommand("sips", ["-z", String(w), String(h), sourceIcon, "--out", path.join(iconsetDir, name)]);
+        await runCommand("iconutil", ["--convert", "icns", iconsetDir, "--output", `${iconBasename}.icns`]);
+    }
 }
 
 function quotePowerShellString(value) {
