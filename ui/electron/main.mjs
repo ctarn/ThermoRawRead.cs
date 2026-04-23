@@ -99,7 +99,7 @@ async function saveState(state) {
 function runJob(request) {
     if (!Array.isArray(request?.inputs) || request.inputs.length === 0) throw new Error("input path is required");
     if (!Array.isArray(request?.formats) || request.formats.length === 0) throw new Error("output format is required");
-    if (currentJob) throw new Error("a task is already running");
+    if (currentJob) throw new Error("already running");
 
     const exe = resolveExecutable(APPLICATION);
     const child = spawn(exe, buildCommandArgs(request), {cwd: dirname(exe), stdio: ["ignore", "pipe", "pipe"]});
