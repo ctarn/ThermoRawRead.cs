@@ -73,10 +73,6 @@ async function prepareReleaseTargets(platform, arch) {
     return {cliZip, guiZip, suffix};
 }
 
-async function prepareIcons() {
-
-}
-
 async function generateAssets() {
     await runCommand("dotnet", ["build", path.join("src", `${productName}.csproj`), "-c", "Release", "-o", buildDir]);
     await rmrf(artifactsDir);
