@@ -17,7 +17,7 @@ if (squirrelStartup) app.quit();
 
 const defaultState = Object.freeze({
     inputs: [],
-    outputDir: "",
+    output: "",
     recursive: false,
     formats: ["umz", "csv", "txt", "meth"]
 });
@@ -88,7 +88,7 @@ function buildCommandArgs(request) {
     
     if (request.recursive) args.push("--recursive");
     
-    const output = request.outputDir?.trim?.() ?? "";
+    const output = request.output?.trim?.() ?? "";
     if (output) args.push("--out", output);
 
     args.push(...request.inputs);

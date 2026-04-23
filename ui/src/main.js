@@ -67,7 +67,7 @@ const defaultOutputs = formatInputs
     .map((input) => input.value);
 const state = {
     inputs: [],
-    outputDir: "",
+    output: "",
     recursive: false,
     formats: new Set(defaultOutputs),
     running: false
@@ -120,9 +120,9 @@ function renderCommandPreview() {
         parts.push("--recursive");
     }
 
-    const outputDir = state.outputDir.trim();
-    if (outputDir) {
-        parts.push("--out", quoteArg(outputDir));
+    const output = state.output.trim();
+    if (output) {
+        parts.push("--out", quoteArg(output));
     }
 
     if (state.inputs.length === 0) {
@@ -175,7 +175,7 @@ function renderState() {
     renderInput();
     renderFormatGrid();
     renderCommandPreview();
-    elements.outputInput.value = state.outputDir;
+    elements.outputInput.value = state.output;
     elements.inputIsRecursive.checked = state.recursive;
     setRunning(state.running);
 }
@@ -186,7 +186,7 @@ function hydrate(saved = {}) {
         : defaultOutputs;
 
     state.inputs = Array.isArray(saved.inputs) ? saved.inputs : [];
-    state.outputDir = typeof saved.outputDir === "string" ? saved.outputDir : "";
+    state.output = typeof saved.output === "string" ? saved.output : "";
     state.recursive = Boolean(saved.recursive);
     state.formats = new Set(savedOutputs.length > 0 ? savedOutputs : defaultOutputs);
     state.running = false;
@@ -202,7 +202,7 @@ function persistState() {
     return commandBus.invoke("save_state", {
         state: {
             inputs: state.inputs,
-            outputDir: state.outputDir,
+            output: state.output,
             recursive: state.recursive,
             formats: selectedOutputs()
         }
@@ -216,8 +216,8 @@ async function chooseFiles() {
 
     state.inputs = [...new Set([...state.inputs, ...paths])];
 
-    if (!state.outputDir.trim()) {
-        state.outputDir = defaultOutDir(paths[0]);
+    if (!state.output.trim()) {
+        state.output = defaultOutDir(paths[0]);
     }
 
     renderState();
@@ -231,8 +231,8 @@ async function chooseInputDir() {
     const normalized = trimTrailingSeparators(directory);
     state.inputs = [...new Set([...state.inputs, normalized])];
 
-    if (!state.outputDir.trim()) {
-        state.outputDir = `${normalized}${pathSeparator(normalized)}out`;
+    if (!state.output.trim()) {
+        state.output = `${normalized}${pathSeparator(normalized)}out`;
     }
 
     renderState();
@@ -243,7 +243,7 @@ async function chooseOutputDir() {
     const directory = await commandBus.invoke("pick_output_dir");
     if (!directory) return;
 
-    state.outputDir = trimTrailingSeparators(directory);
+    state.output = trimTrailingSeparators(directory);
     renderState();
     await persistState();
 }
@@ -267,7 +267,7 @@ async function runJob() {
         await commandBus.invoke("run_job", {
             request: {
                 inputs: state.inputs,
-                outputDir: state.outputDir.trim(),
+                output: state.output.trim(),
                 recursive: state.recursive,
                 formats: selectedOutputs()
             }
@@ -302,7 +302,7 @@ async function initialize() {
     }
 
     elements.outputInput.addEventListener("input", () => {
-        state.outputDir = elements.outputInput.value;
+        state.output = elements.outputInput.value;
         renderCommandPreview();
         void persistState();
     });
