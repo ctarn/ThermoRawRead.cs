@@ -31,13 +31,8 @@ function send(channel, payload) {
     mainWindow.webContents.send(channel, payload);
 }
 
-function emitStatus(status, message) {
-    send("job-status", {status, message});
-}
-
-function emitLog(line) {
-    send("job-log", {line})
-}
+const emitStatus = (status, message) => send("job-status", { status, message });
+const emitLog = (line) => send("job-log", { line });
 
 function createMainWindow() {
     const window = new BrowserWindow({
