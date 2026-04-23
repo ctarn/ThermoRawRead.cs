@@ -304,9 +304,7 @@ async function initialize() {
         void persistState();
     });
 
-    cmdbus.on("job-log", ({line}) => {
-        appendLog(line);
-    });
+    cmdbus.on("job-log", ({line}) => appendLog(line));
 
     cmdbus.on("job-status", ({status, message}) => {
         setRunning(status === "running");
