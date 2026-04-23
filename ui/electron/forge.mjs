@@ -23,19 +23,12 @@ const artifactsDir = join(repoDir, "tmp", "artifacts");
 
 const rmRF = (target) => rm(target, { recursive: true, force: true });
 
-function runCommand(command, args, cwd = repoDir) {
+function runCommand(cmd, args, cwd = repoDir) {
     return new Promise((resolve, reject) => {
-        const process = spawn(command, args, {cwd, stdio: "inherit"});
+        const process = spawn(cmd, args, {cwd, stdio: "inherit"});
 
         process.once("error", reject);
-        process.once("close", (code) => {
-            if (code === 0) {
-                resolve();
-                return;
-            }
-
-            reject(new Error(`${command} exited with status ${code ?? "unknown"}`));
-        });
+        process.once("close", code => code === 0 ? resolve() : reject(new Error(`${cmd} exited with code ${code}`)));
     });
 }
 
