@@ -162,28 +162,19 @@ async function saveState(state) {
     await fsp.writeFile(statePath, JSON.stringify(state, null, 2), "utf8");
 }
 
-async function chooseFiles() {
-    const result = await dialog.showOpenDialog(mainWindow, {
-        title: "Select Thermo RAW files",
-        properties: ["openFile", "multiSelections"],
-        filters: [{name: "Thermo RAW", extensions: ["raw"]}]
-    });
-
+async function chooseFiles(title, filters) {
+    const result = await dialog.showOpenDialog(mainWindow, {title, properties: ["openFile", "multiSelections"], filters});
     return result.canceled ? [] : result.filePaths;
 }
 
 async function chooseFolder(title) {
-    const result = await dialog.showOpenDialog(mainWindow, {
-        title,
-        properties: ["openDirectory"]
-    });
-
+    const result = await dialog.showOpenDialog(mainWindow, {title, properties: ["openDirectory"]});
     return result.canceled ? null : result.filePaths[0] ?? null;
 }
 
 ipcMain.handle("load_state", () => loadState());
 ipcMain.handle("save_state", (_event, payload) => saveState(payload.state));
-ipcMain.handle("pick_raw_files", () => chooseFiles());
+ipcMain.handle("pick_raw_files", () => chooseFiles("Select Thermo RAW files", [{name: "Thermo RAW", extensions: ["raw"]}]));
 ipcMain.handle("pick_input_dir", () => chooseFolder("Select input folder"));
 ipcMain.handle("pick_output_dir", () => chooseFolder("Select output folder"));
 ipcMain.handle("run_job", (_event, payload) => runJob(payload.request));
