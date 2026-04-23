@@ -78,14 +78,10 @@ function resolveExecutable(name = APPLICATION) {
 
 function buildCommandArgs(request) {
     const args = [];
-    
     args.push(...request.formats.map(output => `--${output}`));
-    
     if (request.recursive) args.push("--recursive");
-    
     const output = request.output?.trim?.() ?? "";
     if (output) args.push("--out", output);
-
     args.push(...request.inputs);
     return args;
 }
