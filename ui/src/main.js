@@ -39,12 +39,14 @@ const allowedOutputs = new Set(formatInputs.map((input) => input.value));
 const defaultOutputs = formatInputs
     .filter((input) => input.checked)
     .map((input) => input.value);
+let nextTaskId = 1;
 const state = {
     inputs: [],
     output: "",
     recursive: false,
     formats: new Set(defaultOutputs),
-    running: false
+    running: false,
+    activeTaskId: null
 };
 
 function validOutputs(values) {
@@ -53,6 +55,12 @@ function validOutputs(values) {
 
 function selectedOutputs() {
     return validOutputs(Array.from(state.formats));
+}
+
+function allocateTaskId() {
+    const taskId = nextTaskId;
+    nextTaskId += 1;
+    return taskId;
 }
 
 function buildTaskArgs({preview = false} = {}) {
@@ -88,8 +96,9 @@ function buildTaskArgs({preview = false} = {}) {
     return args;
 }
 
-function buildTaskCommand(options) {
+function buildTaskCommand(taskId, options) {
     return {
+        task_id: taskId,
         command: TASK_COMMAND,
         args: buildTaskArgs(options)
     };
@@ -184,6 +193,7 @@ function hydrate(saved = {}) {
     state.recursive = Boolean(saved.recursive);
     state.formats = new Set(savedOutputs.length > 0 ? savedOutputs : defaultOutputs);
     state.running = false;
+    state.activeTaskId = null;
 
     renderState();
 }
@@ -235,12 +245,15 @@ async function chooseOutputDir() {
 
 async function runJob() {
     try {
-        const request = buildTaskCommand();
+        const taskId = allocateTaskId();
+        const request = buildTaskCommand(taskId);
+        state.activeTaskId = taskId;
         elements.logOutput.textContent = "";
         setRunning(true);
         setStatus("running", "ThermoRawRead is streaming logs from the CLI backend.");
         await BUS.invoke("run_command", request);
     } catch (error) {
+        state.activeTaskId = null;
         setRunning(false);
         appendLog(String(error));
         setStatus("error", String(error));
@@ -249,7 +262,8 @@ async function runJob() {
 
 async function stopJob() {
     try {
-        await BUS.invoke("stop_task");
+        if (state.activeTaskId == null) return;
+        await BUS.invoke("stop_task", {task_id: state.activeTaskId});
     } catch (error) {
         appendLog(String(error));
         setStatus("error", String(error));
@@ -305,11 +319,18 @@ async function initialize() {
         void persistState();
     });
 
-    BUS.on("job-log", ({line}) => appendLog(line));
+    BUS.on("job-log", ({task_id: taskId, line}) => {
+        if (taskId !== state.activeTaskId) return;
+        appendLog(line);
+    });
 
-    BUS.on("job-status", ({status, message}) => {
+    BUS.on("job-status", ({task_id: taskId, status, message}) => {
+        if (taskId !== state.activeTaskId) return;
         setRunning(status === "running");
         setStatus(status, message);
+        if (status !== "running") {
+            state.activeTaskId = null;
+        }
     });
 
     try {

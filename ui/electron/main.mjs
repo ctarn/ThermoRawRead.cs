@@ -25,13 +25,12 @@ const defaultState = Object.freeze({
 const statePath = path.join(os.homedir(), `.${APPLICATION}`, "ui-state.json");
 
 let mainWindow = null;
-let currentTask = null;
-let stopRequested = false;
+const taskStateById = new Map();
 
 // utils
 const send = (chan, msg) => mainWindow && !mainWindow.isDestroyed() && mainWindow.webContents.send(chan, msg);
-const emitStatus = (status, msg) => send("job-status", { status, message: msg });
-const emitLog = (line) => send("job-log", { line });
+const emitStatus = (taskId, status, msg) => send("job-status", {task_id: taskId, status, message: msg});
+const emitLog = (taskId, line) => send("job-log", {task_id: taskId, line});
 
 async function chooseFiles(title, filters) {
     const result = await dialog.showOpenDialog(mainWindow, {title, properties: ["openFile", "multiSelections"], filters});
@@ -43,7 +42,12 @@ async function chooseFolder(title) {
     return result.canceled ? null : result.filePaths[0] ?? null;
 }
 
-function resolveExecutable(name = APPLICATION) {
+function normalizeTaskId(taskId) {
+    if (!Number.isSafeInteger(taskId) || taskId < 0) throw new Error("task_id must be a safe integer");
+    return taskId;
+}
+
+function resolveExecutable(name = APPLICATION, taskId = null) {
     const paths = [];
     if (process.env[`${name.toUpperCase()}_PATH`]) paths.push(process.env[`${name.toUpperCase()}_PATH`]);
     paths.push(path.join(process.resourcesPath, "artifacts", name));
@@ -51,8 +55,10 @@ function resolveExecutable(name = APPLICATION) {
 
     const resolved = paths.find(path => fs.existsSync(path));
     if (resolved) return process.platform === "win32" ? `${resolved}.exe` : resolved;
-    emitLog("Attempted paths (executable not found):");
-    paths.forEach(p => emitLog(`  ${p}`));
+    if (taskId !== null) {
+        emitLog(taskId, "Attempted paths (executable not found):");
+        paths.forEach(p => emitLog(taskId, `  ${p}`));
+    }
     throw new Error(`executable \`${name}\` not found`);
 }
 // utils end
@@ -89,7 +95,8 @@ async function saveState(state) {
 }
 
 function runCommand(request) {
-    if (currentTask) throw new Error("already running");
+    const taskId = normalizeTaskId(request?.task_id);
+    if (taskStateById.has(taskId)) throw new Error(`task ${taskId} is already running`);
 
     const command = request?.command?.trim?.();
     if (!command) throw new Error("command is required");
@@ -100,38 +107,40 @@ function runCommand(request) {
         return arg;
     });
 
-    const exe = resolveExecutable(command);
+    const exe = resolveExecutable(command, taskId);
 
     const child = spawn(exe, args, {cwd: dirname(exe), stdio: ["ignore", "pipe", "pipe"]});
     let finished = false;
+    const taskState = {child, stopRequested: false};
 
-    currentTask = child;
-    stopRequested = false;
-    emitStatus("running", `Running ${exe}`);
+    taskStateById.set(taskId, taskState);
+    emitStatus(taskId, "running", `Running ${exe}`);
 
-    if (child.stdout) readline.createInterface({input: child.stdout}).on("line", emitLog);
-    if (child.stderr) readline.createInterface({input: child.stderr}).on("line", emitLog);
+    if (child.stdout) readline.createInterface({input: child.stdout}).on("line", (line) => emitLog(taskId, line));
+    if (child.stderr) readline.createInterface({input: child.stderr}).on("line", (line) => emitLog(taskId, line));
 
     const finalize = (status, message) => {
         if (finished) return;
         finished = true;
-        currentTask = null;
-        stopRequested = false;
-        emitStatus(status, message);
+        taskStateById.delete(taskId);
+        emitStatus(taskId, status, message);
     };
 
     child.once("close", (code, signal) => {
-        if (stopRequested) finalize("stopped", "Task Stopped.");
+        if (taskState.stopRequested) finalize("stopped", "Task Stopped.");
         else if (code === 0) finalize("success", "Task Completed Successfully.");
         else finalize("error", `Task Exited: code=${code}; signal=${signal}).`);
     });
     child.once("error", (error) => finalize("error", `Failed to Launch ${exe}: ${error.message}`));
 }
 
-function stopTask() {
-    if (!currentTask) return;
-    stopRequested = true;
-    currentTask.kill();
+function stopTask(request) {
+    const taskId = normalizeTaskId(request?.task_id);
+    const taskState = taskStateById.get(taskId);
+    if (!taskState) return;
+
+    taskState.stopRequested = true;
+    taskState.child.kill();
 }
 
 ipcMain.handle("load_state", () => loadState());
@@ -140,7 +149,7 @@ ipcMain.handle("pick_raw_files", () => chooseFiles("Select Input Files", [{name:
 ipcMain.handle("pick_input_dir", () => chooseFolder("Select Input Folder"));
 ipcMain.handle("pick_output_dir", () => chooseFolder("Select Output Folder"));
 ipcMain.handle("run_command", (_event, payload) => runCommand(payload));
-ipcMain.handle("stop_task", () => stopTask());
+ipcMain.handle("stop_task", (_event, payload) => stopTask(payload));
 
 app.whenReady().then(() => mainWindow = createMainWindow());
 app.on("activate", () => {if (BrowserWindow.getAllWindows().length === 0) mainWindow = createMainWindow();});
