@@ -106,9 +106,8 @@ async function prepareIcons() {
         ["icon_512x512@2x.png", 1024, 1024]
     ];
 
-    for (const [name, w, h] of iconsetSpecs) {
+    for (const [name, w, h] of iconsetSpecs)
         await runCommand("sips", ["-z", String(w), String(h), src, "--out", path.join(iconsetDir, name)]);
-    }
 
     await runCommand("iconutil", ["--convert", "icns", iconsetDir, "--output", path.join(iconDir, "icon.icns")]);
 }
