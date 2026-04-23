@@ -55,11 +55,9 @@ function createMainWindow() {
     return window;
 }
 
-function backendExecutableName(productName) {
-    return process.platform === "win32" ? `${productName}.exe` : productName;
-}
-
 function resolveBackendExecutable() {
+    const backendExecutableName = (productName) => process.platform === "win32" ? `${productName}.exe` : productName;
+    
     const candidates = [];
     if (process.env.THERMORAWREAD_BACKEND) candidates.push(process.env.THERMORAWREAD_BACKEND);
     candidates.push(path.join(process.resourcesPath, "artifacts", backendExecutableName(name)));
