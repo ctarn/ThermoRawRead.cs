@@ -56,7 +56,6 @@ function createMainWindow() {
     return window;
 }
 
-
 function backendExecutableName(productName) {
     return process.platform === "win32" ? `${productName}.exe` : productName;
 }
