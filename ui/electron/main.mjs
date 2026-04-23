@@ -15,6 +15,30 @@ const tasks = new Map();
 
 if (squirrelStartup) app.quit();
 
+function createMainWindow() {
+    const window = new BrowserWindow({
+        width: 1200,
+        height: 900,
+        minWidth: 800,
+        minHeight: 600,
+        backgroundColor: "#ffffff",
+        webPreferences: {
+            contextIsolation: true,
+            nodeIntegration: false,
+            sandbox: false,
+            preload: join(dirname(fileURLToPath(import.meta.url)), "preload.mjs"),
+        }
+    });
+
+    void window.loadFile(join(dirname(fileURLToPath(import.meta.url)), "..", "src", "main.html"));
+    window.on("closed", () => {if (mainWindow === window) mainWindow = null;});
+    return window;
+}
+
+app.whenReady().then(() => mainWindow = createMainWindow());
+app.on("activate", () => {if (BrowserWindow.getAllWindows().length === 0) mainWindow = createMainWindow();});
+app.on("window-all-closed", () => {if (process.platform !== "darwin") app.quit();});
+
 const send = (chan, msg) => mainWindow && !mainWindow.isDestroyed() && mainWindow.webContents.send(chan, msg);
 const emitStatus = (taskId, status, msg) => send("task-status", {task_id: taskId, status, message: msg});
 const emitLog = (taskId, line) => send("task-log", {task_id: taskId, line});
@@ -98,30 +122,6 @@ function stopTask(request) {
     state.stopped = true;
     state.process.kill();
 }
-
-function createMainWindow() {
-    const window = new BrowserWindow({
-        width: 1200,
-        height: 900,
-        minWidth: 800,
-        minHeight: 600,
-        backgroundColor: "#ffffff",
-        webPreferences: {
-            contextIsolation: true,
-            nodeIntegration: false,
-            sandbox: false,
-            preload: join(dirname(fileURLToPath(import.meta.url)), "preload.mjs"),
-        }
-    });
-
-    void window.loadFile(join(dirname(fileURLToPath(import.meta.url)), "..", "src", "main.html"));
-    window.on("closed", () => {if (mainWindow === window) mainWindow = null;});
-    return window;
-}
-
-app.whenReady().then(() => mainWindow = createMainWindow());
-app.on("activate", () => {if (BrowserWindow.getAllWindows().length === 0) mainWindow = createMainWindow();});
-app.on("window-all-closed", () => {if (process.platform !== "darwin") app.quit();});
 
 ipcMain.handle("load_state", (_event, payload) => loadState(payload.state_path));
 ipcMain.handle("save_state", (_event, payload) => saveState(payload.state_path, payload.state));
