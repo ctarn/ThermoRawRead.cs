@@ -123,9 +123,7 @@ function runJob(request) {
     attachLogStream(child.stdout);
     attachLogStream(child.stderr);
 
-    child.once("error", (error) => {
-        finalize("error", `Failed to launch ${backend}: ${error.message}`);
-    });
+    child.once("error", (error) => finalize("error", `Failed to launch ${backend}: ${error.message}`));
 
     child.once("close", (code, signal) => {
         if (stopRequested) {
@@ -133,12 +131,10 @@ function runJob(request) {
             finalize("stopped", "Conversion stopped.");
             return;
         }
-
         if (code === 0) {
             finalize("success", "Conversion completed successfully.");
             return;
         }
-
         const detail = signal ? `signal ${signal}` : `status ${code ?? "unknown"}`;
         finalize("error", `Conversion exited with ${detail}.`);
     });
