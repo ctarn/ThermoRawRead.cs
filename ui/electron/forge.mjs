@@ -21,9 +21,7 @@ const releaseDir = join(repoDir, "tmp", "release", version);
 const iconDir = join(repoDir, "tmp", "icon");
 const artifactsDir = join(repoDir, "tmp", "artifacts");
 
-async function rmRF(target) {
-    await rm(target, {recursive: true, force: true});
-}
+const rmRF = (target) => rm(target, { recursive: true, force: true });
 
 function runCommand(command, args, cwd = repoDir) {
     return new Promise((resolve, reject) => {
