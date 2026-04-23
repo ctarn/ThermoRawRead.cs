@@ -75,12 +75,12 @@ function runCommand(request) {
     if (proc.stdout) readline.createInterface({input: proc.stdout}).on("line", (line) => emitLog(id, line));
     if (proc.stderr) readline.createInterface({input: proc.stderr}).on("line", (line) => emitLog(id, line));
 
-    const state = {process: proc, stopRequested: false};
+    const state = {process: proc, stopped: false};
     tasks.set(id, state);
     emitStatus(id, "running", `Task #${id} Running: ${exe}`);
 
     proc.once("close", (code, signal) => {
-        if (state.stopRequested) emitStatus(id, "stopped", `Task #${id} Stopped.`);
+        if (state.stopped) emitStatus(id, "stopped", `Task #${id} Stopped.`);
         else if (code === 0) emitStatus(id, "success", `Task #${id} Completed Successfully.`);
         else emitStatus(id, "error", `Task #${id} Exited: code=${code}; signal=${signal}.`);
         tasks.delete(id)
@@ -96,7 +96,7 @@ function stopTask(request) {
     const taskState = tasks.get(taskId);
     if (!taskState) return;
 
-    taskState.stopRequested = true;
+    taskState.stopped = true;
     taskState.process.kill();
 }
 
