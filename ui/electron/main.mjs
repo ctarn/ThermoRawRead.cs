@@ -88,19 +88,19 @@ async function saveState(state) {
     await fsp.writeFile(statePath, JSON.stringify(state, null, 2), "utf8");
 }
 
-function runTask(request) {
-    if (!Array.isArray(request?.inputs) || request.inputs.length === 0) throw new Error("input path is required");
-    if (!Array.isArray(request?.formats) || request.formats.length === 0) throw new Error("output format is required");
+function runCommand(request) {
     if (currentTask) throw new Error("already running");
 
-    const exe = resolveExecutable(APPLICATION);
+    const command = request?.command?.trim?.();
+    if (!command) throw new Error("command is required");
 
-    const args = [];
-    args.push(...request.formats.map(output => `--${output}`));
-    if (request.recursive) args.push("--recursive");
-    const output = request.output?.trim?.() ?? "";
-    if (output) args.push("--out", output);
-    args.push(...request.inputs);
+    if (!Array.isArray(request?.args)) throw new Error("command arguments are required");
+    const args = request.args.map((arg) => {
+        if (typeof arg !== "string") throw new Error("command arguments must be strings");
+        return arg;
+    });
+
+    const exe = resolveExecutable(command);
 
     const child = spawn(exe, args, {cwd: dirname(exe), stdio: ["ignore", "pipe", "pipe"]});
     let finished = false;
@@ -139,7 +139,7 @@ ipcMain.handle("save_state", (_event, payload) => saveState(payload.state));
 ipcMain.handle("pick_raw_files", () => chooseFiles("Select Input Files", [{name: "Thermo RAW", extensions: ["raw"]}]));
 ipcMain.handle("pick_input_dir", () => chooseFolder("Select Input Folder"));
 ipcMain.handle("pick_output_dir", () => chooseFolder("Select Output Folder"));
-ipcMain.handle("run_task", (_event, payload) => runTask(payload.request));
+ipcMain.handle("run_command", (_event, payload) => runCommand(payload));
 ipcMain.handle("stop_task", () => stopTask());
 
 app.whenReady().then(() => mainWindow = createMainWindow());

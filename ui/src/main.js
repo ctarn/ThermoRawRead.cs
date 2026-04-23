@@ -3,6 +3,7 @@ function quoteArg(value) {
     return /\s/.test(value) ? JSON.stringify(value) : value;
 }
 
+const TASK_COMMAND = "ThermoRawRead";
 const BUS = window.commandbus ?? null;
 
 const statusMeta = {
@@ -54,6 +55,46 @@ function selectedOutputs() {
     return validOutputs(Array.from(state.formats));
 }
 
+function buildTaskArgs({preview = false} = {}) {
+    const args = [];
+    const outputs = selectedOutputs().sort();
+
+    if (!preview && outputs.length === 0) {
+        throw new Error("output format is required");
+    }
+
+    args.push(...outputs.map((output) => `--${output}`));
+
+    if (state.recursive) {
+        args.push("--recursive");
+    }
+
+    const output = state.output.trim();
+    if (output) {
+        args.push("--out", output);
+    }
+
+    const inputs = state.inputs.filter((input) => typeof input === "string" && input.length > 0);
+    if (inputs.length === 0) {
+        if (preview) {
+            args.push("<input>");
+        } else {
+            throw new Error("input path is required");
+        }
+    } else {
+        args.push(...inputs);
+    }
+
+    return args;
+}
+
+function buildTaskCommand(options) {
+    return {
+        command: TASK_COMMAND,
+        args: buildTaskArgs(options)
+    };
+}
+
 function renderInput() {
     elements.inputList.replaceChildren();
 
@@ -83,27 +124,7 @@ function renderFormatGrid() {
 }
 
 function renderCommandPreview() {
-    const parts = ["ThermoRawRead"];
-
-    selectedOutputs()
-        .sort()
-        .forEach((output) => parts.push(`--${output}`));
-
-    if (state.recursive) {
-        parts.push("--recursive");
-    }
-
-    const output = state.output.trim();
-    if (output) {
-        parts.push("--out", quoteArg(output));
-    }
-
-    if (state.inputs.length === 0) {
-        parts.push("<input>");
-    } else {
-        parts.push(...state.inputs.map(quoteArg));
-    }
-
+    const parts = [TASK_COMMAND, ...buildTaskArgs({preview: true}).map(quoteArg)];
     elements.commandPreview.textContent = parts.join(" ");
 }
 
@@ -197,7 +218,7 @@ async function chooseInputDir() {
     const directory = await BUS.invoke("pick_input_dir");
     if (!directory) return;
 
-    state.inputs = [...new Set([...state.inputs, normalized])];
+    state.inputs = [...new Set([...state.inputs, directory])];
 
     renderState();
     await persistState();
@@ -213,19 +234,12 @@ async function chooseOutputDir() {
 }
 
 async function runJob() {
-    elements.logOutput.textContent = "";
-    setRunning(true);
-    setStatus("running", "ThermoRawRead is streaming logs from the CLI backend.");
-
     try {
-        await BUS.invoke("run_task", {
-            request: {
-                inputs: state.inputs,
-                output: state.output.trim(),
-                recursive: state.recursive,
-                formats: selectedOutputs()
-            }
-        });
+        const request = buildTaskCommand();
+        elements.logOutput.textContent = "";
+        setRunning(true);
+        setStatus("running", "ThermoRawRead is streaming logs from the CLI backend.");
+        await BUS.invoke("run_command", request);
     } catch (error) {
         setRunning(false);
         appendLog(String(error));
