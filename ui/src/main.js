@@ -66,7 +66,7 @@ const defaultOutputs = formatInputs
     .filter((input) => input.checked)
     .map((input) => input.value);
 const state = {
-    inputPaths: [],
+    inputs: [],
     outputDir: "",
     recursive: false,
     formats: new Set(defaultOutputs),
@@ -84,7 +84,7 @@ function selectedOutputs() {
 function renderInput() {
     elements.inputList.replaceChildren();
 
-    const count = state.inputPaths.length;
+    const count = state.inputs.length;
     elements.inputCount.textContent = `${count} entr${count <= 1 ? "y" : "ies"}`;
 
     if (count === 0) {
@@ -95,7 +95,7 @@ function renderInput() {
         return;
     }
 
-    state.inputPaths.forEach((path) => {
+    state.inputs.forEach((path) => {
         const item = document.createElement("li");
         item.textContent = path;
         elements.inputList.append(item);
@@ -125,10 +125,10 @@ function renderCommandPreview() {
         parts.push("--out", quoteArg(outputDir));
     }
 
-    if (state.inputPaths.length === 0) {
+    if (state.inputs.length === 0) {
         parts.push("<input>");
     } else {
-        parts.push(...state.inputPaths.map(quoteArg));
+        parts.push(...state.inputs.map(quoteArg));
     }
 
     elements.commandPreview.textContent = parts.join(" ");
@@ -185,7 +185,7 @@ function hydrate(saved = {}) {
         ? validOutputs(saved.formats)
         : defaultOutputs;
 
-    state.inputPaths = Array.isArray(saved.inputPaths) ? saved.inputPaths : [];
+    state.inputs = Array.isArray(saved.inputs) ? saved.inputs : [];
     state.outputDir = typeof saved.outputDir === "string" ? saved.outputDir : "";
     state.recursive = Boolean(saved.recursive);
     state.formats = new Set(savedOutputs.length > 0 ? savedOutputs : defaultOutputs);
@@ -201,7 +201,7 @@ function persistState() {
 
     return commandBus.invoke("save_state", {
         state: {
-            inputPaths: state.inputPaths,
+            inputs: state.inputs,
             outputDir: state.outputDir,
             recursive: state.recursive,
             formats: selectedOutputs()
@@ -214,7 +214,7 @@ async function chooseFiles() {
     const paths = await commandBus.invoke("pick_raw_files");
     if (!Array.isArray(paths) || paths.length === 0) return;
 
-    state.inputPaths = [...new Set([...state.inputPaths, ...paths])];
+    state.inputs = [...new Set([...state.inputs, ...paths])];
 
     if (!state.outputDir.trim()) {
         state.outputDir = defaultOutDir(paths[0]);
@@ -229,7 +229,7 @@ async function chooseInputDir() {
     if (!directory) return;
 
     const normalized = trimTrailingSeparators(directory);
-    state.inputPaths = [...new Set([...state.inputPaths, normalized])];
+    state.inputs = [...new Set([...state.inputs, normalized])];
 
     if (!state.outputDir.trim()) {
         state.outputDir = `${normalized}${pathSeparator(normalized)}out`;
@@ -249,7 +249,7 @@ async function chooseOutputDir() {
 }
 
 async function runJob() {
-    if (state.inputPaths.length === 0) {
+    if (state.inputs.length === 0) {
         setStatus("error", "At least one RAW file or folder is required.");
         return;
     }
@@ -266,7 +266,7 @@ async function runJob() {
     try {
         await commandBus.invoke("run_job", {
             request: {
-                inputPaths: state.inputPaths,
+                inputs: state.inputs,
                 outputDir: state.outputDir.trim(),
                 recursive: state.recursive,
                 formats: selectedOutputs()
@@ -352,7 +352,7 @@ async function initialize() {
     });
 
     elements.inputClear.addEventListener("click", () => {
-        state.inputPaths = [];
+        state.inputs = [];
         renderInput();
         renderCommandPreview();
         void persistState();

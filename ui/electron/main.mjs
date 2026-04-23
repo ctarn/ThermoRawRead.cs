@@ -16,7 +16,7 @@ const {app, BrowserWindow, dialog, ipcMain} = electron;
 if (squirrelStartup) app.quit();
 
 const defaultState = Object.freeze({
-    inputPaths: [],
+    inputs: [],
     outputDir: "",
     recursive: false,
     formats: ["umz", "csv", "txt", "meth"]
@@ -91,7 +91,7 @@ function buildCommandArgs(request) {
     const output = request.outputDir?.trim?.() ?? "";
     if (output) args.push("--out", output);
 
-    args.push(...request.inputPaths);
+    args.push(...request.inputs);
     return args;
 }
 
@@ -101,7 +101,7 @@ function finishJob(status, message) {
 }
 
 function runJob(request) {
-    if (!Array.isArray(request?.inputPaths) || request.inputPaths.length === 0) {
+    if (!Array.isArray(request?.inputs) || request.inputs.length === 0) {
         throw new Error("at least one input path is required");
     }
     if (!Array.isArray(request?.formats) || request.formats.length === 0) {
