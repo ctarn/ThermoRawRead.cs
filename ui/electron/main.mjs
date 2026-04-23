@@ -56,7 +56,7 @@ function createMainWindow() {
 }
 
 function resolveBackendExecutable() {
-    const parseExe = (productName) => process.platform === "win32" ? `${productName}.exe` : productName;
+    const parseExe = (exe) => process.platform === "win32" ? `${exe}.exe` : exe;
 
     const candidates = [];
     if (process.env.THERMORAWREAD_BACKEND) candidates.push(process.env.THERMORAWREAD_BACKEND);
