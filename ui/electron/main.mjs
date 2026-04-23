@@ -117,7 +117,7 @@ function runJob(request) {
         emitStatus(status, message);
     };
 
-    child.once("error", (error) => finalize("error", `Failed to launch ${exe}: ${error.message}`));
+    child.once("error", (error) => finalize("error", `Failed to Launch ${exe}: ${error.message}`));
 
     child.once("close", (code, signal) => {
         if (stopRequested) {
