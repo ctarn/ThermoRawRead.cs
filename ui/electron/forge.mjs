@@ -26,7 +26,6 @@ const rmRF = (target) => rm(target, { recursive: true, force: true });
 function runCommand(cmd, args, cwd = repoDir) {
     return new Promise((resolve, reject) => {
         const process = spawn(cmd, args, {cwd, stdio: "inherit"});
-
         process.once("error", reject);
         process.once("close", code => code === 0 ? resolve() : reject(new Error(`${cmd} exited with code \`${code}\``)));
     });
