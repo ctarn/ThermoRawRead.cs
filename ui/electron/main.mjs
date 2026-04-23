@@ -114,6 +114,7 @@ function runJob(request) {
         if (finished) return;
         finished = true;
         currentJob = null;
+        stopRequested = false;
         emitStatus(status, message);
     };
 
