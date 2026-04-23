@@ -22,6 +22,8 @@ const defaultState = Object.freeze({
     formats: ["umz", "csv", "txt", "meth"]
 });
 
+const statePath = path.join(os.homedir(), `.${APPLICATION}`, "ui-state.json");
+
 let mainWindow = null;
 let currentJob = null;
 let stopRequested = false;
@@ -75,8 +77,6 @@ function buildCommandArgs(request) {
     args.push(...request.inputs);
     return args;
 }
-
-const statePath = path.join(os.homedir(), `.${APPLICATION}`, "ui-state.json");
 
 async function loadState() {
     try {
