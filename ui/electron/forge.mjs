@@ -47,10 +47,10 @@ function isInstallerArtifact(platform, artifact) {
     return installerExtensions(platform).some((extension) => lowerArtifact.endsWith(`.${extension.toLowerCase()}`));
 }
 
-async function copyReleaseArtifact(source, destination) {
-    await mkdir(path.dirname(destination), {recursive: true});
-    await rmRF(destination);
-    await copyFile(source, destination);
+async function copyReleaseArtifact(src, dst) {
+    await mkdir(path.dirname(dst), {recursive: true});
+    await rmRF(dst);
+    await copyFile(src, dst);
 }
 
 async function prepareReleaseTargets(platform, arch) {
@@ -182,7 +182,7 @@ async function organizeReleaseArtifacts(makeResults) {
         }
 
         for (const artifact of result.artifacts) {
-            if (isGuiZipArtifact(artifact)) {
+            if (artifact.toLowerCase().endsWith(".zip")) {
                 await copyReleaseArtifact(artifact, releaseTargets.guiZip);
                 rewrittenArtifacts.push(releaseTargets.guiZip);
                 continue;
