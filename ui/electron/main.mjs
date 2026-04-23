@@ -1,7 +1,6 @@
 import fs from "node:fs";
 import fsp from "node:fs/promises";
 import path, {dirname, join} from "node:path";
-import os from "node:os";
 import readline from "node:readline";
 import {spawn} from "node:child_process";
 import {fileURLToPath} from 'url';
@@ -14,15 +13,6 @@ const APPLICATION = "ThermoRawRead";
 const {app, BrowserWindow, dialog, ipcMain} = electron;
 
 if (squirrelStartup) app.quit();
-
-const defaultState = Object.freeze({
-    inputs: [],
-    output: "",
-    recursive: false,
-    formats: ["umz", "csv", "txt", "meth"]
-});
-
-const statePath = path.join(os.homedir(), `.${APPLICATION}`, "ui-state.json");
 
 let mainWindow = null;
 const tasks = new Map();
@@ -84,12 +74,13 @@ function createMainWindow() {
     return window;
 }
 
-async function loadState() {
-    const exists = await fsp.access(statePath).then(() => true).catch(err => err.code === 'ENOENT' ? false : Promise.reject(err));
-    return exists? JSON.parse(await fsp.readFile(statePath, "utf8")) : structuredClone(defaultState);
+async function loadState(statePath) {
+    if (typeof statePath !== "string" || statePath.length === 0) throw new Error("state_path is required");
+    return JSON.parse(await fsp.readFile(statePath, "utf8"));
 }
 
-async function saveState(state) {
+async function saveState(statePath, state) {
+    if (typeof statePath !== "string" || statePath.length === 0) throw new Error("state_path is required");
     await fsp.mkdir(path.dirname(statePath), {recursive: true});
     await fsp.writeFile(statePath, JSON.stringify(state, null, 2), "utf8");
 }
@@ -143,8 +134,8 @@ function stopTask(request) {
     taskState.child.kill();
 }
 
-ipcMain.handle("load_state", () => loadState());
-ipcMain.handle("save_state", (_event, payload) => saveState(payload.state));
+ipcMain.handle("load_state", (_event, payload) => loadState(payload.state_path));
+ipcMain.handle("save_state", (_event, payload) => saveState(payload.state_path, payload.state));
 ipcMain.handle("pick_raw_files", () => chooseFiles("Select Input Files", [{name: "Thermo RAW", extensions: ["raw"]}]));
 ipcMain.handle("pick_input_dir", () => chooseFolder("Select Input Folder"));
 ipcMain.handle("pick_output_dir", () => chooseFolder("Select Output Folder"));

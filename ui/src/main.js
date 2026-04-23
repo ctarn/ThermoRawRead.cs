@@ -3,8 +3,15 @@ function quoteArg(value) {
     return /\s/.test(value) ? JSON.stringify(value) : value;
 }
 
+const APPLICATION = "ThermoRawRead";
 const TASK_COMMAND = "ThermoRawRead";
 const BUS = window.commandbus ?? null;
+const defaultState = Object.freeze({
+    inputs: [],
+    output: "",
+    recursive: false,
+    formats: ["umz", "csv", "txt", "meth"]
+});
 
 const statusMeta = {
     idle: {badgeClass: "badge badge-muted", badgeText: "Idle"},
@@ -34,6 +41,9 @@ const elements = {
 };
 
 const bridgeErrorMessage = "Desktop bridge is unavailable. Restart the app to reload the preload script.";
+const statePath = BUS
+    ? `${BUS.env.homeDir}${BUS.env.pathSep}.${APPLICATION}${BUS.env.pathSep}ui-state.json`
+    : "";
 const formatInputs = Array.from(elements.formatGrid.querySelectorAll("input[type='checkbox']"));
 const allowedOutputs = new Set(formatInputs.map((input) => input.value));
 const defaultOutputs = formatInputs
@@ -204,6 +214,7 @@ function persistState() {
     }
 
     return BUS.invoke("save_state", {
+        state_path: statePath,
         state: {
             inputs: state.inputs,
             output: state.output,
@@ -334,10 +345,10 @@ async function initialize() {
     });
 
     try {
-        const saved = await BUS.invoke("load_state");
+        const saved = await BUS.invoke("load_state", {state_path: statePath});
         hydrate(saved);
     } catch {
-        hydrate({});
+        hydrate(defaultState);
     }
 }
 
