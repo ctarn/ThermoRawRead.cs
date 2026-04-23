@@ -86,16 +86,6 @@ async function saveState(state) {
     await fsp.writeFile(statePath, JSON.stringify(state, null, 2), "utf8");
 }
 
-function buildCommandArgs(request) {
-    const args = [];
-    args.push(...request.formats.map(output => `--${output}`));
-    if (request.recursive) args.push("--recursive");
-    const output = request.output?.trim?.() ?? "";
-    if (output) args.push("--out", output);
-    args.push(...request.inputs);
-    return args;
-}
-
 function runJob(request) {
     if (!Array.isArray(request?.inputs) || request.inputs.length === 0) throw new Error("input path is required");
     if (!Array.isArray(request?.formats) || request.formats.length === 0) throw new Error("output format is required");
