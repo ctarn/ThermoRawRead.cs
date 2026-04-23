@@ -111,14 +111,7 @@ async function prepareIcons() {
 }
 
 async function buildBackend(platform = process.platform, arch = process.arch) {
-    await runCommand("dotnet", [
-        "build",
-        path.join("src", `${productName}.csproj`),
-        "-c",
-        "Release",
-        "-o",
-        buildDir
-    ]);
+    await runCommand("dotnet", ["build", path.join("src", `${productName}.csproj`), "-c", "Release", "-o", buildDir]);
 }
 
 async function buildAndPrepareAssets(platform = process.platform, arch = process.arch) {
