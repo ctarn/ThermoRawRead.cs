@@ -91,6 +91,32 @@ function buildCommandArgs(request) {
     return args;
 }
 
+const statePath = path.join(os.homedir(), `.${name}`, "ui-state.json");
+
+async function loadState() {
+    try {
+        return JSON.parse(await fsp.readFile(statePath, "utf8"));
+    } catch (error) {
+        if (error && error.code === "ENOENT") return structuredClone(defaultState);
+        throw error;
+    }
+}
+
+async function saveState(state) {
+    await fsp.mkdir(path.dirname(statePath), {recursive: true});
+    await fsp.writeFile(statePath, JSON.stringify(state, null, 2), "utf8");
+}
+
+async function chooseFiles(title, filters) {
+    const result = await dialog.showOpenDialog(mainWindow, {title, properties: ["openFile", "multiSelections"], filters});
+    return result.canceled ? [] : result.filePaths;
+}
+
+async function chooseFolder(title) {
+    const result = await dialog.showOpenDialog(mainWindow, {title, properties: ["openDirectory"]});
+    return result.canceled ? null : result.filePaths[0] ?? null;
+}
+
 function runJob(request) {
     if (!Array.isArray(request?.inputs) || request.inputs.length === 0) {
         throw new Error("at least one input path is required");
@@ -144,32 +170,6 @@ function stopJob() {
     if (!currentJob) return;
     stopRequested = true;
     currentJob.kill();
-}
-
-const statePath = path.join(os.homedir(), `.${name}`, "ui-state.json");
-
-async function loadState() {
-    try {
-        return JSON.parse(await fsp.readFile(statePath, "utf8"));
-    } catch (error) {
-        if (error && error.code === "ENOENT") return structuredClone(defaultState);
-        throw error;
-    }
-}
-
-async function saveState(state) {
-    await fsp.mkdir(path.dirname(statePath), {recursive: true});
-    await fsp.writeFile(statePath, JSON.stringify(state, null, 2), "utf8");
-}
-
-async function chooseFiles(title, filters) {
-    const result = await dialog.showOpenDialog(mainWindow, {title, properties: ["openFile", "multiSelections"], filters});
-    return result.canceled ? [] : result.filePaths;
-}
-
-async function chooseFolder(title) {
-    const result = await dialog.showOpenDialog(mainWindow, {title, properties: ["openDirectory"]});
-    return result.canceled ? null : result.filePaths[0] ?? null;
 }
 
 ipcMain.handle("load_state", () => loadState());
