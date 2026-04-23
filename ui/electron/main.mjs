@@ -72,13 +72,12 @@ function runCommand(request) {
     const args = [...request.args];
 
     const child = spawn(exe, args, {cwd: dirname(exe), stdio: ["ignore", "pipe", "pipe"]});
-    const state = {child, stopRequested: false};
-
-    tasks.set(id, state);
-    emitStatus(id, "running", `Task #${id} Running: ${exe}`);
-
     if (child.stdout) readline.createInterface({input: child.stdout}).on("line", (line) => emitLog(id, line));
     if (child.stderr) readline.createInterface({input: child.stderr}).on("line", (line) => emitLog(id, line));
+
+    const state = {child, stopRequested: false};
+    tasks.set(id, state);
+    emitStatus(id, "running", `Task #${id} Running: ${exe}`);
 
     child.once("close", (code, signal) => {
         if (state.stopRequested) emitStatus("stopped", `Task #${id} Stopped.`);
