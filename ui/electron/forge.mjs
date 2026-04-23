@@ -92,7 +92,6 @@ async function generateAssets() {
         const iconsetDir = join(iconDir, "icon.iconset");
         await rmrf(iconsetDir);
         await mkdirs(iconsetDir);
-
         for (const size of [16, 32, 128, 256, 512]) {
             const sz = String(size);
             const dsz = String(size * 2);
