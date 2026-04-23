@@ -86,7 +86,7 @@ async function saveState(state) {
     await fsp.writeFile(statePath, JSON.stringify(state, null, 2), "utf8");
 }
 
-function runJob(request) {
+function runTask(request) {
     if (!Array.isArray(request?.inputs) || request.inputs.length === 0) throw new Error("input path is required");
     if (!Array.isArray(request?.formats) || request.formats.length === 0) throw new Error("output format is required");
     if (currentTask) throw new Error("already running");
@@ -127,7 +127,7 @@ function runJob(request) {
     });
 }
 
-function stopJob() {
+function stopTask() {
     if (!currentTask) return;
     stopRequested = true;
     currentTask.kill();
@@ -138,8 +138,8 @@ ipcMain.handle("save_state", (_event, payload) => saveState(payload.state));
 ipcMain.handle("pick_raw_files", () => chooseFiles("Select Input Files", [{name: "Thermo RAW", extensions: ["raw"]}]));
 ipcMain.handle("pick_input_dir", () => chooseFolder("Select Input Folder"));
 ipcMain.handle("pick_output_dir", () => chooseFolder("Select Output Folder"));
-ipcMain.handle("run_job", (_event, payload) => runJob(payload.request));
-ipcMain.handle("stop_job", () => stopJob());
+ipcMain.handle("run_task", (_event, payload) => runTask(payload.request));
+ipcMain.handle("stop_task", () => stopTask());
 
 app.whenReady().then(() => mainWindow = createMainWindow());
 app.on("activate", () => {if (BrowserWindow.getAllWindows().length === 0) mainWindow = createMainWindow();});

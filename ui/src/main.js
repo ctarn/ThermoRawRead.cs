@@ -264,7 +264,7 @@ async function runJob() {
     setStatus("running", "ThermoRawRead is streaming logs from the CLI backend.");
 
     try {
-        await commandBus.invoke("run_job", {
+        await commandBus.invoke("run_task", {
             request: {
                 inputs: state.inputs,
                 output: state.output.trim(),
@@ -281,7 +281,7 @@ async function runJob() {
 
 async function stopJob() {
     try {
-        await commandBus.invoke("stop_job");
+        await commandBus.invoke("stop_task");
     } catch (error) {
         appendLog(String(error));
         setStatus("error", String(error));
