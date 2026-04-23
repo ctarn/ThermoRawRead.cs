@@ -92,12 +92,11 @@ function runCommand(request) {
 }
 
 function stopTask(request) {
-    const taskId = normalizeTaskId(request?.task_id);
-    const taskState = tasks.get(taskId);
-    if (!taskState) return;
-
-    taskState.stopped = true;
-    taskState.process.kill();
+    const id = normalizeTaskId(request?.task_id);
+    const state = tasks.get(id);
+    if (!state) return;
+    state.stopped = true;
+    state.process.kill();
 }
 
 function createMainWindow() {
