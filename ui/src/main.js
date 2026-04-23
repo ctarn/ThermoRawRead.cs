@@ -282,11 +282,8 @@ async function initialize() {
 
     formatInputs.forEach((input) => {
         input.addEventListener("change", async () => {
-            if (input.checked) {
-                state.formats.add(input.value);
-            } else {
-                state.formats.delete(input.value);
-            }
+            if (input.checked) state.formats.add(input.value);
+            else state.formats.delete(input.value);
 
             renderFormatGrid();
             renderCommandPreview();
