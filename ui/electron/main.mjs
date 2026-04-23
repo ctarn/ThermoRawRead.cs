@@ -156,12 +156,7 @@ ipcMain.handle("stop_job", () => stopJob());
 
 app.whenReady().then(() => {
     mainWindow = createMainWindow();
-
-    app.on("activate", () => {
-        if (BrowserWindow.getAllWindows().length === 0) {
-            mainWindow = createMainWindow();
-        }
-    });
+    app.on("activate", () => {if (BrowserWindow.getAllWindows().length === 0) mainWindow = createMainWindow();});
 });
 
 app.on("window-all-closed", () => {
