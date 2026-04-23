@@ -42,6 +42,17 @@ async function chooseFolder(title) {
     const result = await dialog.showOpenDialog(mainWindow, {title, properties: ["openDirectory"]});
     return result.canceled ? null : result.filePaths[0] ?? null;
 }
+
+function resolveExecutable(name = APPLICATION) {
+    const paths = [];
+    if (process.env[`${name.toUpperCase()}_BACKEND`]) paths.push(process.env[`${name.toUpperCase()}_BACKEND`]);
+    paths.push(path.join(process.resourcesPath, "artifacts", name));
+    paths.push(path.join(path.dirname(process.execPath), "artifacts", name));
+
+    const resolved = paths.find(path => fs.existsSync(path));
+    if (resolved) return process.platform === "win32" ? `${resolved}.exe` : resolved;
+    throw new Error(`executable \`${name}\` not found`);
+}
 // utils end
 
 function createMainWindow() {
@@ -73,17 +84,6 @@ async function loadState() {
 async function saveState(state) {
     await fsp.mkdir(path.dirname(statePath), {recursive: true});
     await fsp.writeFile(statePath, JSON.stringify(state, null, 2), "utf8");
-}
-
-function resolveExecutable(name = APPLICATION) {
-    const paths = [];
-    if (process.env[`${name.toUpperCase()}_BACKEND`]) paths.push(process.env[`${name.toUpperCase()}_BACKEND`]);
-    paths.push(path.join(process.resourcesPath, "artifacts", name));
-    paths.push(path.join(path.dirname(process.execPath), "artifacts", name));
-
-    const resolved = paths.find(path => fs.existsSync(path));
-    if (resolved) return process.platform === "win32" ? `${resolved}.exe` : resolved;
-    throw new Error(`executable \`${name}\` not found`);
 }
 
 function buildCommandArgs(request) {
