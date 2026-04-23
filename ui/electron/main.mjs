@@ -34,6 +34,17 @@ async function chooseFolder(title) {
     return result.canceled ? null : result.filePaths[0] ?? null;
 }
 
+async function loadState(path) {
+    if (typeof path !== "string" || path.length === 0) throw new Error("state path is required");
+    return JSON.parse(await fsp.readFile(path, "utf8"));
+}
+
+async function saveState(path, state) {
+    if (typeof path !== "string" || path.length === 0) throw new Error("state path is required");
+    await fsp.mkdir(path.dirname(path), {recursive: true});
+    await fsp.writeFile(path, JSON.stringify(state, null, 2), "utf8");
+}
+
 function resolveExecutable(name, taskId = null) {
     const paths = [];
     if (process.env[`${name.toUpperCase()}_PATH`]) paths.push(process.env[`${name.toUpperCase()}_PATH`]);
@@ -45,17 +56,6 @@ function resolveExecutable(name, taskId = null) {
     emitLog(taskId, "Attempted paths (executable not found):");
     paths.forEach(p => emitLog(taskId, `  ${p}`));
     throw new Error(`executable \`${name}\` not found`);
-}
-
-async function loadState(path) {
-    if (typeof path !== "string" || path.length === 0) throw new Error("state path is required");
-    return JSON.parse(await fsp.readFile(path, "utf8"));
-}
-
-async function saveState(path, state) {
-    if (typeof path !== "string" || path.length === 0) throw new Error("state path is required");
-    await fsp.mkdir(path.dirname(path), {recursive: true});
-    await fsp.writeFile(path, JSON.stringify(state, null, 2), "utf8");
 }
 
 function runCommand(request) {
