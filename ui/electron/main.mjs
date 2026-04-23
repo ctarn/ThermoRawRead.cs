@@ -121,7 +121,7 @@ function runTask(request) {
     child.once("close", (code, signal) => {
         if (stopRequested) finalize("stopped", "Task Stopped.");
         else if (code === 0) finalize("success", "Task Completed Successfully.");
-        else finalize("error", `Task Exited. (code=${code}; signal=${signal})`);
+        else finalize("error", `Task Exited: code=${code}; signal=${signal}).`);
     });
     child.once("error", (error) => finalize("error", `Failed to Launch ${exe}: ${error.message}`));
 }
