@@ -32,6 +32,16 @@ const send = (chan, msg) => mainWindow && !mainWindow.isDestroyed() && mainWindo
 const emitStatus = (status, msg) => send("job-status", { status, message: msg });
 const emitLog = (line) => send("job-log", { line });
 
+async function chooseFiles(title, filters) {
+    const result = await dialog.showOpenDialog(mainWindow, {title, properties: ["openFile", "multiSelections"], filters});
+    return result.canceled ? [] : result.filePaths;
+}
+
+async function chooseFolder(title) {
+    const result = await dialog.showOpenDialog(mainWindow, {title, properties: ["openDirectory"]});
+    return result.canceled ? null : result.filePaths[0] ?? null;
+}
+
 function createMainWindow() {
     const window = new BrowserWindow({
         title: APPLICATION,
@@ -86,16 +96,6 @@ async function loadState() {
 async function saveState(state) {
     await fsp.mkdir(path.dirname(statePath), {recursive: true});
     await fsp.writeFile(statePath, JSON.stringify(state, null, 2), "utf8");
-}
-
-async function chooseFiles(title, filters) {
-    const result = await dialog.showOpenDialog(mainWindow, {title, properties: ["openFile", "multiSelections"], filters});
-    return result.canceled ? [] : result.filePaths;
-}
-
-async function chooseFolder(title) {
-    const result = await dialog.showOpenDialog(mainWindow, {title, properties: ["openDirectory"]});
-    return result.canceled ? null : result.filePaths[0] ?? null;
 }
 
 function runJob(request) {
