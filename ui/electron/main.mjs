@@ -35,10 +35,6 @@ function emitStatus(status, message) {
     send("job-status", {status, message});
 }
 
-function emitLog(line) {
-    send("job-log", {line});
-}
-
 function createMainWindow() {
     const window = new BrowserWindow({
         title: "ThermoRawRead",
@@ -78,7 +74,7 @@ function resolveBackendExecutable() {
 
 function attachLogStream(stream) {
     if (!stream) return;
-    readline.createInterface({input: stream}).on("line", emitLog);
+    readline.createInterface({input: stream}).on("line", line => send("job-log", {line}));
 }
 
 function buildCommandArgs(request) {
