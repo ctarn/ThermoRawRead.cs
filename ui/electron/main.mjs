@@ -94,7 +94,7 @@ function runCommand(request) {
 function stopTask(request) {
     const id = normalizeTaskId(request?.task_id);
     const state = tasks.get(id);
-    if (!state) return;
+    if (!state) throw new Error(`task ${id} is not existing`);
     state.stopped = true;
     state.process.kill();
 }
