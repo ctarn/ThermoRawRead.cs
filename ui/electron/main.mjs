@@ -10,10 +10,10 @@ import squirrelStartup from "electron-squirrel-startup";
 
 const {app, BrowserWindow, dialog, ipcMain} = electron;
 
-if (squirrelStartup) app.quit();
-
 let mainWindow = null;
 const tasks = new Map();
+
+if (squirrelStartup) app.quit();
 
 const send = (chan, msg) => mainWindow && !mainWindow.isDestroyed() && mainWindow.webContents.send(chan, msg);
 const emitStatus = (taskId, status, msg) => send("task-status", {task_id: taskId, status, message: msg});
