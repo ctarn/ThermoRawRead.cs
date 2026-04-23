@@ -63,7 +63,7 @@ function resolveExecutable(name = name) {
 
     const resolved = paths.find(path => fs.existsSync(path));
     if (resolved) return process.platform === "win32" ? `${resolved}.exe` : resolved;
-    throw new Error(`Executable \`${name}\` Not Found.`);
+    throw new Error(`executable \`${name}\` not found`);
 }
 
 function buildCommandArgs(request) {
