@@ -11,7 +11,7 @@ function trimTrailingSeparators(path) {
     return path.replace(/[\\/]+$/, "");
 }
 
-const cmdbus = window.commandbus ?? null;
+const BUS = window.commandbus ?? null;
 
 const statusMeta = {
     idle: {badgeClass: "badge badge-muted", badgeText: "Idle"},
@@ -176,11 +176,11 @@ function hydrate(saved = {}) {
 }
 
 function persistState() {
-    if (!cmdbus) {
+    if (!BUS) {
         return Promise.resolve();
     }
 
-    return cmdbus.invoke("save_state", {
+    return BUS.invoke("save_state", {
         state: {
             inputs: state.inputs,
             output: state.output,
@@ -192,7 +192,7 @@ function persistState() {
 }
 
 async function chooseFiles() {
-    const paths = await cmdbus.invoke("pick_raw_files");
+    const paths = await BUS.invoke("pick_raw_files");
     if (!Array.isArray(paths) || paths.length === 0) return;
 
     state.inputs = [...new Set([...state.inputs, ...paths])];
@@ -202,7 +202,7 @@ async function chooseFiles() {
 }
 
 async function chooseInputDir() {
-    const directory = await cmdbus.invoke("pick_input_dir");
+    const directory = await BUS.invoke("pick_input_dir");
     if (!directory) return;
 
     const normalized = trimTrailingSeparators(directory);
@@ -217,7 +217,7 @@ async function chooseInputDir() {
 }
 
 async function chooseOutputDir() {
-    const directory = await cmdbus.invoke("pick_output_dir");
+    const directory = await BUS.invoke("pick_output_dir");
     if (!directory) return;
 
     state.output = trimTrailingSeparators(directory);
@@ -231,7 +231,7 @@ async function runJob() {
     setStatus("running", "ThermoRawRead is streaming logs from the CLI backend.");
 
     try {
-        await cmdbus.invoke("run_task", {
+        await BUS.invoke("run_task", {
             request: {
                 inputs: state.inputs,
                 output: state.output.trim(),
@@ -248,7 +248,7 @@ async function runJob() {
 
 async function stopJob() {
     try {
-        await cmdbus.invoke("stop_task");
+        await BUS.invoke("stop_task");
     } catch (error) {
         appendLog(String(error));
         setStatus("error", String(error));
@@ -261,7 +261,7 @@ async function initialize() {
     renderCommandPreview();
     setRunning(false);
 
-    if (!cmdbus) {
+    if (!BUS) {
         setBridgeEnabled(false);
         setStatus("error", bridgeErrorMessage);
         appendLog(bridgeErrorMessage);
@@ -304,15 +304,15 @@ async function initialize() {
         void persistState();
     });
 
-    cmdbus.on("job-log", ({line}) => appendLog(line));
+    BUS.on("job-log", ({line}) => appendLog(line));
 
-    cmdbus.on("job-status", ({status, message}) => {
+    BUS.on("job-status", ({status, message}) => {
         setRunning(status === "running");
         setStatus(status, message);
     });
 
     try {
-        const saved = await cmdbus.invoke("load_state");
+        const saved = await BUS.invoke("load_state");
         hydrate(saved);
     } catch {
         hydrate({});
