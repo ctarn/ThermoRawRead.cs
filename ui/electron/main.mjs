@@ -15,7 +15,6 @@ if (squirrelStartup) app.quit();
 let mainWindow = null;
 const tasks = new Map();
 
-// utils
 const send = (chan, msg) => mainWindow && !mainWindow.isDestroyed() && mainWindow.webContents.send(chan, msg);
 const emitStatus = (taskId, status, msg) => send("task-status", {task_id: taskId, status, message: msg});
 const emitLog = (taskId, line) => send("task-log", {task_id: taskId, line});
@@ -49,7 +48,6 @@ function resolveExecutable(name, taskId = null) {
     }
     throw new Error(`executable \`${name}\` not found`);
 }
-// utils end
 
 function createMainWindow() {
     const window = new BrowserWindow({
