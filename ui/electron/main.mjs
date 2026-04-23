@@ -123,14 +123,11 @@ function runJob(request) {
         if (stopRequested) {
             stopRequested = false;
             finalize("stopped", "Task Stopped.");
-            return;
-        }
-        if (code === 0) {
+        } else if (code === 0) {
             finalize("success", "Task Completed Successfully.");
-            return;
+        } else {
+            finalize("error", `Task Exited with ${signal ? `Signal ${signal}` : `Status ${code ?? "Unknown"}`}.`);
         }
-        const detail = signal ? `Signal ${signal}` : `Status ${code ?? "Unknown"}`;
-        finalize("error", `Task Exited with ${detail}.`);
     });
 }
 
