@@ -89,16 +89,16 @@ async function generateAssets() {
     await writeFile(`${iconBasename}.ico`, await pngToIco(sourceIcon));
 
     if (process.platform === "darwin") {
-        const iconsetDir = join(iconDir, "icon.iconset");
-        await rmrf(iconsetDir);
-        await mkdirs(iconsetDir);
+        const out = join(iconDir, "icon.iconset");
+        await rmrf(out);
+        await mkdirs(out);
         for (const size of [16, 32, 128, 256, 512]) {
             const sz = String(size);
             const dsz = String(size * 2);
-            await runCommand("sips", ["-z", sz, sz, sourceIcon, "-o", path.join(iconsetDir, `icon_${sz}x${sz}.png`)]);
-            await runCommand("sips", ["-z", dsz, dsz, sourceIcon, "-o", path.join(iconsetDir, `icon_${sz}x${sz}@2x.png`)]);
+            await runCommand("sips", ["-z", sz, sz, sourceIcon, "-o", path.join(out, `icon_${sz}x${sz}.png`)]);
+            await runCommand("sips", ["-z", dsz, dsz, sourceIcon, "-o", path.join(out, `icon_${sz}x${sz}@2x.png`)]);
         }
-        await runCommand("iconutil", ["--convert", "icns", iconsetDir, "--output", `${iconBasename}.icns`]);
+        await runCommand("iconutil", ["--convert", "icns", out, "--output", `${iconBasename}.icns`]);
     }
 }
 
