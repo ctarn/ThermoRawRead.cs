@@ -291,30 +291,12 @@ async function initialize() {
         });
     });
 
-    elements.inputAddFile.addEventListener("click", () => {
-        void chooseFiles();
-    });
-
-    elements.inputAddFolder.addEventListener("click", () => {
-        void chooseInputDir();
-    });
-
-    elements.outputPick.addEventListener("click", () => {
-        void chooseOutputDir();
-    });
-
-    elements.taskStart.addEventListener("click", () => {
-        void runJob();
-    });
-
-    elements.taskStop.addEventListener("click", () => {
-        void stopJob();
-    });
-
-    elements.logClear.addEventListener("click", () => {
-        elements.logOutput.textContent = "idle...";
-    });
-
+    elements.inputAddFile.addEventListener("click", chooseFiles);
+    elements.inputAddFolder.addEventListener("click", chooseInputDir);
+    elements.outputPick.addEventListener("click", chooseOutputDir);
+    elements.taskStart.addEventListener("click", runJob);
+    elements.taskStop.addEventListener("click", stopJob);
+    elements.logClear.addEventListener("click", () => elements.logOutput.textContent = "idle...");
     elements.inputClear.addEventListener("click", () => {
         state.inputs = [];
         renderInput();
