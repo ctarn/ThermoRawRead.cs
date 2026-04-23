@@ -71,21 +71,21 @@ function runCommand(request) {
     const exe = resolveExecutable(command, id);
     const args = [...request.args];
 
-    const child = spawn(exe, args, {cwd: dirname(exe), stdio: ["ignore", "pipe", "pipe"]});
-    if (child.stdout) readline.createInterface({input: child.stdout}).on("line", (line) => emitLog(id, line));
-    if (child.stderr) readline.createInterface({input: child.stderr}).on("line", (line) => emitLog(id, line));
+    const proc = spawn(exe, args, {cwd: dirname(exe), stdio: ["ignore", "pipe", "pipe"]});
+    if (proc.stdout) readline.createInterface({input: proc.stdout}).on("line", (line) => emitLog(id, line));
+    if (proc.stderr) readline.createInterface({input: proc.stderr}).on("line", (line) => emitLog(id, line));
 
-    const state = {child, stopRequested: false};
+    const state = {child: proc, stopRequested: false};
     tasks.set(id, state);
     emitStatus(id, "running", `Task #${id} Running: ${exe}`);
 
-    child.once("close", (code, signal) => {
+    proc.once("close", (code, signal) => {
         if (state.stopRequested) emitStatus(id, "stopped", `Task #${id} Stopped.`);
         else if (code === 0) emitStatus(id, "success", `Task #${id} Completed Successfully.`);
         else emitStatus(id, "error", `Task #${id} Exited: code=${code}; signal=${signal}.`);
         tasks.delete(id)
     });
-    child.once("error", (error) => {
+    proc.once("error", (error) => {
         emitStatus(id, "error", `Task #${id} Failed: ${error.message}`);
         tasks.delete(id)
     });
