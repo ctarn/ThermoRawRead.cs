@@ -38,10 +38,6 @@ function installerExtensions(platform) {
     return [];
 }
 
-function isGuiZipArtifact(artifact) {
-    return artifact.toLowerCase().endsWith(".zip");
-}
-
 function isInstallerArtifact(platform, artifact) {
     const lowerArtifact = artifact.toLowerCase();
     return installerExtensions(platform).some((extension) => lowerArtifact.endsWith(`.${extension.toLowerCase()}`));
