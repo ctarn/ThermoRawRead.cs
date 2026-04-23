@@ -56,12 +56,12 @@ function createMainWindow() {
 }
 
 function resolveBackendExecutable() {
-    const backendExecutableName = (productName) => process.platform === "win32" ? `${productName}.exe` : productName;
-    
+    const parseExe = (productName) => process.platform === "win32" ? `${productName}.exe` : productName;
+
     const candidates = [];
     if (process.env.THERMORAWREAD_BACKEND) candidates.push(process.env.THERMORAWREAD_BACKEND);
-    candidates.push(path.join(process.resourcesPath, "artifacts", backendExecutableName(name)));
-    candidates.push(path.join(path.dirname(process.execPath), "artifacts", backendExecutableName(name)));
+    candidates.push(path.join(process.resourcesPath, "artifacts", parseExe(name)));
+    candidates.push(path.join(path.dirname(process.execPath), "artifacts", parseExe(name)));
 
     const resolved = candidates.find(candidate => fs.existsSync(candidate));
     if (resolved) return resolved;
