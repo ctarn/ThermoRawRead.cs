@@ -67,7 +67,7 @@ function createMainWindow() {
             contextIsolation: true,
             nodeIntegration: false,
             sandbox: false,
-            preload: join(dirname(fileURLToPath(import.meta.url)), 'preload.js'),
+            preload: join(dirname(fileURLToPath(import.meta.url)), "preload.mjs"),
         }
     });
 
