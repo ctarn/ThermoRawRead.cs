@@ -78,7 +78,6 @@ async function stageBackend(platform = process.platform, arch = process.arch) {
     await cp(buildDir, artifactsDir, {recursive: true});
 }
 
-
 async function prepareIcons() {
     const src = join(repoDir, "fig", `${productName}.png`);
     await stat(src);
