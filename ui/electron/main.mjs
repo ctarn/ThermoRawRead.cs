@@ -104,7 +104,7 @@ function runJob(request) {
         throw new Error("at least one output format is required");
     }
     if (currentJob) {
-        throw new Error("a conversion is already running");
+        throw new Error("a task is already running");
     }
 
     const backend = resolveBackendExecutable();
