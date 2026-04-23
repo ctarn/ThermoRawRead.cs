@@ -81,13 +81,13 @@ function runCommand(request) {
     if (child.stderr) readline.createInterface({input: child.stderr}).on("line", (line) => emitLog(id, line));
 
     child.once("close", (code, signal) => {
-        if (state.stopRequested) emitStatus("stopped", "Task Stopped.");
-        else if (code === 0) emitStatus("success", "Task Completed Successfully.");
-        else emitStatus("error", `Task Exited: code=${code}; signal=${signal}.`);
+        if (state.stopRequested) emitStatus("stopped", `Task #${id} Stopped.`);
+        else if (code === 0) emitStatus("success", `Task #${id} Completed Successfully.`);
+        else emitStatus("error", `Task #${id} Exited: code=${code}; signal=${signal}.`);
         tasks.delete(id)
     });
     child.once("error", (error) => {
-        emitStatus("error", `Failed to Launch ${exe}: ${error.message}`);
+        emitStatus("error", `Task #${id} Failed: ${error.message}`);
         tasks.delete(id)
     });
 }
