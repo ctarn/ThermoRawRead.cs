@@ -32,9 +32,9 @@ async function chooseFolder(title) {
     return result.canceled ? null : result.filePaths[0] ?? null;
 }
 
-function normalizeTaskId(taskId) {
-    if (!Number.isSafeInteger(taskId) || taskId < 0) throw new Error("task_id must be a safe integer");
-    return taskId;
+function normalizeTaskId(id) {
+    if (!Number.isSafeInteger(id) || id < 0) throw new Error("task_id must be a safe integer");
+    return id;
 }
 
 function resolveExecutable(name = APPLICATION, taskId = null) {
