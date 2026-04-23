@@ -49,26 +49,6 @@ function resolveExecutable(name, taskId = null) {
     throw new Error(`executable \`${name}\` not found`);
 }
 
-function createMainWindow() {
-    const window = new BrowserWindow({
-        width: 1200,
-        height: 900,
-        minWidth: 800,
-        minHeight: 600,
-        backgroundColor: "#ffffff",
-        webPreferences: {
-            contextIsolation: true,
-            nodeIntegration: false,
-            sandbox: false,
-            preload: join(dirname(fileURLToPath(import.meta.url)), "preload.mjs"),
-        }
-    });
-
-    void window.loadFile(join(dirname(fileURLToPath(import.meta.url)), "..", "src", "main.html"));
-    window.on("closed", () => {if (mainWindow === window) mainWindow = null;});
-    return window;
-}
-
 async function loadState(statePath) {
     if (typeof statePath !== "string" || statePath.length === 0) throw new Error("state_path is required");
     return JSON.parse(await fsp.readFile(statePath, "utf8"));
@@ -127,6 +107,26 @@ function stopTask(request) {
 
     taskState.stopRequested = true;
     taskState.child.kill();
+}
+
+function createMainWindow() {
+    const window = new BrowserWindow({
+        width: 1200,
+        height: 900,
+        minWidth: 800,
+        minHeight: 600,
+        backgroundColor: "#ffffff",
+        webPreferences: {
+            contextIsolation: true,
+            nodeIntegration: false,
+            sandbox: false,
+            preload: join(dirname(fileURLToPath(import.meta.url)), "preload.mjs"),
+        }
+    });
+
+    void window.loadFile(join(dirname(fileURLToPath(import.meta.url)), "..", "src", "main.html"));
+    window.on("closed", () => {if (mainWindow === window) mainWindow = null;});
+    return window;
 }
 
 ipcMain.handle("load_state", (_event, payload) => loadState(payload.state_path));
