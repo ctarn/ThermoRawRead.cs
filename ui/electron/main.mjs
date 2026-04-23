@@ -159,7 +159,6 @@ async function loadState() {
                 formats: [...defaultState.formats]
             };
         }
-
         throw error;
     }
 }
