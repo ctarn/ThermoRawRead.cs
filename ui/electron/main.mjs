@@ -75,7 +75,7 @@ function runCommand(request) {
     if (proc.stdout) readline.createInterface({input: proc.stdout}).on("line", (line) => emitLog(id, line));
     if (proc.stderr) readline.createInterface({input: proc.stderr}).on("line", (line) => emitLog(id, line));
 
-    const state = {child: proc, stopRequested: false};
+    const state = {process: proc, stopRequested: false};
     tasks.set(id, state);
     emitStatus(id, "running", `Task #${id} Running: ${exe}`);
 
@@ -97,7 +97,7 @@ function stopTask(request) {
     if (!taskState) return;
 
     taskState.stopRequested = true;
-    taskState.child.kill();
+    taskState.process.kill();
 }
 
 function createMainWindow() {

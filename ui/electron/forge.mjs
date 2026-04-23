@@ -28,13 +28,13 @@ async function rmRF(target) {
 
 function runCommand(command, args, cwd = repoDir) {
     return new Promise((resolve, reject) => {
-        const child = spawn(command, args, {
+        const process = spawn(command, args, {
             cwd,
             stdio: "inherit"
         });
 
-        child.once("error", reject);
-        child.once("close", (code) => {
+        process.once("error", reject);
+        process.once("close", (code) => {
             if (code === 0) {
                 resolve();
                 return;
