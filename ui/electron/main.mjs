@@ -26,12 +26,8 @@ let mainWindow = null;
 let currentJob = null;
 let stopRequested = false;
 
-function send(channel, payload) {
-    if (!mainWindow || mainWindow.isDestroyed()) return;
-    mainWindow.webContents.send(channel, payload);
-}
-
-const emitStatus = (status, message) => send("job-status", { status, message });
+const send = (chan, msg) => mainWindow && !mainWindow.isDestroyed() && mainWindow.webContents.send(chan, msg);
+const emitStatus = (status, msg) => send("job-status", { status, message: msg });
 const emitLog = (line) => send("job-log", { line });
 
 function createMainWindow() {
