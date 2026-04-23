@@ -121,7 +121,7 @@ async function buildBackend() {
     await runCommand("dotnet", ["build", path.join("src", `${productName}.csproj`), "-c", "Release", "-o", buildDir]);
 }
 
-async function buildAndPrepareAssets() {
+async function generateAssets() {
     await buildBackend();
     await stageBackend();
     await prepareIcons();
@@ -154,7 +154,7 @@ async function createCliZip(platform, destination) {
     return destination;
 }
 
-async function organizeReleaseArtifacts(makeResults) {
+async function organizeRelease(makeResults) {
     const cliDone = new Set();
     const releaseTargetsBySuffix = new Map();
     const rewrittenResults = [];
@@ -210,8 +210,8 @@ async function organizeReleaseArtifacts(makeResults) {
 export default {
     outDir: join(repoDir, "tmp", "forge"),
     hooks: {
-        generateAssets: async () => buildAndPrepareAssets(),
-        postMake: async (_forgeConfig, makeResults) => organizeReleaseArtifacts(makeResults)
+        generateAssets: async () => generateAssets(),
+        postMake: async (_forgeConfig, makeResults) => organizeRelease(makeResults)
     },
     packagerConfig: {
         appBundleId: "io.ctarn.thermorawread",
