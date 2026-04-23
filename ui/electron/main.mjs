@@ -42,7 +42,7 @@ function createMainWindow() {
         height: 920,
         minWidth: 1024,
         minHeight: 720,
-        backgroundColor: "#f6efe7",
+        backgroundColor: "#ffffff",
         webPreferences: {
             contextIsolation: true,
             nodeIntegration: false,
