@@ -102,7 +102,15 @@ function runJob(request) {
     if (currentJob) throw new Error("already running");
 
     const exe = resolveExecutable(APPLICATION);
-    const child = spawn(exe, buildCommandArgs(request), {cwd: dirname(exe), stdio: ["ignore", "pipe", "pipe"]});
+
+    const args = [];
+    args.push(...request.formats.map(output => `--${output}`));
+    if (request.recursive) args.push("--recursive");
+    const output = request.output?.trim?.() ?? "";
+    if (output) args.push("--out", output);
+    args.push(...request.inputs);
+
+    const child = spawn(exe, args, {cwd: dirname(exe), stdio: ["ignore", "pipe", "pipe"]});
     let finished = false;
 
     const finalize = (status, message) => {
