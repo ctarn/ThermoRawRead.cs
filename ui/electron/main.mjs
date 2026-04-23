@@ -118,10 +118,7 @@ function runJob(request) {
     }
 
     const backend = resolveExecutable();
-    const child = spawn(backend, buildCommandArgs(request), {
-        cwd: dirname(backend),
-        stdio: ["ignore", "pipe", "pipe"]
-    });
+    const child = spawn(backend, buildCommandArgs(request), {cwd: dirname(backend), stdio: ["ignore", "pipe", "pipe"]});
     let finished = false;
 
     const finalize = (status, message) => {
