@@ -80,8 +80,7 @@ function buildCommandArgs(request) {
 
 async function loadState() {
     const exists = await fsp.access(statePath).then(() => true).catch(err => err.code === 'ENOENT' ? false : Promise.reject(err));
-    if (exists) return JSON.parse(await fsp.readFile(statePath, "utf8"));
-    return structuredClone(defaultState);
+    return exists? JSON.parse(await fsp.readFile(statePath, "utf8")) : structuredClone(defaultState);
 }
 
 async function saveState(state) {
