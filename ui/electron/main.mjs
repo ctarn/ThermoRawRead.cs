@@ -174,9 +174,9 @@ async function chooseFolder(title) {
 
 ipcMain.handle("load_state", () => loadState());
 ipcMain.handle("save_state", (_event, payload) => saveState(payload.state));
-ipcMain.handle("pick_raw_files", () => chooseFiles("Select Thermo RAW files", [{name: "Thermo RAW", extensions: ["raw"]}]));
-ipcMain.handle("pick_input_dir", () => chooseFolder("Select input folder"));
-ipcMain.handle("pick_output_dir", () => chooseFolder("Select output folder"));
+ipcMain.handle("pick_raw_files", () => chooseFiles("Select Input Files", [{name: "Thermo RAW", extensions: ["raw"]}]));
+ipcMain.handle("pick_input_dir", () => chooseFolder("Select Input Folder"));
+ipcMain.handle("pick_output_dir", () => chooseFolder("Select Output Folder"));
 ipcMain.handle("run_job", (_event, payload) => runJob(payload.request));
 ipcMain.handle("stop_job", () => stopJob());
 
