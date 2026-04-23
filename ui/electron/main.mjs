@@ -65,6 +65,16 @@ function createMainWindow() {
     return window;
 }
 
+async function loadState() {
+    const exists = await fsp.access(statePath).then(() => true).catch(err => err.code === 'ENOENT' ? false : Promise.reject(err));
+    return exists? JSON.parse(await fsp.readFile(statePath, "utf8")) : structuredClone(defaultState);
+}
+
+async function saveState(state) {
+    await fsp.mkdir(path.dirname(statePath), {recursive: true});
+    await fsp.writeFile(statePath, JSON.stringify(state, null, 2), "utf8");
+}
+
 function resolveExecutable(name = APPLICATION) {
     const paths = [];
     if (process.env[`${name.toUpperCase()}_BACKEND`]) paths.push(process.env[`${name.toUpperCase()}_BACKEND`]);
@@ -84,16 +94,6 @@ function buildCommandArgs(request) {
     if (output) args.push("--out", output);
     args.push(...request.inputs);
     return args;
-}
-
-async function loadState() {
-    const exists = await fsp.access(statePath).then(() => true).catch(err => err.code === 'ENOENT' ? false : Promise.reject(err));
-    return exists? JSON.parse(await fsp.readFile(statePath, "utf8")) : structuredClone(defaultState);
-}
-
-async function saveState(state) {
-    await fsp.mkdir(path.dirname(statePath), {recursive: true});
-    await fsp.writeFile(statePath, JSON.stringify(state, null, 2), "utf8");
 }
 
 function runJob(request) {
