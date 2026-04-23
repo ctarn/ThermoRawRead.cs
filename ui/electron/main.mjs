@@ -75,7 +75,7 @@ function runCommand(request) {
     const state = {child, stopRequested: false};
 
     tasks.set(id, state);
-    emitStatus(id, "running", `Running ${exe}`);
+    emitStatus(id, "running", `Running Task #${id}: ${exe}`);
 
     if (child.stdout) readline.createInterface({input: child.stdout}).on("line", (line) => emitLog(id, line));
     if (child.stderr) readline.createInterface({input: child.stderr}).on("line", (line) => emitLog(id, line));
