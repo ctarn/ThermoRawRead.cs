@@ -28,7 +28,7 @@ function runCommand(cmd, args, cwd = repoDir) {
         const process = spawn(cmd, args, {cwd, stdio: "inherit"});
 
         process.once("error", reject);
-        process.once("close", code => code === 0 ? resolve() : reject(new Error(`${cmd} exited with code ${code}`)));
+        process.once("close", code => code === 0 ? resolve() : reject(new Error(`${cmd} exited with code \`${code}\``)));
     });
 }
 
