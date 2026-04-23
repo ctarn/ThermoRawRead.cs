@@ -40,14 +40,6 @@ const elements = {
     logOutput: document.querySelector("#log-output"),
 };
 
-const missingElements = Object.entries(elements)
-    .filter(([, element]) => !element)
-    .map(([name]) => name);
-
-if (missingElements.length > 0) {
-    throw new Error(`missing UI elements: ${missingElements.join(", ")}`);
-}
-
 const bridgeErrorMessage = "Desktop bridge is unavailable. Restart the app to reload the preload script.";
 const formatInputs = Array.from(elements.formatGrid.querySelectorAll("input[type='checkbox']"));
 const allowedOutputs = new Set(formatInputs.map((input) => input.value));
