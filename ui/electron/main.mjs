@@ -58,10 +58,10 @@ function resolveExecutable(name = APPLICATION) {
 function createMainWindow() {
     const window = new BrowserWindow({
         title: APPLICATION,
-        width: 1360,
-        height: 920,
-        minWidth: 1024,
-        minHeight: 720,
+        width: 1200,
+        height: 900,
+        minWidth: 800,
+        minHeight: 600,
         backgroundColor: "#ffffff",
         webPreferences: {
             contextIsolation: true,
