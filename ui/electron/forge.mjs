@@ -112,9 +112,7 @@ async function createCliZip(platform, destination) {
 
         if (platform === "win32") {
             const quote = (value) => `'${value.replace(/'/g, "''")}'`;
-            await runCommand("powershell", [
-                "-NoProfile",
-                "-Command",
+            await runCommand("powershell", ["-NoProfile", "-Command",
                 `Compress-Archive -Path ${quote(`${cliStageDir}\\*`)} -DestinationPath ${quote(destination)} -Force`
             ]);
         } else {
