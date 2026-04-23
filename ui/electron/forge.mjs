@@ -79,12 +79,12 @@ async function stageBackend(platform = process.platform, arch = process.arch) {
 
 
 async function prepareIcons() {
-    const sourcePng = join(repoDir, "fig", `${productName}.png`);
-    await stat(sourcePng);
+    const src = join(repoDir, "fig", `${productName}.png`);
+    await stat(src);
     await rmRF(iconDir);
     await mkdir(iconDir, {recursive: true});
-    await cp(sourcePng, path.join(iconDir, "icon.png"));
-    await writeFile(path.join(iconDir, "icon.ico"), await pngToIco(sourcePng));
+    await cp(src, path.join(iconDir, "icon.png"));
+    await writeFile(path.join(iconDir, "icon.ico"), await pngToIco(src));
 
     if (process.platform !== "darwin") return;
     const iconsetDir = join(iconDir, "icon.iconset");
@@ -105,7 +105,7 @@ async function prepareIcons() {
     ];
 
     for (const [name, w, h] of iconsetSpecs) {
-        await runCommand("sips", ["-z", String(w), String(h), sourcePng, "--out", path.join(iconsetDir, name)]);
+        await runCommand("sips", ["-z", String(w), String(h), src, "--out", path.join(iconsetDir, name)]);
     }
 
     await runCommand("iconutil", ["--convert", "icns", iconsetDir, "--output", path.join(iconDir, "icon.icns")]);
