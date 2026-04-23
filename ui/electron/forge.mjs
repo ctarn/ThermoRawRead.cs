@@ -77,9 +77,7 @@ async function stageBackend() {
     try {
         await stat(buildDir);
     } catch {
-        throw new Error(
-            `missing backend build at ${buildDir}. Run npm run package or build src/${productName}.csproj first.`
-        );
+        throw new Error(`missing backend build at ${buildDir}`);
     }
 
     await rmrf(artifactsDir);
