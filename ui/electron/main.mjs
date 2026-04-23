@@ -154,7 +154,7 @@ async function loadState() {
         return JSON.parse(content);
     } catch (error) {
         if (error && error.code === "ENOENT") {
-            return {...defaultState, formats: [...defaultState.formats]}; // deep copy
+            return structuredClone(defaultState);
         }
         throw error;
     }
