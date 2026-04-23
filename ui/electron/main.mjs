@@ -128,15 +128,15 @@ function runJob(request) {
     child.once("close", (code, signal) => {
         if (stopRequested) {
             stopRequested = false;
-            finalize("stopped", "Conversion stopped.");
+            finalize("stopped", "Task Stopped.");
             return;
         }
         if (code === 0) {
-            finalize("success", "Conversion completed successfully.");
+            finalize("success", "Task Completed Successfully.");
             return;
         }
-        const detail = signal ? `signal ${signal}` : `status ${code ?? "unknown"}`;
-        finalize("error", `Conversion exited with ${detail}.`);
+        const detail = signal ? `Signal ${signal}` : `Status ${code ?? "Unknown"}`;
+        finalize("error", `Task Exited with ${detail}.`);
     });
 }
 
