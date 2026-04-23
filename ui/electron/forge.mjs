@@ -22,6 +22,7 @@ const iconDir = join(repoDir, "tmp", "icon");
 const artifactsDir = join(repoDir, "tmp", "artifacts");
 
 const rmRF = (target) => rm(target, { recursive: true, force: true });
+const mkdirs = (target) => mkdir(target, { recursive: true });
 
 function runCommand(cmd, args, cwd = repoDir) {
     return new Promise((resolve, reject) => {
@@ -44,7 +45,7 @@ function isInstallerArtifact(platform, artifact) {
 }
 
 async function copyReleaseArtifact(src, dst) {
-    await mkdir(path.dirname(dst), {recursive: true});
+    await mkdirs(path.dirname(dst));
     await rmRF(dst);
     await copyFile(src, dst);
 }
@@ -53,7 +54,7 @@ async function prepareReleaseTargets(platform, arch) {
     const zip = path.join(releaseDir, `${productName}-${version}.${rid}.zip`);
     const cliZip = path.join(releaseDir, `${productName}-cli-${version}.${rid}.zip`);
 
-    await mkdir(releaseDir, {recursive: true});
+    await mkdirs(releaseDir);
     await rmRF(zip);
     await rmRF(cliZip);
 
@@ -82,14 +83,14 @@ async function prepareIcons() {
     const src = join(repoDir, "fig", `${productName}.png`);
     await stat(src);
     await rmRF(iconDir);
-    await mkdir(iconDir, {recursive: true});
+    await mkdirs(iconDir);
     await cp(src, path.join(iconDir, "icon.png"));
     await writeFile(path.join(iconDir, "icon.ico"), await pngToIco(src));
 
     if (process.platform !== "darwin") return;
     const iconsetDir = join(iconDir, "icon.iconset");
     await rmRF(iconsetDir);
-    await mkdir(iconsetDir, {recursive: true});
+    await mkdirs(iconsetDir);
 
     const iconsetSpecs = [
         ["icon_16x16.png", 16, 16],
