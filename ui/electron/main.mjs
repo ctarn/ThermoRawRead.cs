@@ -66,12 +66,10 @@ function runCommand(request) {
     if (!command) throw new Error("command is required");
 
     if (!Array.isArray(request?.args)) throw new Error("command arguments are required");
-    const args = request.args.map((arg) => {
-        if (typeof arg !== "string") throw new Error("command arguments must be strings");
-        return arg;
-    });
-
+    if (request.args.some(arg => typeof arg !== "string")) throw new Error("command arguments must be strings");
+    
     const exe = resolveExecutable(command, id);
+    const args = [...request.args];
 
     const child = spawn(exe, args, {cwd: dirname(exe), stdio: ["ignore", "pipe", "pipe"]});
     let finished = false;
