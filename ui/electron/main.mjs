@@ -80,13 +80,16 @@ function runCommand(request) {
     if (child.stdout) readline.createInterface({input: child.stdout}).on("line", (line) => emitLog(id, line));
     if (child.stderr) readline.createInterface({input: child.stderr}).on("line", (line) => emitLog(id, line));
 
-    const finalize = (status, message) => {if (tasks.delete(id)) emitStatus(id, status, message);};
     child.once("close", (code, signal) => {
-        if (state.stopRequested) finalize("stopped", "Task Stopped.");
-        else if (code === 0) finalize("success", "Task Completed Successfully.");
-        else finalize("error", `Task Exited: code=${code}; signal=${signal}.`);
+        if (state.stopRequested) emitStatus("stopped", "Task Stopped.");
+        else if (code === 0) emitStatus("success", "Task Completed Successfully.");
+        else emitStatus("error", `Task Exited: code=${code}; signal=${signal}.`);
+        tasks.delete(id)
     });
-    child.once("error", (error) => finalize("error", `Failed to Launch ${exe}: ${error.message}`));
+    child.once("error", (error) => {
+        emitStatus("error", `Failed to Launch ${exe}: ${error.message}`);
+        tasks.delete(id)
+    });
 }
 
 function stopTask(request) {
