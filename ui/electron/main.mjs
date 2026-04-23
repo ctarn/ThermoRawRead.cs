@@ -82,7 +82,7 @@ async function loadState() {
     try {
         return JSON.parse(await fsp.readFile(statePath, "utf8"));
     } catch (error) {
-        if (error && error.code === "ENOENT") return structuredClone(defaultState);
+        if (error?.code === "ENOENT") return structuredClone(defaultState);
         throw error;
     }
 }
