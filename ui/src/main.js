@@ -226,16 +226,6 @@ async function chooseOutputDir() {
 }
 
 async function runJob() {
-    if (state.inputs.length === 0) {
-        setStatus("error", "At least one RAW file or folder is required.");
-        return;
-    }
-
-    if (state.formats.size === 0) {
-        setStatus("error", "Select at least one export format.");
-        return;
-    }
-
     elements.logOutput.textContent = "";
     setRunning(true);
     setStatus("running", "ThermoRawRead is streaming logs from the CLI backend.");
