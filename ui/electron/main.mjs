@@ -80,13 +80,13 @@ function runCommand(request) {
     emitStatus(id, "running", `Task #${id} Running: ${exe}`);
 
     child.once("close", (code, signal) => {
-        if (state.stopRequested) emitStatus("stopped", `Task #${id} Stopped.`);
-        else if (code === 0) emitStatus("success", `Task #${id} Completed Successfully.`);
-        else emitStatus("error", `Task #${id} Exited: code=${code}; signal=${signal}.`);
+        if (state.stopRequested) emitStatus(id, "stopped", `Task #${id} Stopped.`);
+        else if (code === 0) emitStatus(id, "success", `Task #${id} Completed Successfully.`);
+        else emitStatus(id, "error", `Task #${id} Exited: code=${code}; signal=${signal}.`);
         tasks.delete(id)
     });
     child.once("error", (error) => {
-        emitStatus("error", `Task #${id} Failed: ${error.message}`);
+        emitStatus(id, "error", `Task #${id} Failed: ${error.message}`);
         tasks.delete(id)
     });
 }
