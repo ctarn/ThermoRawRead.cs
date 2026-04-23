@@ -67,7 +67,7 @@ function runCommand(request) {
 
     if (!Array.isArray(request?.args)) throw new Error("command arguments are required");
     if (request.args.some(arg => typeof arg !== "string")) throw new Error("command arguments must be strings");
-    
+
     const exe = resolveExecutable(command, id);
     const args = [...request.args];
 
@@ -91,7 +91,7 @@ function runCommand(request) {
     child.once("close", (code, signal) => {
         if (state.stopRequested) finalize("stopped", "Task Stopped.");
         else if (code === 0) finalize("success", "Task Completed Successfully.");
-        else finalize("error", `Task Exited: code=${code}; signal=${signal}).`);
+        else finalize("error", `Task Exited: code=${code}; signal=${signal}.`);
     });
     child.once("error", (error) => finalize("error", `Failed to Launch ${exe}: ${error.message}`));
 }
