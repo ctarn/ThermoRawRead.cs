@@ -19,6 +19,11 @@ const send = (chan, msg) => mainWindow && !mainWindow.isDestroyed() && mainWindo
 const emitStatus = (taskId, status, msg) => send("task-status", {task_id: taskId, status, message: msg});
 const emitLog = (taskId, line) => send("task-log", {task_id: taskId, line});
 
+function normalizeTaskId(id) {
+    if (!Number.isSafeInteger(id) || id < 0) throw new Error("task_id must be a safe integer");
+    return id;
+}
+
 async function chooseFiles(title, filters) {
     const result = await dialog.showOpenDialog(mainWindow, {title, properties: ["openFile", "multiSelections"], filters});
     return result.canceled ? [] : result.filePaths;
@@ -27,11 +32,6 @@ async function chooseFiles(title, filters) {
 async function chooseFolder(title) {
     const result = await dialog.showOpenDialog(mainWindow, {title, properties: ["openDirectory"]});
     return result.canceled ? null : result.filePaths[0] ?? null;
-}
-
-function normalizeTaskId(id) {
-    if (!Number.isSafeInteger(id) || id < 0) throw new Error("task_id must be a safe integer");
-    return id;
 }
 
 function resolveExecutable(name, taskId = null) {
