@@ -56,12 +56,12 @@ function createMainWindow() {
 }
 
 function resolveExecutable(name = name) {
-    const candidates = [];
-    if (process.env[`${name.toUpperCase()}_BACKEND`]) candidates.push(process.env[`${name.toUpperCase()}_BACKEND`]);
-    candidates.push(path.join(process.resourcesPath, "artifacts", name));
-    candidates.push(path.join(path.dirname(process.execPath), "artifacts", name));
+    const paths = [];
+    if (process.env[`${name.toUpperCase()}_BACKEND`]) paths.push(process.env[`${name.toUpperCase()}_BACKEND`]);
+    paths.push(path.join(process.resourcesPath, "artifacts", name));
+    paths.push(path.join(path.dirname(process.execPath), "artifacts", name));
 
-    const resolved = candidates.find(candidate => fs.existsSync(candidate));
+    const resolved = paths.find(path => fs.existsSync(path));
     if (resolved) return process.platform === "win32" ? `${resolved}.exe` : resolved;
     throw new Error(`Executable \`${name}\` Not Found.`);
 }
