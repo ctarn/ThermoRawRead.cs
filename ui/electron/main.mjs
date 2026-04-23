@@ -96,13 +96,13 @@ async function saveState(state) {
     await fsp.writeFile(statePath, JSON.stringify(state, null, 2), "utf8");
 }
 
-function runJob(cfg) {
-    if (!Array.isArray(cfg?.inputs) || cfg.inputs.length === 0) throw new Error("at least one input path is required");
-    if (!Array.isArray(cfg?.formats) || cfg.formats.length === 0) throw new Error("at least one output format is required");
+function runJob(request) {
+    if (!Array.isArray(request?.inputs) || request.inputs.length === 0) throw new Error("at least one input path is required");
+    if (!Array.isArray(request?.formats) || request.formats.length === 0) throw new Error("at least one output format is required");
     if (currentJob) throw new Error("a task is already running");
 
     const exe = resolveExecutable(APPLICATION);
-    const child = spawn(exe, buildCommandArgs(cfg), {cwd: dirname(exe), stdio: ["ignore", "pipe", "pipe"]});
+    const child = spawn(exe, buildCommandArgs(request), {cwd: dirname(exe), stdio: ["ignore", "pipe", "pipe"]});
     let finished = false;
 
     const finalize = (status, message) => {
