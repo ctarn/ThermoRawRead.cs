@@ -226,7 +226,7 @@ async function organizeReleaseArtifacts(makeResults) {
 
 const iconBasename = join(iconDir, "icon");
 
-default {
+export default {
     outDir: join(repoDir, "tmp", "forge"),
     hooks: {
         generateAssets: async (_forgeConfig, platform, arch) => {
