@@ -144,8 +144,8 @@ function runJob(request) {
     stopRequested = false;
     emitStatus("running", `Running ${backend}`);
 
-    if (child.stdout) readline.createInterface({input: child.stdout}).on("line", (line) => send("job-log", {line}));
-    if (child.stderr) readline.createInterface({input: child.stderr}).on("line", (line) => send("job-log", {line}));
+    if (child.stdout) readline.createInterface({input: child.stdout}).on("line", emitLog);
+    if (child.stderr) readline.createInterface({input: child.stderr}).on("line", emitLog);
 
     child.once("error", (error) => finalize("error", `Failed to launch ${backend}: ${error.message}`));
 
