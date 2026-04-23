@@ -68,7 +68,6 @@ async function generateAssets() {
     }
 }
 
-
 async function createCliZip(platform, destination) {
     const stagingRoot = await mkdtemp(path.join(os.tmpdir(), `${productName}-cli-`));
     const cliStageDir = path.join(stagingRoot, "cli");
@@ -96,15 +95,15 @@ async function organizeRelease(makeResults) {
 
     await mkdirs(releaseDir);
 
-    const prefixes = new Set();
+    const prefixes = [];
     for (const {platform, arch} of makeResults) {
         const suffix = releaseSuffix(platform, arch);
-        prefixes.add(`${productName}-${version}.${suffix}.`);
-        prefixes.add(`${productName}-cli-${version}.${suffix}.`);
+        prefixes.push(`${productName}-${version}.${suffix}.`);
+        prefixes.push(`${productName}-cli-${version}.${suffix}.`);
     }
 
     for (const name of await readdir(releaseDir)) {
-        if ([...prefixes].some((prefix) => name.startsWith(prefix))) {
+        if (prefixes.some((prefix) => name.startsWith(prefix))) {
             await rmrf(path.join(releaseDir, name));
         }
     }
@@ -133,8 +132,8 @@ async function organizeRelease(makeResults) {
 export default {
     outDir: join(repoDir, "tmp", "forge"),
     hooks: {
-        generateAssets: async () => generateAssets(),
-        postMake: async (_forgeConfig, makeResults) => organizeRelease(makeResults)
+        generateAssets,
+        postMake: (_forgeConfig, makeResults) => organizeRelease(makeResults)
     },
     packagerConfig: {
         appBundleId: "io.ctarn.thermorawread",
