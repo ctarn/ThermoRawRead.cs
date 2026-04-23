@@ -154,10 +154,7 @@ async function loadState() {
         return JSON.parse(content);
     } catch (error) {
         if (error && error.code === "ENOENT") {
-            return {
-                ...defaultState,
-                formats: [...defaultState.formats]
-            };
+            return {...defaultState, formats: [...defaultState.formats]};
         }
         throw error;
     }
