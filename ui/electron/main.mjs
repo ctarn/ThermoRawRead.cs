@@ -91,11 +91,6 @@ function buildCommandArgs(request) {
     return args;
 }
 
-function finishJob(status, message) {
-    currentJob = null;
-    emitStatus(status, message);
-}
-
 function runJob(request) {
     if (!Array.isArray(request?.inputs) || request.inputs.length === 0) {
         throw new Error("at least one input path is required");
@@ -117,7 +112,8 @@ function runJob(request) {
     const finalize = (status, message) => {
         if (finished) return;
         finished = true;
-        finishJob(status, message);
+        currentJob = null;
+        emitStatus(status, message);
     };
 
     currentJob = child;
