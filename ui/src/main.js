@@ -11,17 +11,6 @@ function trimTrailingSeparators(path) {
     return path.replace(/[\\/]+$/, "");
 }
 
-function defaultOutDir(path) {
-    const normalized = trimTrailingSeparators(path);
-    const separator = pathSeparator(normalized);
-    const index = normalized.lastIndexOf(separator);
-
-    if (index < 0) return `${normalized}${separator}out`;
-    if (index === 0) return `${separator}out`;
-
-    return `${normalized.slice(0, index)}${separator}out`;
-}
-
 const cmdbus = window.commandbus ?? null;
 
 const statusMeta = {
@@ -215,10 +204,6 @@ async function chooseFiles() {
     if (!Array.isArray(paths) || paths.length === 0) return;
 
     state.inputs = [...new Set([...state.inputs, ...paths])];
-
-    if (!state.output.trim()) {
-        state.output = defaultOutDir(paths[0]);
-    }
 
     renderState();
     await persistState();
