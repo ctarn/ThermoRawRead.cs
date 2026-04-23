@@ -12,9 +12,9 @@ contextBridge.exposeInMainWorld("commandbus", {
     invoke(command, payload = {}) {
         return ipcRenderer.invoke(command, payload);
     },
-    on(eventName, handler) {
+    on(event, handler) {
         const listener = (_event, payload) => handler(payload);
-        ipcRenderer.on(eventName, listener);
-        return () => ipcRenderer.removeListener(eventName, listener);
+        ipcRenderer.on(event, listener);
+        return () => ipcRenderer.removeListener(event, listener);
     }
 });
