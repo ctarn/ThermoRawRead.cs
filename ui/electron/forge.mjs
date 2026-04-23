@@ -102,9 +102,7 @@ async function generateAssets() {
     }
 }
 
-function quotePowerShellString(value) {
-    return `'${value.replace(/'/g, "''")}'`;
-}
+quotePowerShellString = (value) => `'${value.replace(/'/g, "''")}'`;
 
 async function createCliZip(platform, destination) {
     const stagingRoot = await mkdtemp(path.join(os.tmpdir(), `${productName}-cli-`));
