@@ -22,7 +22,7 @@ function defaultOutDir(path) {
     return `${normalized.slice(0, index)}${separator}out`;
 }
 
-const commandBus = window.commandbus ?? null;
+const cmdbus = window.commandbus ?? null;
 
 const statusMeta = {
     idle: {badgeClass: "badge badge-muted", badgeText: "Idle"},
@@ -195,11 +195,11 @@ function hydrate(saved = {}) {
 }
 
 function persistState() {
-    if (!commandBus) {
+    if (!cmdbus) {
         return Promise.resolve();
     }
 
-    return commandBus.invoke("save_state", {
+    return cmdbus.invoke("save_state", {
         state: {
             inputs: state.inputs,
             output: state.output,
@@ -211,7 +211,7 @@ function persistState() {
 }
 
 async function chooseFiles() {
-    const paths = await commandBus.invoke("pick_raw_files");
+    const paths = await cmdbus.invoke("pick_raw_files");
     if (!Array.isArray(paths) || paths.length === 0) return;
 
     state.inputs = [...new Set([...state.inputs, ...paths])];
@@ -225,7 +225,7 @@ async function chooseFiles() {
 }
 
 async function chooseInputDir() {
-    const directory = await commandBus.invoke("pick_input_dir");
+    const directory = await cmdbus.invoke("pick_input_dir");
     if (!directory) return;
 
     const normalized = trimTrailingSeparators(directory);
@@ -240,7 +240,7 @@ async function chooseInputDir() {
 }
 
 async function chooseOutputDir() {
-    const directory = await commandBus.invoke("pick_output_dir");
+    const directory = await cmdbus.invoke("pick_output_dir");
     if (!directory) return;
 
     state.output = trimTrailingSeparators(directory);
@@ -264,7 +264,7 @@ async function runJob() {
     setStatus("running", "ThermoRawRead is streaming logs from the CLI backend.");
 
     try {
-        await commandBus.invoke("run_task", {
+        await cmdbus.invoke("run_task", {
             request: {
                 inputs: state.inputs,
                 output: state.output.trim(),
@@ -281,7 +281,7 @@ async function runJob() {
 
 async function stopJob() {
     try {
-        await commandBus.invoke("stop_task");
+        await cmdbus.invoke("stop_task");
     } catch (error) {
         appendLog(String(error));
         setStatus("error", String(error));
@@ -294,7 +294,7 @@ async function initialize() {
     renderCommandPreview();
     setRunning(false);
 
-    if (!commandBus) {
+    if (!cmdbus) {
         setBridgeEnabled(false);
         setStatus("error", bridgeErrorMessage);
         appendLog(bridgeErrorMessage);
@@ -358,17 +358,17 @@ async function initialize() {
         void persistState();
     });
 
-    commandBus.on("job-log", ({line}) => {
+    cmdbus.on("job-log", ({line}) => {
         appendLog(line);
     });
 
-    commandBus.on("job-status", ({status, message}) => {
+    cmdbus.on("job-status", ({status, message}) => {
         setRunning(status === "running");
         setStatus(status, message);
     });
 
     try {
-        const saved = await commandBus.invoke("load_state");
+        const saved = await cmdbus.invoke("load_state");
         hydrate(saved);
     } catch {
         hydrate({});
