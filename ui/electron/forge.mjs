@@ -126,45 +126,27 @@ async function createCliZip(platform, destination) {
 }
 
 async function organizeRelease(makeResults) {
-    const cliDone = new Set();
-    const releaseTargetsBySuffix = new Map();
     const rewrittenResults = [];
 
     for (const result of makeResults) {
         const {platform, arch} = result;
-        const suffix = releaseSuffix(platform, arch);
-        let releaseTargets = releaseTargetsBySuffix.get(suffix);
+        const releaseTargets = await prepareReleaseTargets(platform, arch);
+        const rewrittenArtifacts = [await createCliZip(platform, releaseTargets.cliZip)];
+        const guiArtifact = result.artifacts.find((artifact) => artifact.toLowerCase().endsWith(".zip"));
+        const installerArtifact = result.artifacts.find((artifact) => isInstallerArtifact(platform, artifact));
 
-        if (!releaseTargets) {
-            releaseTargets = await prepareReleaseTargets(platform, arch);
-            releaseTargetsBySuffix.set(suffix, releaseTargets);
+        if (guiArtifact) {
+            await copyReleaseArtifact(guiArtifact, releaseTargets.guiZip);
+            rewrittenArtifacts.push(releaseTargets.guiZip);
         }
 
-        const rewrittenArtifacts = [];
-        let installerCopied = false;
-
-        if (!cliDone.has(releaseTargets.suffix)) {
-            rewrittenArtifacts.push(await createCliZip(platform, releaseTargets.cliZip));
-            cliDone.add(releaseTargets.suffix);
-        }
-
-        for (const artifact of result.artifacts) {
-            if (artifact.toLowerCase().endsWith(".zip")) {
-                await copyReleaseArtifact(artifact, releaseTargets.guiZip);
-                rewrittenArtifacts.push(releaseTargets.guiZip);
-                continue;
-            }
-
-            if (!installerCopied && isInstallerArtifact(platform, artifact)) {
-                const installerDestination = path.join(
-                    releaseDir,
-                    `${productName}-${version}.${releaseTargets.suffix}${path.extname(artifact)}`
-                );
-
-                await copyReleaseArtifact(artifact, installerDestination);
-                rewrittenArtifacts.push(installerDestination);
-                installerCopied = true;
-            }
+        if (installerArtifact) {
+            const installerPath = path.join(
+                releaseDir,
+                `${productName}-${version}.${releaseTargets.suffix}${path.extname(installerArtifact)}`
+            );
+            await copyReleaseArtifact(installerArtifact, installerPath);
+            rewrittenArtifacts.push(installerPath);
         }
 
         if (rewrittenArtifacts.length > 0) {
