@@ -79,12 +79,9 @@ function buildCommandArgs(request) {
 }
 
 async function loadState() {
-    try {
-        return JSON.parse(await fsp.readFile(statePath, "utf8"));
-    } catch (error) {
-        if (error?.code === "ENOENT") return structuredClone(defaultState);
-        throw error;
-    }
+    const exists = await fsp.access(statePath).then(() => true).catch(err => err.code === 'ENOENT' ? false : Promise.reject(err));
+    if (exists) return JSON.parse(await fsp.readFile(statePath, "utf8"));
+    return structuredClone(defaultState);
 }
 
 async function saveState(state) {
