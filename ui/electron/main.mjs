@@ -56,15 +56,13 @@ function createMainWindow() {
 }
 
 function resolveBackendExecutable() {
-    const parseExe = (exe) => process.platform === "win32" ? `${exe}.exe` : exe;
-
     const candidates = [];
     if (process.env.THERMORAWREAD_BACKEND) candidates.push(process.env.THERMORAWREAD_BACKEND);
-    candidates.push(path.join(process.resourcesPath, "artifacts", parseExe(name)));
-    candidates.push(path.join(path.dirname(process.execPath), "artifacts", parseExe(name)));
+    candidates.push(path.join(process.resourcesPath, "artifacts", name));
+    candidates.push(path.join(path.dirname(process.execPath), "artifacts", name));
 
     const resolved = candidates.find(candidate => fs.existsSync(candidate));
-    if (resolved) return resolved;
+    if (resolved) return process.platform === "win32" ? `${resolved}.exe` : resolved;
     throw new Error("ThermoRawRead backend not found.");
 }
 
