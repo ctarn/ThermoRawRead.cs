@@ -21,7 +21,7 @@ const releaseDir = join(repoDir, "tmp", "release", version);
 const iconDir = join(repoDir, "tmp", "icon");
 const artifactsDir = join(repoDir, "tmp", "artifacts");
 
-const rmRF = (target) => rm(target, { recursive: true, force: true });
+const rmrf = (target) => rm(target, { recursive: true, force: true });
 const mkdirs = (target) => mkdir(target, { recursive: true });
 
 function runCommand(cmd, args, cwd = repoDir) {
@@ -46,7 +46,7 @@ function isInstallerArtifact(platform, artifact) {
 
 async function copyReleaseArtifact(src, dst) {
     await mkdirs(path.dirname(dst));
-    await rmRF(dst);
+    await rmrf(dst);
     await copyFile(src, dst);
 }
 
@@ -55,11 +55,11 @@ async function prepareReleaseTargets(platform, arch) {
     const cliZip = path.join(releaseDir, `${productName}-cli-${version}.${rid}.zip`);
 
     await mkdirs(releaseDir);
-    await rmRF(zip);
-    await rmRF(cliZip);
+    await rmrf(zip);
+    await rmrf(cliZip);
 
     for (const ext of installerExtensions(platform)) {
-        await rmRF(path.join(releaseDir, `${productName}-${version}.${rid}.${ext}`));
+        await rmrf(path.join(releaseDir, `${productName}-${version}.${rid}.${ext}`));
     }
 
     return {cliZip, guiZip: zip, suffix: rid};
@@ -74,7 +74,7 @@ async function stageBackend(platform = process.platform, arch = process.arch) {
         );
     }
 
-    await rmRF(artifactsDir);
+    await rmrf(artifactsDir);
     await cp(buildDir, artifactsDir, {recursive: true});
 }
 
@@ -82,14 +82,14 @@ async function stageBackend(platform = process.platform, arch = process.arch) {
 async function prepareIcons() {
     const src = join(repoDir, "fig", `${productName}.png`);
     await stat(src);
-    await rmRF(iconDir);
+    await rmrf(iconDir);
     await mkdirs(iconDir);
     await cp(src, path.join(iconDir, "icon.png"));
     await writeFile(path.join(iconDir, "icon.ico"), await pngToIco(src));
 
     if (process.platform !== "darwin") return;
     const iconsetDir = join(iconDir, "icon.iconset");
-    await rmRF(iconsetDir);
+    await rmrf(iconsetDir);
     await mkdirs(iconsetDir);
 
     const iconsetSpecs = [
@@ -150,7 +150,7 @@ async function createCliZip(platform, arch, destination) {
             await runCommand("zip", ["-qry", destination, "cli"], stagingRoot);
         }
     } finally {
-        await rmRF(stagingRoot);
+        await rmrf(stagingRoot);
     }
 
     return destination;
