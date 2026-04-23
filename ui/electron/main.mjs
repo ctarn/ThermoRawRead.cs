@@ -51,8 +51,8 @@ function resolveExecutable(name = APPLICATION) {
 
     const resolved = paths.find(path => fs.existsSync(path));
     if (resolved) return process.platform === "win32" ? `${resolved}.exe` : resolved;
-    console.error("Attempted paths (executable not found):");
-    paths.forEach(p => console.error(`  ${p}`));
+    emitLog("Attempted paths (executable not found):");
+    paths.forEach(p => emitLog(`  ${p}`));
     throw new Error(`executable \`${name}\` not found`);
 }
 // utils end
