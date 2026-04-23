@@ -25,7 +25,7 @@ const defaultState = Object.freeze({
 const statePath = path.join(os.homedir(), `.${APPLICATION}`, "ui-state.json");
 
 let mainWindow = null;
-const taskStateById = new Map();
+const tasks = new Map();
 
 // utils
 const send = (chan, msg) => mainWindow && !mainWindow.isDestroyed() && mainWindow.webContents.send(chan, msg);
@@ -96,7 +96,7 @@ async function saveState(state) {
 
 function runCommand(request) {
     const taskId = normalizeTaskId(request?.task_id);
-    if (taskStateById.has(taskId)) throw new Error(`task ${taskId} is already running`);
+    if (tasks.has(taskId)) throw new Error(`task ${taskId} is already running`);
 
     const command = request?.command?.trim?.();
     if (!command) throw new Error("command is required");
@@ -113,7 +113,7 @@ function runCommand(request) {
     let finished = false;
     const taskState = {child, stopRequested: false};
 
-    taskStateById.set(taskId, taskState);
+    tasks.set(taskId, taskState);
     emitStatus(taskId, "running", `Running ${exe}`);
 
     if (child.stdout) readline.createInterface({input: child.stdout}).on("line", (line) => emitLog(taskId, line));
@@ -122,7 +122,7 @@ function runCommand(request) {
     const finalize = (status, message) => {
         if (finished) return;
         finished = true;
-        taskStateById.delete(taskId);
+        tasks.delete(taskId);
         emitStatus(taskId, status, message);
     };
 
@@ -136,7 +136,7 @@ function runCommand(request) {
 
 function stopTask(request) {
     const taskId = normalizeTaskId(request?.task_id);
-    const taskState = taskStateById.get(taskId);
+    const taskState = tasks.get(taskId);
     if (!taskState) return;
 
     taskState.stopRequested = true;
