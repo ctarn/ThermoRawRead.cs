@@ -42,10 +42,8 @@ function resolveExecutable(name, taskId = null) {
 
     const resolved = paths.find(path => fs.existsSync(path));
     if (resolved) return process.platform === "win32" ? `${resolved}.exe` : resolved;
-    if (taskId !== null) {
-        emitLog(taskId, "Attempted paths (executable not found):");
-        paths.forEach(p => emitLog(taskId, `  ${p}`));
-    }
+    emitLog(taskId, "Attempted paths (executable not found):");
+    paths.forEach(p => emitLog(taskId, `  ${p}`));
     throw new Error(`executable \`${name}\` not found`);
 }
 
