@@ -37,7 +37,7 @@ function emitStatus(status, message) {
 
 function createMainWindow() {
     const window = new BrowserWindow({
-        title: "ThermoRawRead",
+        title: name,
         width: 1360,
         height: 920,
         minWidth: 1024,
