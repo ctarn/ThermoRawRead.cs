@@ -330,12 +330,12 @@ async function initialize() {
         void persistState();
     });
 
-    BUS.on("job-log", ({task_id: taskId, line}) => {
+    BUS.on("task-log", ({task_id: taskId, line}) => {
         if (taskId !== state.activeTaskId) return;
         appendLog(line);
     });
 
-    BUS.on("job-status", ({task_id: taskId, status, message}) => {
+    BUS.on("task-status", ({task_id: taskId, status, message}) => {
         if (taskId !== state.activeTaskId) return;
         setRunning(status === "running");
         setStatus(status, message);

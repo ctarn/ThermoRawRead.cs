@@ -17,8 +17,8 @@ const tasks = new Map();
 
 // utils
 const send = (chan, msg) => mainWindow && !mainWindow.isDestroyed() && mainWindow.webContents.send(chan, msg);
-const emitStatus = (taskId, status, msg) => send("job-status", {task_id: taskId, status, message: msg});
-const emitLog = (taskId, line) => send("job-log", {task_id: taskId, line});
+const emitStatus = (taskId, status, msg) => send("task-status", {task_id: taskId, status, message: msg});
+const emitLog = (taskId, line) => send("task-log", {task_id: taskId, line});
 
 async function chooseFiles(title, filters) {
     const result = await dialog.showOpenDialog(mainWindow, {title, properties: ["openFile", "multiSelections"], filters});
