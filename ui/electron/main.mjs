@@ -125,7 +125,7 @@ function runJob(request) {
         else if (code === 0)
             finalize("success", "Task Completed Successfully.");
         else
-            finalize("error", `Task Exited with ${signal ? `Signal ${signal}` : `Status ${code ?? "Unknown"}`}.`);
+            finalize("error", `Task Exited. (code=${code}; signal=${signal})`);
     });
 }
 
