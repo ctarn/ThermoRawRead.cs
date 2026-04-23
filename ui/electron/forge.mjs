@@ -57,8 +57,8 @@ async function prepareReleaseTargets(platform, arch) {
     await rmRF(zip);
     await rmRF(cliZip);
 
-    for (const extension of installerExtensions(platform)) {
-        await rmRF(path.join(releaseDir, `${productName}-${version}.${rid}.${extension}`));
+    for (const ext of installerExtensions(platform)) {
+        await rmRF(path.join(releaseDir, `${productName}-${version}.${rid}.${ext}`));
     }
 
     return {cliZip, guiZip: zip, suffix: rid};
