@@ -73,17 +73,6 @@ async function prepareReleaseTargets(platform, arch) {
     return {cliZip, guiZip, suffix};
 }
 
-async function stageBackend() {
-    try {
-        await stat(buildDir);
-    } catch {
-        throw new Error(`missing backend build at ${buildDir}`);
-    }
-
-    await rmrf(artifactsDir);
-    await cp(buildDir, artifactsDir, {recursive: true});
-}
-
 async function prepareIcons() {
     await stat(sourceIcon);
     await rmrf(iconDir);
@@ -117,7 +106,8 @@ async function prepareIcons() {
 
 async function generateAssets() {
     await runCommand("dotnet", ["build", path.join("src", `${productName}.csproj`), "-c", "Release", "-o", buildDir]);
-    await stageBackend();
+    await rmrf(artifactsDir);
+    await cp(buildDir, artifactsDir, {recursive: true});
     await prepareIcons();
 }
 
