@@ -20,7 +20,7 @@ const emitStatus = (taskId, status, msg) => send("task-status", {task_id: taskId
 const emitLog = (taskId, line) => send("task-log", {task_id: taskId, line});
 
 function normalizeTaskId(id) {
-    if (!Number.isSafeInteger(id) || id < 0) throw new Error("task_id must be a safe integer");
+    if (!Number.isSafeInteger(id) || id < 0) throw new Error("task id must be a safe integer");
     return id;
 }
 
