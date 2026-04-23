@@ -28,6 +28,7 @@ let mainWindow = null;
 let currentJob = null;
 let stopRequested = false;
 
+// utils
 const send = (chan, msg) => mainWindow && !mainWindow.isDestroyed() && mainWindow.webContents.send(chan, msg);
 const emitStatus = (status, msg) => send("job-status", { status, message: msg });
 const emitLog = (line) => send("job-log", { line });
@@ -41,6 +42,7 @@ async function chooseFolder(title) {
     const result = await dialog.showOpenDialog(mainWindow, {title, properties: ["openDirectory"]});
     return result.canceled ? null : result.filePaths[0] ?? null;
 }
+// utils end
 
 function createMainWindow() {
     const window = new BrowserWindow({
