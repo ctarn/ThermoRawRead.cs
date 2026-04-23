@@ -24,16 +24,6 @@ function normalizeTaskId(id) {
     return id;
 }
 
-async function chooseFiles(title, filters) {
-    const result = await dialog.showOpenDialog(mainWindow, {title, properties: ["openFile", "multiSelections"], filters});
-    return result.canceled ? [] : result.filePaths;
-}
-
-async function chooseFolder(title) {
-    const result = await dialog.showOpenDialog(mainWindow, {title, properties: ["openDirectory"]});
-    return result.canceled ? null : result.filePaths[0] ?? null;
-}
-
 async function loadState(path) {
     if (typeof path !== "string" || path.length === 0) throw new Error("state path is required");
     return JSON.parse(await fsp.readFile(path, "utf8"));
@@ -43,6 +33,16 @@ async function saveState(path, state) {
     if (typeof path !== "string" || path.length === 0) throw new Error("state path is required");
     await fsp.mkdir(path.dirname(path), {recursive: true});
     await fsp.writeFile(path, JSON.stringify(state, null, 2), "utf8");
+}
+
+async function chooseFiles(title, filters) {
+    const result = await dialog.showOpenDialog(mainWindow, {title, properties: ["openFile", "multiSelections"], filters});
+    return result.canceled ? [] : result.filePaths;
+}
+
+async function chooseFolder(title) {
+    const result = await dialog.showOpenDialog(mainWindow, {title, properties: ["openDirectory"]});
+    return result.canceled ? null : result.filePaths[0] ?? null;
 }
 
 function resolveExecutable(name, taskId = null) {
