@@ -59,7 +59,7 @@ function createMainWindow() {
     const window = new BrowserWindow({
         title: APPLICATION,
         width: 1200,
-        height: 900,
+        height: 1200,
         minWidth: 800,
         minHeight: 600,
         backgroundColor: "#ffffff",
