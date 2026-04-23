@@ -14,11 +14,6 @@ const version = packageJson.version;
 
 const ARCH_NAMES = {x64: "x86_64", arm64: "arm64"};
 const PLATFORM_NAMES = {darwin: "Darwin", linux: "Linux", win32: "Windows"};
-const INSTALLER_EXTENSIONS = {
-    darwin: ["dmg", "pkg"],
-    linux: ["deb", "rpm", "AppImage"],
-    win32: ["exe", "msi"]
-};
 
 const releaseSuffix = (platform = process.platform, arch = process.arch) =>
     `${ARCH_NAMES[arch] ?? arch}.${PLATFORM_NAMES[platform] ?? platform}`;
@@ -40,15 +35,6 @@ function runCommand(cmd, args, cwd = repoDir) {
         process.once("error", reject);
         process.once("close", code => code === 0 ? resolve() : reject(new Error(`${cmd} exited with code \`${code}\``)));
     });
-}
-
-function installerExtensions(platform) {
-    return INSTALLER_EXTENSIONS[platform] ?? [];
-}
-
-function isInstallerArtifact(platform, artifact) {
-    const lowerArtifact = artifact.toLowerCase();
-    return installerExtensions(platform).some((extension) => lowerArtifact.endsWith(`.${extension.toLowerCase()}`));
 }
 
 async function copyReleaseArtifact(src, dst) {
@@ -128,21 +114,16 @@ async function organizeRelease(makeResults) {
         const suffix = releaseSuffix(platform, arch);
         const guiZip = path.join(releaseDir, `${productName}-${version}.${suffix}.zip`);
         const cliZip = path.join(releaseDir, `${productName}-cli-${version}.${suffix}.zip`);
-
         const rewrittenArtifacts = [await createCliZip(platform, cliZip)];
-        const guiArtifact = result.artifacts.find((artifact) => artifact.toLowerCase().endsWith(".zip"));
-        const installerArtifact = result.artifacts.find((artifact) => isInstallerArtifact(platform, artifact));
 
-        if (guiArtifact) {
-            await copyReleaseArtifact(guiArtifact, guiZip);
-            rewrittenArtifacts.push(guiZip);
+        for (const artifact of result.artifacts) {
+            const destination = artifact.toLowerCase().endsWith(".zip")
+                ? guiZip
+                : path.join(releaseDir, `${productName}-${version}.${suffix}${path.extname(artifact)}`);
+            await copyReleaseArtifact(artifact, destination);
+            rewrittenArtifacts.push(destination);
         }
 
-        if (installerArtifact) {
-            const installerPath = path.join(releaseDir, `${productName}-${version}.${suffix}${path.extname(installerArtifact)}`);
-            await copyReleaseArtifact(installerArtifact, installerPath);
-            rewrittenArtifacts.push(installerPath);
-        }
         rewrittenResults.push({...result, artifacts: rewrittenArtifacts});
     }
 
