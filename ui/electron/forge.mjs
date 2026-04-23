@@ -25,10 +25,7 @@ const rmRF = (target) => rm(target, { recursive: true, force: true });
 
 function runCommand(command, args, cwd = repoDir) {
     return new Promise((resolve, reject) => {
-        const process = spawn(command, args, {
-            cwd,
-            stdio: "inherit"
-        });
+        const process = spawn(command, args, {cwd, stdio: "inherit"});
 
         process.once("error", reject);
         process.once("close", (code) => {
