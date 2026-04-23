@@ -25,7 +25,7 @@ const defaultState = Object.freeze({
 const statePath = path.join(os.homedir(), `.${APPLICATION}`, "ui-state.json");
 
 let mainWindow = null;
-let currentJob = null;
+let currentTask = null;
 let stopRequested = false;
 
 // utils
@@ -89,7 +89,7 @@ async function saveState(state) {
 function runJob(request) {
     if (!Array.isArray(request?.inputs) || request.inputs.length === 0) throw new Error("input path is required");
     if (!Array.isArray(request?.formats) || request.formats.length === 0) throw new Error("output format is required");
-    if (currentJob) throw new Error("already running");
+    if (currentTask) throw new Error("already running");
 
     const exe = resolveExecutable(APPLICATION);
 
@@ -103,7 +103,7 @@ function runJob(request) {
     const child = spawn(exe, args, {cwd: dirname(exe), stdio: ["ignore", "pipe", "pipe"]});
     let finished = false;
 
-    currentJob = child;
+    currentTask = child;
     stopRequested = false;
     emitStatus("running", `Running ${exe}`);
 
@@ -113,7 +113,7 @@ function runJob(request) {
     const finalize = (status, message) => {
         if (finished) return;
         finished = true;
-        currentJob = null;
+        currentTask = null;
         stopRequested = false;
         emitStatus(status, message);
     };
@@ -128,9 +128,9 @@ function runJob(request) {
 }
 
 function stopJob() {
-    if (!currentJob) return;
+    if (!currentTask) return;
     stopRequested = true;
-    currentJob.kill();
+    currentTask.kill();
 }
 
 ipcMain.handle("load_state", () => loadState());
