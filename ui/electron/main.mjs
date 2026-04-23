@@ -8,8 +8,6 @@ import {fileURLToPath} from 'url';
 import electron from "electron";
 import squirrelStartup from "electron-squirrel-startup";
 
-const APPLICATION = "ThermoRawRead";
-
 const {app, BrowserWindow, dialog, ipcMain} = electron;
 
 if (squirrelStartup) app.quit();
@@ -37,7 +35,7 @@ function normalizeTaskId(id) {
     return id;
 }
 
-function resolveExecutable(name = APPLICATION, taskId = null) {
+function resolveExecutable(name, taskId = null) {
     const paths = [];
     if (process.env[`${name.toUpperCase()}_PATH`]) paths.push(process.env[`${name.toUpperCase()}_PATH`]);
     paths.push(path.join(process.resourcesPath, "artifacts", name));
@@ -55,7 +53,6 @@ function resolveExecutable(name = APPLICATION, taskId = null) {
 
 function createMainWindow() {
     const window = new BrowserWindow({
-        title: APPLICATION,
         width: 1200,
         height: 900,
         minWidth: 800,
