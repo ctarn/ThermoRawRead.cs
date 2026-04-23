@@ -262,7 +262,7 @@ async function runJob() {
         elements.logOutput.textContent = "";
         setRunning(true);
         setStatus("running", "ThermoRawRead is streaming logs from the CLI backend.");
-        await BUS.invoke("run_command", request);
+        await BUS.invoke("run_task", request);
     } catch (error) {
         state.activeTaskId = null;
         setRunning(false);

@@ -81,7 +81,7 @@ function resolveExecutable(name, taskId = null) {
     throw new Error(`executable \`${name}\` not found`);
 }
 
-function runCommand(request) {
+function runTask(request) {
     const id = normalizeTaskId(request?.task_id);
     if (tasks.has(id)) throw new Error(`task ${id} is already running`);
 
@@ -127,5 +127,5 @@ ipcMain.handle("save_state", (_event, payload) => saveState(payload.state_path, 
 ipcMain.handle("pick_raw_files", () => chooseFiles("Select Input Files", [{name: "Thermo RAW", extensions: ["raw"]}]));
 ipcMain.handle("pick_input_dir", () => chooseFolder("Select Input Folder"));
 ipcMain.handle("pick_output_dir", () => chooseFolder("Select Output Folder"));
-ipcMain.handle("run_command", (_event, payload) => runCommand(payload));
+ipcMain.handle("run_task", (_event, payload) => runTask(payload));
 ipcMain.handle("stop_task", (_event, payload) => stopTask(payload));
