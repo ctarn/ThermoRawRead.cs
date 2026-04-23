@@ -3,14 +3,6 @@ function quoteArg(value) {
     return /\s/.test(value) ? JSON.stringify(value) : value;
 }
 
-function pathSeparator(path) {
-    return path.includes("\\") ? "\\" : "/";
-}
-
-function trimTrailingSeparators(path) {
-    return path.replace(/[\\/]+$/, "");
-}
-
 const BUS = window.commandbus ?? null;
 
 const statusMeta = {
@@ -205,12 +197,7 @@ async function chooseInputDir() {
     const directory = await BUS.invoke("pick_input_dir");
     if (!directory) return;
 
-    const normalized = trimTrailingSeparators(directory);
     state.inputs = [...new Set([...state.inputs, normalized])];
-
-    if (!state.output.trim()) {
-        state.output = `${normalized}${pathSeparator(normalized)}out`;
-    }
 
     renderState();
     await persistState();
@@ -220,7 +207,7 @@ async function chooseOutputDir() {
     const directory = await BUS.invoke("pick_output_dir");
     if (!directory) return;
 
-    state.output = trimTrailingSeparators(directory);
+    state.output = directory;
     renderState();
     await persistState();
 }
