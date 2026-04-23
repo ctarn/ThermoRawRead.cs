@@ -13,8 +13,6 @@ const {app, BrowserWindow, dialog, ipcMain} = electron;
 let mainWindow = null;
 const tasks = new Map();
 
-if (squirrelStartup) app.quit();
-
 function createMainWindow() {
     const window = new BrowserWindow({
         width: 1200,
@@ -35,6 +33,7 @@ function createMainWindow() {
     return window;
 }
 
+if (squirrelStartup) app.quit();
 app.whenReady().then(() => mainWindow = createMainWindow());
 app.on("activate", () => {if (BrowserWindow.getAllWindows().length === 0) mainWindow = createMainWindow();});
 app.on("window-all-closed", () => {if (process.platform !== "darwin") app.quit();});
