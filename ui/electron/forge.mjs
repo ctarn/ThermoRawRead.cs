@@ -102,7 +102,6 @@ async function generateAssets() {
     }
 }
 
-quotePowerShellString = (value) => `'${value.replace(/'/g, "''")}'`;
 
 async function createCliZip(platform, destination) {
     const stagingRoot = await mkdtemp(path.join(os.tmpdir(), `${productName}-cli-`));
@@ -112,10 +111,11 @@ async function createCliZip(platform, destination) {
         await cp(buildDir, cliStageDir, {recursive: true});
 
         if (platform === "win32") {
+            const quote = (value) => `'${value.replace(/'/g, "''")}'`;
             await runCommand("powershell", [
                 "-NoProfile",
                 "-Command",
-                `Compress-Archive -Path ${quotePowerShellString(`${cliStageDir}\\*`)} -DestinationPath ${quotePowerShellString(destination)} -Force`
+                `Compress-Archive -Path ${quote(`${cliStageDir}\\*`)} -DestinationPath ${quote(destination)} -Force`
             ]);
         } else {
             await runCommand("zip", ["-qry", destination, "cli"], stagingRoot);
