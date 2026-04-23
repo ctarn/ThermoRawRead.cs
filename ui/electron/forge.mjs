@@ -158,7 +158,7 @@ async function organizeRelease(makeResults) {
             if (!installerCopied && isInstallerArtifact(platform, artifact)) {
                 const installerDestination = path.join(
                     releaseDir,
-                    `${productName}-installer-${version}.${releaseTargets.suffix}${path.extname(artifact)}`
+                    `${productName}-${version}.${releaseTargets.suffix}${path.extname(artifact)}`
                 );
 
                 await copyReleaseArtifact(artifact, installerDestination);
