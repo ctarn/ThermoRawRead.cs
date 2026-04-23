@@ -65,7 +65,7 @@ async function prepareReleaseTargets(platform, arch) {
     return {cliZip, guiZip: zip, suffix: rid};
 }
 
-async function stageBackend(platform = process.platform, arch = process.arch) {
+async function stageBackend() {
     try {
         await stat(buildDir);
     } catch {
