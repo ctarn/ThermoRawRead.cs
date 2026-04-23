@@ -117,8 +117,8 @@ function runJob(request) {
         throw new Error("a task is already running");
     }
 
-    const backend = resolveExecutable();
-    const child = spawn(backend, buildCommandArgs(request), {cwd: dirname(backend), stdio: ["ignore", "pipe", "pipe"]});
+    const exe = resolveExecutable(name);
+    const child = spawn(exe, buildCommandArgs(request), {cwd: dirname(exe), stdio: ["ignore", "pipe", "pipe"]});
     let finished = false;
 
     const finalize = (status, message) => {
@@ -130,12 +130,12 @@ function runJob(request) {
 
     currentJob = child;
     stopRequested = false;
-    emitStatus("running", `Running ${backend}`);
+    emitStatus("running", `Running ${exe}`);
 
     if (child.stdout) readline.createInterface({input: child.stdout}).on("line", emitLog);
     if (child.stderr) readline.createInterface({input: child.stderr}).on("line", emitLog);
 
-    child.once("error", (error) => finalize("error", `Failed to launch ${backend}: ${error.message}`));
+    child.once("error", (error) => finalize("error", `Failed to launch ${exe}: ${error.message}`));
 
     child.once("close", (code, signal) => {
         if (stopRequested) {
