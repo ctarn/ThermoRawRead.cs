@@ -120,14 +120,12 @@ function runJob(request) {
     child.once("error", (error) => finalize("error", `Failed to Launch ${exe}: ${error.message}`));
 
     child.once("close", (code, signal) => {
-        if (stopRequested) {
-            stopRequested = false;
+        if (stopRequested)
             finalize("stopped", "Task Stopped.");
-        } else if (code === 0) {
+        else if (code === 0)
             finalize("success", "Task Completed Successfully.");
-        } else {
+        else
             finalize("error", `Task Exited with ${signal ? `Signal ${signal}` : `Status ${code ?? "Unknown"}`}.`);
-        }
     });
 }
 
