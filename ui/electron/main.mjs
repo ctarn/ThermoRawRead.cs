@@ -81,7 +81,6 @@ function runCommand(request) {
     if (child.stderr) readline.createInterface({input: child.stderr}).on("line", (line) => emitLog(id, line));
 
     const finalize = (status, message) => {if (tasks.delete(id)) emitStatus(id, status, message);};
-
     child.once("close", (code, signal) => {
         if (state.stopRequested) finalize("stopped", "Task Stopped.");
         else if (code === 0) finalize("success", "Task Completed Successfully.");
