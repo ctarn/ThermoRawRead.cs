@@ -35,6 +35,10 @@ function emitStatus(status, message) {
     send("job-status", {status, message});
 }
 
+function emitLog(line) {
+    send("job-log", {line})
+}
+
 function createMainWindow() {
     const window = new BrowserWindow({
         title: name,
