@@ -119,6 +119,10 @@ function createMainWindow() {
     return window;
 }
 
+app.whenReady().then(() => mainWindow = createMainWindow());
+app.on("activate", () => {if (BrowserWindow.getAllWindows().length === 0) mainWindow = createMainWindow();});
+app.on("window-all-closed", () => {if (process.platform !== "darwin") app.quit();});
+
 ipcMain.handle("load_state", (_event, payload) => loadState(payload.state_path));
 ipcMain.handle("save_state", (_event, payload) => saveState(payload.state_path, payload.state));
 ipcMain.handle("pick_raw_files", () => chooseFiles("Select Input Files", [{name: "Thermo RAW", extensions: ["raw"]}]));
@@ -126,7 +130,3 @@ ipcMain.handle("pick_input_dir", () => chooseFolder("Select Input Folder"));
 ipcMain.handle("pick_output_dir", () => chooseFolder("Select Output Folder"));
 ipcMain.handle("run_command", (_event, payload) => runCommand(payload));
 ipcMain.handle("stop_task", (_event, payload) => stopTask(payload));
-
-app.whenReady().then(() => mainWindow = createMainWindow());
-app.on("activate", () => {if (BrowserWindow.getAllWindows().length === 0) mainWindow = createMainWindow();});
-app.on("window-all-closed", () => {if (process.platform !== "darwin") app.quit();});
