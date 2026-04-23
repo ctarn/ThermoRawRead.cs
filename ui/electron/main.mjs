@@ -55,7 +55,7 @@ function createMainWindow() {
     return window;
 }
 
-function resolveBackendExecutable() {
+function resolveExecutable(name = name) {
     const candidates = [];
     if (process.env[`${name.toUpperCase()}_BACKEND`]) candidates.push(process.env[`${name.toUpperCase()}_BACKEND`]);
     candidates.push(path.join(process.resourcesPath, "artifacts", name));
@@ -63,7 +63,7 @@ function resolveBackendExecutable() {
 
     const resolved = candidates.find(candidate => fs.existsSync(candidate));
     if (resolved) return process.platform === "win32" ? `${resolved}.exe` : resolved;
-    throw new Error(`${name} backend not found.`);
+    throw new Error(`Executable \`${name}\` Not Found.`);
 }
 
 function buildCommandArgs(request) {
@@ -117,7 +117,7 @@ function runJob(request) {
         throw new Error("a task is already running");
     }
 
-    const backend = resolveBackendExecutable();
+    const backend = resolveExecutable();
     const child = spawn(backend, buildCommandArgs(request), {
         cwd: dirname(backend),
         stdio: ["ignore", "pipe", "pipe"]
