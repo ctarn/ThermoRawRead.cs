@@ -59,8 +59,8 @@ function resolveExecutable(name, taskId = null) {
 }
 
 function runCommand(request) {
-    const taskId = normalizeTaskId(request?.task_id);
-    if (tasks.has(taskId)) throw new Error(`task ${taskId} is already running`);
+    const id = normalizeTaskId(request?.task_id);
+    if (tasks.has(id)) throw new Error(`task ${id} is already running`);
 
     const command = request?.command?.trim?.();
     if (!command) throw new Error("command is required");
@@ -71,27 +71,27 @@ function runCommand(request) {
         return arg;
     });
 
-    const exe = resolveExecutable(command, taskId);
+    const exe = resolveExecutable(command, id);
 
     const child = spawn(exe, args, {cwd: dirname(exe), stdio: ["ignore", "pipe", "pipe"]});
     let finished = false;
-    const taskState = {child, stopRequested: false};
+    const state = {child, stopRequested: false};
 
-    tasks.set(taskId, taskState);
-    emitStatus(taskId, "running", `Running ${exe}`);
+    tasks.set(id, state);
+    emitStatus(id, "running", `Running ${exe}`);
 
-    if (child.stdout) readline.createInterface({input: child.stdout}).on("line", (line) => emitLog(taskId, line));
-    if (child.stderr) readline.createInterface({input: child.stderr}).on("line", (line) => emitLog(taskId, line));
+    if (child.stdout) readline.createInterface({input: child.stdout}).on("line", (line) => emitLog(id, line));
+    if (child.stderr) readline.createInterface({input: child.stderr}).on("line", (line) => emitLog(id, line));
 
     const finalize = (status, message) => {
         if (finished) return;
         finished = true;
-        tasks.delete(taskId);
-        emitStatus(taskId, status, message);
+        tasks.delete(id);
+        emitStatus(id, status, message);
     };
 
     child.once("close", (code, signal) => {
-        if (taskState.stopRequested) finalize("stopped", "Task Stopped.");
+        if (state.stopRequested) finalize("stopped", "Task Stopped.");
         else if (code === 0) finalize("success", "Task Completed Successfully.");
         else finalize("error", `Task Exited: code=${code}; signal=${signal}).`);
     });
