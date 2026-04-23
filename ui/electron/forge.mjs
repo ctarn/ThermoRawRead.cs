@@ -1,6 +1,6 @@
 import {spawn} from "node:child_process";
 import fs from "node:fs";
-import {copyFile, cp, mkdir, mkdtemp, rm, stat, writeFile} from "node:fs/promises";
+import {copyFile, cp, mkdir, mkdtemp, readdir, rm, stat, writeFile} from "node:fs/promises";
 import os from "node:os";
 import path, {dirname, join} from "node:path";
 import {fileURLToPath} from "node:url";
@@ -108,19 +108,26 @@ async function createCliZip(platform, destination) {
 async function organizeRelease(makeResults) {
     const rewrittenResults = [];
 
+    await mkdirs(releaseDir);
+
+    const prefixes = new Set();
+    for (const {platform, arch} of makeResults) {
+        const suffix = releaseSuffix(platform, arch);
+        prefixes.add(`${productName}-${version}.${suffix}.`);
+        prefixes.add(`${productName}-cli-${version}.${suffix}.`);
+    }
+
+    for (const name of await readdir(releaseDir)) {
+        if ([...prefixes].some((prefix) => name.startsWith(prefix))) {
+            await rmrf(path.join(releaseDir, name));
+        }
+    }
+
     for (const result of makeResults) {
         const {platform, arch} = result;
         const suffix = releaseSuffix(platform, arch);
         const guiZip = path.join(releaseDir, `${productName}-${version}.${suffix}.zip`);
         const cliZip = path.join(releaseDir, `${productName}-cli-${version}.${suffix}.zip`);
-
-        await mkdirs(releaseDir);
-        await rmrf(guiZip);
-        await rmrf(cliZip);
-
-        for (const ext of installerExtensions(platform)) {
-            await rmrf(path.join(releaseDir, `${productName}-${version}.${suffix}.${ext}`));
-        }
 
         const rewrittenArtifacts = [await createCliZip(platform, cliZip)];
         const guiArtifact = result.artifacts.find((artifact) => artifact.toLowerCase().endsWith(".zip"));
