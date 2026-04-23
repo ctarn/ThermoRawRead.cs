@@ -103,19 +103,19 @@ function runJob(request) {
     const child = spawn(exe, args, {cwd: dirname(exe), stdio: ["ignore", "pipe", "pipe"]});
     let finished = false;
 
-    const finalize = (status, message) => {
-        if (finished) return;
-        finished = true;
-        currentJob = null;
-        emitStatus(status, message);
-    };
-
     currentJob = child;
     stopRequested = false;
     emitStatus("running", `Running ${exe}`);
 
     if (child.stdout) readline.createInterface({input: child.stdout}).on("line", emitLog);
     if (child.stderr) readline.createInterface({input: child.stderr}).on("line", emitLog);
+
+    const finalize = (status, message) => {
+        if (finished) return;
+        finished = true;
+        currentJob = null;
+        emitStatus(status, message);
+    };
 
     child.once("error", (error) => finalize("error", `Failed to launch ${exe}: ${error.message}`));
 
