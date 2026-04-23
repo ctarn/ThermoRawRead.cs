@@ -72,7 +72,6 @@ function runCommand(request) {
     const args = [...request.args];
 
     const child = spawn(exe, args, {cwd: dirname(exe), stdio: ["ignore", "pipe", "pipe"]});
-    let finished = false;
     const state = {child, stopRequested: false};
 
     tasks.set(id, state);
@@ -82,9 +81,7 @@ function runCommand(request) {
     if (child.stderr) readline.createInterface({input: child.stderr}).on("line", (line) => emitLog(id, line));
 
     const finalize = (status, message) => {
-        if (finished) return;
-        finished = true;
-        tasks.delete(id);
+        if (!tasks.delete(id)) return;
         emitStatus(id, status, message);
     };
 
