@@ -50,18 +50,18 @@ async function copyReleaseArtifact(src, dst) {
 }
 
 async function prepareReleaseTargets(platform, arch) {
+    const zip = path.join(releaseDir, `${productName}-${version}.${rid}.zip`);
     const cliZip = path.join(releaseDir, `${productName}-cli-${version}.${rid}.zip`);
-    const guiZip = path.join(releaseDir, `${productName}-${version}.${rid}.zip`);
 
     await mkdir(releaseDir, {recursive: true});
+    await rmRF(zip);
     await rmRF(cliZip);
-    await rmRF(guiZip);
 
     for (const extension of installerExtensions(platform)) {
         await rmRF(path.join(releaseDir, `${productName}-${version}.${rid}.${extension}`));
     }
 
-    return {cliZip, guiZip, suffix: rid};
+    return {cliZip, guiZip: zip, suffix: rid};
 }
 
 async function stageBackend(platform = process.platform, arch = process.arch) {
