@@ -45,7 +45,7 @@ async function chooseFolder(title) {
 
 function resolveExecutable(name = APPLICATION) {
     const paths = [];
-    if (process.env[`${name.toUpperCase()}_BACKEND`]) paths.push(process.env[`${name.toUpperCase()}_BACKEND`]);
+    if (process.env[`${name.toUpperCase()}_PATH`]) paths.push(process.env[`${name.toUpperCase()}_PATH`]);
     paths.push(path.join(process.resourcesPath, "artifacts", name));
     paths.push(path.join(path.dirname(process.execPath), "artifacts", name));
 
