@@ -150,8 +150,7 @@ const statePath = path.join(os.homedir(), `.${name}`, "ui-state.json");
 
 async function loadState() {
     try {
-        const content = await fsp.readFile(statePath, "utf8");
-        return JSON.parse(content);
+        return JSON.parse(await fsp.readFile(statePath, "utf8"));
     } catch (error) {
         if (error && error.code === "ENOENT") return structuredClone(defaultState);
         throw error;
