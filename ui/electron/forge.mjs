@@ -88,6 +88,7 @@ async function prepareIcons() {
     await writeFile(path.join(iconDir, "icon.ico"), await pngToIco(src));
 
     if (process.platform !== "darwin") return;
+
     const iconsetDir = join(iconDir, "icon.iconset");
     await rmrf(iconsetDir);
     await mkdirs(iconsetDir);
