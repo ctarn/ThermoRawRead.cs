@@ -78,7 +78,7 @@ function resolveBackendExecutable() {
 
 function attachLogStream(stream) {
     if (!stream) return;
-    readline.createInterface({input: stream}).on("line", (line) => {emitLog(line);});
+    readline.createInterface({input: stream}).on("line", emitLog);
 }
 
 function buildCommandArgs(request) {
