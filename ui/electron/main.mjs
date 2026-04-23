@@ -71,7 +71,7 @@ function resolveBackendExecutable() {
     candidates.push(path.join(process.resourcesPath, "artifacts", backendExecutableName(name)));
     candidates.push(path.join(path.dirname(process.execPath), "artifacts", backendExecutableName(name)));
 
-    const resolved = candidates.find((candidate) => fs.existsSync(candidate));
+    const resolved = candidates.find(candidate => fs.existsSync(candidate));
     if (resolved) return resolved;
     throw new Error("ThermoRawRead backend not found.");
 }
