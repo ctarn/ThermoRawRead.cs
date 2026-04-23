@@ -139,20 +139,11 @@ async function organizeRelease(makeResults) {
         }
 
         if (installerArtifact) {
-            const installerPath = path.join(
-                releaseDir,
-                `${productName}-${version}.${suffix}${path.extname(installerArtifact)}`
-            );
+            const installerPath = path.join(releaseDir, `${productName}-${version}.${suffix}${path.extname(installerArtifact)}`);
             await copyReleaseArtifact(installerArtifact, installerPath);
             rewrittenArtifacts.push(installerPath);
         }
-
-        if (rewrittenArtifacts.length > 0) {
-            rewrittenResults.push({
-                ...result,
-                artifacts: rewrittenArtifacts
-            });
-        }
+        rewrittenResults.push({...result, artifacts: rewrittenArtifacts});
     }
 
     return rewrittenResults;
