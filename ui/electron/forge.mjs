@@ -57,22 +57,6 @@ async function copyReleaseArtifact(src, dst) {
     await copyFile(src, dst);
 }
 
-async function prepareReleaseTargets(platform, arch) {
-    const suffix = releaseSuffix(platform, arch);
-    const guiZip = path.join(releaseDir, `${productName}-${version}.${suffix}.zip`);
-    const cliZip = path.join(releaseDir, `${productName}-cli-${version}.${suffix}.zip`);
-
-    await mkdirs(releaseDir);
-    await rmrf(guiZip);
-    await rmrf(cliZip);
-
-    for (const ext of installerExtensions(platform)) {
-        await rmrf(path.join(releaseDir, `${productName}-${version}.${suffix}.${ext}`));
-    }
-
-    return {cliZip, guiZip, suffix};
-}
-
 async function generateAssets() {
     await runCommand("dotnet", ["build", path.join("src", `${productName}.csproj`), "-c", "Release", "-o", buildDir]);
     await rmrf(artifactsDir);
@@ -126,20 +110,31 @@ async function organizeRelease(makeResults) {
 
     for (const result of makeResults) {
         const {platform, arch} = result;
-        const releaseTargets = await prepareReleaseTargets(platform, arch);
-        const rewrittenArtifacts = [await createCliZip(platform, releaseTargets.cliZip)];
+        const suffix = releaseSuffix(platform, arch);
+        const guiZip = path.join(releaseDir, `${productName}-${version}.${suffix}.zip`);
+        const cliZip = path.join(releaseDir, `${productName}-cli-${version}.${suffix}.zip`);
+
+        await mkdirs(releaseDir);
+        await rmrf(guiZip);
+        await rmrf(cliZip);
+
+        for (const ext of installerExtensions(platform)) {
+            await rmrf(path.join(releaseDir, `${productName}-${version}.${suffix}.${ext}`));
+        }
+
+        const rewrittenArtifacts = [await createCliZip(platform, cliZip)];
         const guiArtifact = result.artifacts.find((artifact) => artifact.toLowerCase().endsWith(".zip"));
         const installerArtifact = result.artifacts.find((artifact) => isInstallerArtifact(platform, artifact));
 
         if (guiArtifact) {
-            await copyReleaseArtifact(guiArtifact, releaseTargets.guiZip);
-            rewrittenArtifacts.push(releaseTargets.guiZip);
+            await copyReleaseArtifact(guiArtifact, guiZip);
+            rewrittenArtifacts.push(guiZip);
         }
 
         if (installerArtifact) {
             const installerPath = path.join(
                 releaseDir,
-                `${productName}-${version}.${releaseTargets.suffix}${path.extname(installerArtifact)}`
+                `${productName}-${version}.${suffix}${path.extname(installerArtifact)}`
             );
             await copyReleaseArtifact(installerArtifact, installerPath);
             rewrittenArtifacts.push(installerPath);
