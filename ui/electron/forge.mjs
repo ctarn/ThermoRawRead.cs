@@ -110,7 +110,7 @@ async function prepareIcons() {
     await runCommand("iconutil", ["--convert", "icns", iconsetDir, "--output", path.join(iconDir, "icon.icns")]);
 }
 
-async function buildBackend(platform = process.platform, arch = process.arch) {
+async function buildBackend() {
     await runCommand("dotnet", ["build", path.join("src", `${productName}.csproj`), "-c", "Release", "-o", buildDir]);
 }
 
