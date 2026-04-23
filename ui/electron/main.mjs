@@ -154,12 +154,6 @@ ipcMain.handle("pick_output_dir", () => chooseFolder("Select Output Folder"));
 ipcMain.handle("run_job", (_event, payload) => runJob(payload.request));
 ipcMain.handle("stop_job", () => stopJob());
 
-app.whenReady().then(() => {
-    mainWindow = createMainWindow();
-});
-app.on("activate", () => {
-    if (BrowserWindow.getAllWindows().length === 0) mainWindow = createMainWindow();
-});
-app.on("window-all-closed", () => {
-    if (process.platform !== "darwin") app.quit();
-});
+app.whenReady().then(() => mainWindow = createMainWindow());
+app.on("activate", () => {if (BrowserWindow.getAllWindows().length === 0) mainWindow = createMainWindow();});
+app.on("window-all-closed", () => {if (process.platform !== "darwin") app.quit();});
