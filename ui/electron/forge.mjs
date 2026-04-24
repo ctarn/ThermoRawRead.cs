@@ -70,10 +70,10 @@ async function organizeRelease(makes) {
 
     await mkdirs(releaseDir);
 
-    const names = [`${productName}-${version}.${rid}.`, `${productName}-cli-${version}.${rid}.`];
+    const names = [`${productName}`, `${productName}-cli`];
 
     await Promise.all((await readdir(releaseDir))
-        .filter(x => names.some(name => x.startsWith(name)))
+        .filter(x => names.some(name => x.startsWith(`${name}-${version}.${rid}.`)))
         .map(x => rmrf(path.join(releaseDir, x)))
     );
 
