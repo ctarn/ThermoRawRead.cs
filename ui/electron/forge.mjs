@@ -102,7 +102,6 @@ async function organizeRelease(makes) {
         const out = [`${cli}.zip`];
         for (const src of result.artifacts) {
             dst = `${gui}.${path.extname(src)}`
-            await rmrf(dst);
             await copyFile(src, dst);
             out.push(dst);
         }
