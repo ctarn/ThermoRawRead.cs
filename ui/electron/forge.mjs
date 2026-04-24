@@ -35,12 +35,6 @@ function runCommand(cmd, args, cwd = repoDir) {
     });
 }
 
-async function copyReleaseArtifact(src, dst) {
-    await mkdirs(path.dirname(dst));
-    await rmrf(dst);
-    await copyFile(src, dst);
-}
-
 async function generateAssets() {
     await runCommand("dotnet", ["build", path.join("src", `${productName}.csproj`), "-c", "Release", "-o", buildDir]);
     await rmrf(artifactsDir);
@@ -96,7 +90,7 @@ async function organizeRelease(makes) {
         const out = [`${cli}.zip`];
         for (const src of result.artifacts) {
             const dst = `${gui}${path.extname(src)}`;
-            await copyReleaseArtifact(src, dst);
+            await copyFile(src, dst);
             out.push(dst);
         }
         outputs.push({...result, artifacts: out});
