@@ -70,9 +70,9 @@ async function organizeRelease(makes) {
 
     await mkdirs(releaseDir);
 
+    const names = [`${productName}-${version}.${rid}`, `${productName}-cli-${version}.${rid}`];
     const gui = path.join(releaseDir, `${productName}-${version}.${rid}`);
     const cli = path.join(releaseDir, `${productName}-cli-${version}.${rid}`);
-    const names = [gui, cli];
 
     await Promise.all((await readdir(releaseDir))
         .filter(x => names.some(name => x.startsWith(`${name}.`)))
