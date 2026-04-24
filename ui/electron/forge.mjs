@@ -13,7 +13,6 @@ const version = packageJson.version;
 
 const ARCH_NAMES = {x64: "x86_64", arm64: "arm64"};
 const PLATFORM_NAMES = {darwin: "Darwin", linux: "Linux", win32: "Windows"};
-
 const rid = `${ARCH_NAMES[process.arch] ?? process.arch}.${PLATFORM_NAMES[process.platform] ?? process.platform}`;
 
 const buildDir = join(repoDir, "tmp", "build", rid);
