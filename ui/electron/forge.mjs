@@ -70,14 +70,8 @@ async function organizeRelease(makes) {
 
     await mkdirs(releaseDir);
 
-    const names = [`${productName}-${version}.${rid}`, `${productName}-cli-${version}.${rid}`];
     const gui = path.join(releaseDir, `${productName}-${version}.${rid}`);
     const cli = path.join(releaseDir, `${productName}-cli-${version}.${rid}`);
-
-    await Promise.all((await readdir(releaseDir))
-        .filter(x => names.some(name => x.startsWith(`${name}.`)))
-        .map(x => rmrf(path.join(releaseDir, x)))
-    );
 
     const stagingRoot = await mkdtemp(path.join(os.tmpdir(), `${productName}-cli-`));
     const cliStageDir = path.join(stagingRoot, "cli");
@@ -85,6 +79,7 @@ async function organizeRelease(makes) {
     try {
         await cp(buildDir, cliStageDir, {recursive: true});
 
+        rmrf(`${cli}.zip`)
         if (process.platform === "win32") {
             const quote = (value) => `'${value.replace(/'/g, "''")}'`;
             await runCommand("powershell", ["-NoProfile", "-Command",
