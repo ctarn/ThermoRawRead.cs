@@ -64,20 +64,20 @@ async function organizeRelease(makes) {
     const gui = join(releaseDir, `${APPLICATION}-${VERSION}.${RID}`);
     const cli = join(releaseDir, `${APPLICATION}-cli-${VERSION}.${RID}`);
 
-    const cliDir = join(dirname(artifactsDir), basename(cli));
+    const tmp = join(dirname(artifactsDir), basename(cli));
     try {
-        await rename(artifactsDir, cliDir);
+        await rename(artifactsDir, tmp);
         await rmrf(`${cli}.zip`);
         if (process.platform === "win32") {
             const quote = (value) => `'${value.replace(/'/g, "''")}'`;
             await run("powershell", ["-NoProfile", "-Command",
-                `Compress-Archive -Path ${quote(cliDir)} -DestinationPath ${quote(`${cli}.zip`)} -Force`
+                `Compress-Archive -Path ${quote(tmp)} -DestinationPath ${quote(`${cli}.zip`)} -Force`
             ]);
         } else {
-            await run("zip", ["-qry", `${cli}.zip`, basename(cliDir)], dirname(cliDir));
+            await run("zip", ["-qry", `${cli}.zip`, basename(tmp)], dirname(tmp));
         }
     } finally {
-        await rename(cliDir, artifactsDir);
+        await rename(tmp, artifactsDir);
     }
 
     const outputs = [];
