@@ -115,12 +115,12 @@ async function organizeRelease(makes) {
         const cliZip = path.join(releaseDir, `${productName}-cli-${version}.${suffix}.zip`);
         const rewrittenArtifacts = [await createCliZip(platform, cliZip)];
 
-        for (const artifact of result.artifacts) {
-            const destination = artifact.toLowerCase().endsWith(".zip")
+        for (const src of result.artifacts) {
+            const dst = src.toLowerCase().endsWith(".zip")
                 ? guiZip
-                : path.join(releaseDir, `${productName}-${version}.${suffix}${path.extname(artifact)}`);
-            await copyReleaseArtifact(artifact, destination);
-            rewrittenArtifacts.push(destination);
+                : path.join(releaseDir, `${productName}-${version}.${suffix}${path.extname(src)}`);
+            await copyReleaseArtifact(src, dst);
+            rewrittenArtifacts.push(dst);
         }
         outputs.push({...result, artifacts: rewrittenArtifacts});
     }
