@@ -71,6 +71,8 @@ async function organizeRelease(makes) {
     await mkdirs(releaseDir);
 
     const names = [`${productName}`, `${productName}-cli`];
+    const guiZip = path.join(releaseDir, `${productName}-${version}.${rid}.zip`);
+    const cliZip = path.join(releaseDir, `${productName}-cli-${version}.${rid}.zip`);
 
     await Promise.all((await readdir(releaseDir))
         .filter(x => names.some(name => x.startsWith(`${name}-${version}.${rid}.`)))
@@ -79,8 +81,6 @@ async function organizeRelease(makes) {
 
     const outputs = [];
     for (const result of makes) {
-        const guiZip = path.join(releaseDir, `${productName}-${version}.${rid}.zip`);
-        const cliZip = path.join(releaseDir, `${productName}-cli-${version}.${rid}.zip`);
 
         const stagingRoot = await mkdtemp(path.join(os.tmpdir(), `${productName}-cli-`));
         const cliStageDir = path.join(stagingRoot, "cli");
