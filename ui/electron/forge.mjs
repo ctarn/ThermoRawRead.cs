@@ -13,9 +13,9 @@ const VERSION = packageJson.version;
 
 const ARCH_NAMES = {x64: "x86_64", arm64: "arm64"};
 const PLATFORM_NAMES = {darwin: "Darwin", linux: "Linux", win32: "Windows"};
-const rid = `${ARCH_NAMES[process.arch] ?? process.arch}.${PLATFORM_NAMES[process.platform] ?? process.platform}`;
+const RID = `${ARCH_NAMES[process.arch] ?? process.arch}.${PLATFORM_NAMES[process.platform] ?? process.platform}`;
 
-const buildDir = join(repoDir, "tmp", "build", rid);
+const buildDir = join(repoDir, "tmp", "build", RID);
 const releaseDir = join(repoDir, "tmp", "release", VERSION);
 const artifactsDir = join(repoDir, "tmp", "artifacts");
 const iconDir = join(repoDir, "tmp", "icon");
@@ -61,8 +61,8 @@ async function generateAssets() {
 async function organizeRelease(makes) {
     await mkdirs(releaseDir);
 
-    const gui = join(releaseDir, `${APPLICATION}-${VERSION}.${rid}`);
-    const cli = join(releaseDir, `${APPLICATION}-cli-${VERSION}.${rid}`);
+    const gui = join(releaseDir, `${APPLICATION}-${VERSION}.${RID}`);
+    const cli = join(releaseDir, `${APPLICATION}-cli-${VERSION}.${RID}`);
 
     const cliDir = join(dirname(artifactsDir), basename(cli));
     try {
