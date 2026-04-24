@@ -17,8 +17,8 @@ const rid = `${ARCH_NAMES[process.arch] ?? process.arch}.${PLATFORM_NAMES[proces
 
 const buildDir = join(repoDir, "tmp", "build", rid);
 const releaseDir = join(repoDir, "tmp", "release", version);
-const iconDir = join(repoDir, "tmp", "icon");
 const artifactsDir = join(repoDir, "tmp", "artifacts");
+const iconDir = join(repoDir, "tmp", "icon");
 const sourceIcon = join(repoDir, "fig", `${productName}.png`);
 const iconBasename = join(iconDir, "icon");
 
