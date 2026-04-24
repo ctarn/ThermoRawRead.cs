@@ -8,18 +8,18 @@ import pngToIco from "png-to-ico";
 const repoDir = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 
 const packageJson = JSON.parse(readFileSync(join(repoDir, "ui", "package.json"), "utf8"));
-const productName = packageJson.productName;
-const version = packageJson.version;
+const APPLICATION = packageJson.productName;
+const VERSION = packageJson.version;
 
 const ARCH_NAMES = {x64: "x86_64", arm64: "arm64"};
 const PLATFORM_NAMES = {darwin: "Darwin", linux: "Linux", win32: "Windows"};
 const rid = `${ARCH_NAMES[process.arch] ?? process.arch}.${PLATFORM_NAMES[process.platform] ?? process.platform}`;
 
 const buildDir = join(repoDir, "tmp", "build", rid);
-const releaseDir = join(repoDir, "tmp", "release", version);
+const releaseDir = join(repoDir, "tmp", "release", VERSION);
 const artifactsDir = join(repoDir, "tmp", "artifacts");
 const iconDir = join(repoDir, "tmp", "icon");
-const sourceIcon = join(repoDir, "fig", `${productName}.png`);
+const sourceIcon = join(repoDir, "fig", `${APPLICATION}.png`);
 const iconBasename = join(iconDir, "icon");
 
 const rmrf = (target) => rm(target, { recursive: true, force: true });
@@ -34,7 +34,7 @@ function runCommand(cmd, args, cwd = repoDir) {
 }
 
 async function generateAssets() {
-    await runCommand("dotnet", ["build", join("src", `${productName}.csproj`), "-c", "Release", "-o", buildDir]);
+    await runCommand("dotnet", ["build", join("src", `${APPLICATION}.csproj`), "-c", "Release", "-o", buildDir]);
     await rmrf(artifactsDir);
     await cp(buildDir, artifactsDir, {recursive: true});
 
@@ -61,8 +61,8 @@ async function generateAssets() {
 async function organizeRelease(makes) {
     await mkdirs(releaseDir);
 
-    const gui = join(releaseDir, `${productName}-${version}.${rid}`);
-    const cli = join(releaseDir, `${productName}-cli-${version}.${rid}`);
+    const gui = join(releaseDir, `${APPLICATION}-${VERSION}.${rid}`);
+    const cli = join(releaseDir, `${APPLICATION}-cli-${VERSION}.${rid}`);
 
     const cliDir = join(dirname(artifactsDir), basename(cli));
     try {
@@ -104,10 +104,10 @@ export default {
         appCategoryType: "public.app-category.utilities",
         appCopyright: "Copyright © Tarn Yeong Ching",
         asar: true,
-        executableName: productName,
+        executableName: APPLICATION,
         extraResource: [artifactsDir],
         icon: iconBasename,
-        name: productName,
+        name: APPLICATION,
         overwrite: true
     },
     makers: [
@@ -125,7 +125,7 @@ export default {
         {name: "@electron-forge/maker-squirrel", platforms: ["win32"], config: {
             authors: packageJson.author,
             description: packageJson.description,
-            name: productName,
+            name: APPLICATION,
             setupIcon: `${iconBasename}.ico`
         }}
     ]
