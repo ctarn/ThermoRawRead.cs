@@ -11,15 +11,11 @@ const repoDir = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const packageJson = JSON.parse(fs.readFileSync(join(repoDir, "ui", "package.json"), "utf8"));
 const productName = packageJson.productName;
 const version = packageJson.version;
-const currentPlatform = process.platform;
-const currentArch = process.arch;
 
 const ARCH_NAMES = {x64: "x86_64", arm64: "arm64"};
 const PLATFORM_NAMES = {darwin: "Darwin", linux: "Linux", win32: "Windows"};
 
-const releaseSuffix = () =>
-    `${ARCH_NAMES[currentArch] ?? currentArch}.${PLATFORM_NAMES[currentPlatform] ?? currentPlatform}`;
-const rid = releaseSuffix();
+const rid = `${ARCH_NAMES[process.arch] ?? process.arch}.${PLATFORM_NAMES[process.platform] ?? process.platform}`;
 
 const buildDir = join(repoDir, "tmp", "build", rid);
 const releaseDir = join(repoDir, "tmp", "release", version);
@@ -96,7 +92,7 @@ async function organizeRelease(makes) {
         try {
             await cp(buildDir, cliStageDir, {recursive: true});
 
-            if (currentPlatform === "win32") {
+            if (process.platform === "win32") {
                 const quote = (value) => `'${value.replace(/'/g, "''")}'`;
                 await runCommand("powershell", ["-NoProfile", "-Command",
                     `Compress-Archive -Path ${quote(`${cliStageDir}\\*`)} -DestinationPath ${quote(cliZip)} -Force`
