@@ -94,16 +94,17 @@ async function organizeRelease(makes) {
 
     await mkdirs(releaseDir);
 
-    const prefixes = [];
+    const names = [];
     for (const {platform, arch} of makes) {
         const suffix = releaseSuffix(platform, arch);
-        prefixes.push(`${productName}-${version}.${suffix}.`);
-        prefixes.push(`${productName}-cli-${version}.${suffix}.`);
+        names.push(`${productName}-${version}.${suffix}.`);
+        names.push(`${productName}-cli-${version}.${suffix}.`);
     }
 
-    await Promise.all((await readdir(releaseDir))
-        .filter(name => prefixes.some(prefix => name.startsWith(prefix)))
-        .map(name => rmrf(path.join(releaseDir, name)))
+    await Promise.all(
+        (await readdir(releaseDir))
+        .filter(x => names.some(name => x.startsWith(name)))
+        .map(x => rmrf(path.join(releaseDir, x)))
     );
 
     const outputs = [];
