@@ -75,7 +75,7 @@ async function organizeRelease(makes) {
                 `Compress-Archive -Path ${quote(cliDir)} -DestinationPath ${quote(`${cli}.zip`)} -Force`
             ]);
         } else {
-            await runCommand("zip", ["-qry", `${cli}.zip`, path.basename(cli)], path.dirname(artifactsDir));
+            await runCommand("zip", ["-qry", `${cli}.zip`, path.basename(cliDir)], path.dirname(artifactsDir));
         }
     } finally {
         await rename(cliDir, artifactsDir);
