@@ -1,5 +1,5 @@
 import {spawn} from "node:child_process";
-import fs from "node:fs";
+import {readFileSync} from "node:fs";
 import {copyFile, cp, mkdir, rename, rm, stat, writeFile} from "node:fs/promises";
 import path, {basename, dirname, join} from "node:path";
 import {fileURLToPath} from "node:url";
@@ -7,7 +7,7 @@ import pngToIco from "png-to-ico";
 
 const repoDir = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 
-const packageJson = JSON.parse(fs.readFileSync(join(repoDir, "ui", "package.json"), "utf8"));
+const packageJson = JSON.parse(readFileSync(join(repoDir, "ui", "package.json"), "utf8"));
 const productName = packageJson.productName;
 const version = packageJson.version;
 
