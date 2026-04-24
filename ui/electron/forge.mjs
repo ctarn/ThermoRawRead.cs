@@ -58,7 +58,7 @@ async function generateAssets() {
     }
 }
 
-async function organizeRelease(makes) {
+async function postMake(_, makes) {
     await mkdirs(releaseDir);
 
     const gui = join(releaseDir, `${APPLICATION}-${VERSION}.${RID}`);
@@ -95,10 +95,7 @@ async function organizeRelease(makes) {
 
 export default {
     outDir: join(repoDir, "tmp", "forge"),
-    hooks: {
-        generateAssets,
-        postMake: (_, makes) => organizeRelease(makes)
-    },
+    hooks: {generateAssets, postMake},
     packagerConfig: {
         appBundleId: "io.ctarn.thermorawread",
         appCategoryType: "public.app-category.utilities",
