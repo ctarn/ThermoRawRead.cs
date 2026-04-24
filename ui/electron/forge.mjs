@@ -97,7 +97,7 @@ export default {
     outDir: join(repoDir, "tmp", "forge"),
     hooks: {
         generateAssets,
-        postMake: (_forgeConfig, makeResults) => organizeRelease(makeResults)
+        postMake: (_, makes) => organizeRelease(makes)
     },
     packagerConfig: {
         appBundleId: "io.ctarn.thermorawread",
