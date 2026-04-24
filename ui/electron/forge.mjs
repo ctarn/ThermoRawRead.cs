@@ -112,13 +112,11 @@ export default {
         {name: "@electron-forge/maker-dmg", platforms: ["darwin"], config: {
             icon: `${iconBasename}.icns`
         }},
-        {name: "@electron-forge/maker-deb", platforms: ["linux"], config: {
-            options: {
-                homepage: "http://ctarn.io",
-                icon: sourceIcon,
-                maintainer: packageJson.author
-            }
-        }},
+        {name: "@electron-forge/maker-deb", platforms: ["linux"], config: {options: {
+            homepage: "http://ctarn.io",
+            icon: sourceIcon,
+            maintainer: packageJson.author
+        }}},
         {name: "@electron-forge/maker-squirrel", platforms: ["win32"], config: {
             authors: packageJson.author,
             description: packageJson.description,
