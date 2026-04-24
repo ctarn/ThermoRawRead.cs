@@ -100,8 +100,7 @@ async function organizeRelease(makes) {
         names.push(`${productName}-cli-${version}.${releaseSuffix(platform, arch)}.`);
     }
 
-    await Promise.all(
-        (await readdir(releaseDir))
+    await Promise.all((await readdir(releaseDir))
         .filter(x => names.some(name => x.startsWith(name)))
         .map(x => rmrf(path.join(releaseDir, x)))
     );
