@@ -90,13 +90,12 @@ async function createCliZip(platform, destination) {
     return destination;
 }
 
-async function organizeRelease(makeResults) {
-    const rewrittenResults = [];
+async function organizeRelease(makes) {
 
     await mkdirs(releaseDir);
 
     const prefixes = [];
-    for (const {platform, arch} of makeResults) {
+    for (const {platform, arch} of makes) {
         const suffix = releaseSuffix(platform, arch);
         prefixes.push(`${productName}-${version}.${suffix}.`);
         prefixes.push(`${productName}-cli-${version}.${suffix}.`);
@@ -108,7 +107,8 @@ async function organizeRelease(makeResults) {
         }
     }
 
-    for (const result of makeResults) {
+    const outputs = [];
+    for (const result of makes) {
         const {platform, arch} = result;
         const suffix = releaseSuffix(platform, arch);
         const guiZip = path.join(releaseDir, `${productName}-${version}.${suffix}.zip`);
@@ -122,11 +122,9 @@ async function organizeRelease(makeResults) {
             await copyReleaseArtifact(artifact, destination);
             rewrittenArtifacts.push(destination);
         }
-
-        rewrittenResults.push({...result, artifacts: rewrittenArtifacts});
+        outputs.push({...result, artifacts: rewrittenArtifacts});
     }
-
-    return rewrittenResults;
+    return outputs;
 }
 
 export default {
