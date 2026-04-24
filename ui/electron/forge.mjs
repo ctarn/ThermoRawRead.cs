@@ -1,6 +1,6 @@
 import {spawn} from "node:child_process";
 import fs from "node:fs";
-import {copyFile, cp, mkdir, mkdtemp, readdir, rm, stat, writeFile} from "node:fs/promises";
+import {copyFile, cp, mkdir, mkdtemp, rm, stat, writeFile} from "node:fs/promises";
 import os from "node:os";
 import path, {dirname, join} from "node:path";
 import {fileURLToPath} from "node:url";
@@ -67,7 +67,6 @@ async function generateAssets() {
 }
 
 async function organizeRelease(makes) {
-
     await mkdirs(releaseDir);
 
     const gui = path.join(releaseDir, `${productName}-${version}.${rid}`);
@@ -79,7 +78,7 @@ async function organizeRelease(makes) {
     try {
         await cp(buildDir, cliStageDir, {recursive: true});
 
-        rmrf(`${cli}.zip`)
+        await rmrf(`${cli}.zip`);
         if (process.platform === "win32") {
             const quote = (value) => `'${value.replace(/'/g, "''")}'`;
             await runCommand("powershell", ["-NoProfile", "-Command",
@@ -96,8 +95,8 @@ async function organizeRelease(makes) {
     for (const result of makes) {
         const out = [`${cli}.zip`];
         for (const src of result.artifacts) {
-            dst = `${gui}.${path.extname(src)}`
-            await copyFile(src, dst);
+            const dst = `${gui}${path.extname(src)}`;
+            await copyReleaseArtifact(src, dst);
             out.push(dst);
         }
         outputs.push({...result, artifacts: out});
