@@ -19,8 +19,8 @@ const buildDir = join(repoDir, "tmp", "build", RID);
 const releaseDir = join(repoDir, "tmp", "release", VERSION);
 const artifactsDir = join(repoDir, "tmp", "artifacts");
 const iconDir = join(repoDir, "tmp", "icon");
-const sourceIcon = join(repoDir, "fig", `${APPLICATION}.png`);
 const iconBasename = join(iconDir, "icon");
+const sourceIcon = join(repoDir, "fig", `${APPLICATION}.png`);
 
 const rmrf = (target) => rm(target, { recursive: true, force: true });
 const mkdirs = (target) => mkdir(target, { recursive: true });
