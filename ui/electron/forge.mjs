@@ -96,9 +96,8 @@ async function organizeRelease(makes) {
 
     const names = [];
     for (const {platform, arch} of makes) {
-        const suffix = releaseSuffix(platform, arch);
-        names.push(`${productName}-${version}.${suffix}.`);
-        names.push(`${productName}-cli-${version}.${suffix}.`);
+        names.push(`${productName}-${version}.${releaseSuffix(platform, arch)}.`);
+        names.push(`${productName}-cli-${version}.${releaseSuffix(platform, arch)}.`);
     }
 
     await Promise.all(
