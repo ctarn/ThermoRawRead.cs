@@ -1,7 +1,7 @@
 import {spawn} from "node:child_process";
 import {readFileSync} from "node:fs";
 import {copyFile, cp, mkdir, rename, rm, stat, writeFile} from "node:fs/promises";
-import path, {basename, dirname, join} from "node:path";
+import {basename, dirname, extname, join} from "node:path";
 import {fileURLToPath} from "node:url";
 import pngToIco from "png-to-ico";
 
@@ -34,7 +34,7 @@ function runCommand(cmd, args, cwd = repoDir) {
 }
 
 async function generateAssets() {
-    await runCommand("dotnet", ["build", path.join("src", `${productName}.csproj`), "-c", "Release", "-o", buildDir]);
+    await runCommand("dotnet", ["build", join("src", `${productName}.csproj`), "-c", "Release", "-o", buildDir]);
     await rmrf(artifactsDir);
     await cp(buildDir, artifactsDir, {recursive: true});
 
@@ -51,8 +51,8 @@ async function generateAssets() {
         for (const size of [16, 32, 128, 256, 512]) {
             const sz = String(size);
             const dsz = String(size * 2);
-            await runCommand("sips", ["-z", sz, sz, sourceIcon, "-o", path.join(out, `icon_${sz}x${sz}.png`)]);
-            await runCommand("sips", ["-z", dsz, dsz, sourceIcon, "-o", path.join(out, `icon_${sz}x${sz}@2x.png`)]);
+            await runCommand("sips", ["-z", sz, sz, sourceIcon, "-o", join(out, `icon_${sz}x${sz}.png`)]);
+            await runCommand("sips", ["-z", dsz, dsz, sourceIcon, "-o", join(out, `icon_${sz}x${sz}@2x.png`)]);
         }
         await runCommand("iconutil", ["--convert", "icns", out, "--output", `${iconBasename}.icns`]);
     }
@@ -61,10 +61,10 @@ async function generateAssets() {
 async function organizeRelease(makes) {
     await mkdirs(releaseDir);
 
-    const gui = path.join(releaseDir, `${productName}-${version}.${rid}`);
-    const cli = path.join(releaseDir, `${productName}-cli-${version}.${rid}`);
+    const gui = join(releaseDir, `${productName}-${version}.${rid}`);
+    const cli = join(releaseDir, `${productName}-cli-${version}.${rid}`);
 
-    const cliDir = path.join(path.dirname(artifactsDir), path.basename(cli));
+    const cliDir = join(dirname(artifactsDir), basename(cli));
     try {
         await rename(artifactsDir, cliDir);
         await rmrf(`${cli}.zip`);
@@ -74,7 +74,7 @@ async function organizeRelease(makes) {
                 `Compress-Archive -Path ${quote(cliDir)} -DestinationPath ${quote(`${cli}.zip`)} -Force`
             ]);
         } else {
-            await runCommand("zip", ["-qry", `${cli}.zip`, path.basename(cliDir)], path.dirname(cliDir));
+            await runCommand("zip", ["-qry", `${cli}.zip`, basename(cliDir)], dirname(cliDir));
         }
     } finally {
         await rename(cliDir, artifactsDir);
@@ -84,7 +84,7 @@ async function organizeRelease(makes) {
     for (const result of makes) {
         const out = [`${cli}.zip`];
         for (const src of result.artifacts) {
-            const dst = `${gui}${path.extname(src)}`;
+            const dst = `${gui}${extname(src)}`;
             await copyFile(src, dst);
             out.push(dst);
         }
