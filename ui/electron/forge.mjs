@@ -1,7 +1,6 @@
 import {spawn} from "node:child_process";
 import fs from "node:fs";
-import {copyFile, cp, mkdir, mkdtemp, rm, stat, writeFile} from "node:fs/promises";
-import os from "node:os";
+import {copyFile, cp, mkdir, rm, stat, writeFile} from "node:fs/promises";
 import path, {dirname, join} from "node:path";
 import {fileURLToPath} from "node:url";
 import pngToIco from "png-to-ico";
@@ -66,23 +65,14 @@ async function organizeRelease(makes) {
     const gui = path.join(releaseDir, `${productName}-${version}.${rid}`);
     const cli = path.join(releaseDir, `${productName}-cli-${version}.${rid}`);
 
-    const stagingRoot = await mkdtemp(path.join(os.tmpdir(), `${productName}-cli-`));
-    const cliStageDir = path.join(stagingRoot, "cli");
-
-    try {
-        await cp(buildDir, cliStageDir, {recursive: true});
-
-        await rmrf(`${cli}.zip`);
-        if (process.platform === "win32") {
-            const quote = (value) => `'${value.replace(/'/g, "''")}'`;
-            await runCommand("powershell", ["-NoProfile", "-Command",
-                `Compress-Archive -Path ${quote(`${cliStageDir}\\*`)} -DestinationPath ${quote(`${cli}.zip`)} -Force`
-            ]);
-        } else {
-            await runCommand("zip", ["-qry", `${cli}.zip`, "cli"], stagingRoot);
-        }
-    } finally {
-        await rmrf(stagingRoot);
+    await rmrf(`${cli}.zip`);
+    if (process.platform === "win32") {
+        const quote = (value) => `'${value.replace(/'/g, "''")}'`;
+        await runCommand("powershell", ["-NoProfile", "-Command",
+            `Compress-Archive -Path ${quote(artifactsDir)} -DestinationPath ${quote(`${cli}.zip`)} -Force`
+        ]);
+    } else {
+        await runCommand("zip", ["-qry", `${cli}.zip`, path.basename(artifactsDir)], path.dirname(artifactsDir));
     }
 
     const outputs = [];
