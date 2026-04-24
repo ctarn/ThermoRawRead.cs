@@ -11,12 +11,14 @@ const repoDir = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const packageJson = JSON.parse(fs.readFileSync(join(repoDir, "ui", "package.json"), "utf8"));
 const productName = packageJson.productName;
 const version = packageJson.version;
+const currentPlatform = process.platform;
+const currentArch = process.arch;
 
 const ARCH_NAMES = {x64: "x86_64", arm64: "arm64"};
 const PLATFORM_NAMES = {darwin: "Darwin", linux: "Linux", win32: "Windows"};
 
-const releaseSuffix = (platform = process.platform, arch = process.arch) =>
-    `${ARCH_NAMES[arch] ?? arch}.${PLATFORM_NAMES[platform] ?? platform}`;
+const releaseSuffix = () =>
+    `${ARCH_NAMES[currentArch] ?? currentArch}.${PLATFORM_NAMES[currentPlatform] ?? currentPlatform}`;
 const rid = releaseSuffix();
 
 const buildDir = join(repoDir, "tmp", "build", rid);
@@ -72,11 +74,11 @@ async function organizeRelease(makes) {
 
     await mkdirs(releaseDir);
 
-    const names = [];
-    for (const {platform, arch} of makes) {
-        names.push(`${productName}-${version}.${releaseSuffix(platform, arch)}.`);
-        names.push(`${productName}-cli-${version}.${releaseSuffix(platform, arch)}.`);
-    }
+    const suffix = releaseSuffix();
+    const names = [
+        `${productName}-${version}.${suffix}.`,
+        `${productName}-cli-${version}.${suffix}.`
+    ];
 
     await Promise.all((await readdir(releaseDir))
         .filter(x => names.some(name => x.startsWith(name)))
@@ -85,8 +87,6 @@ async function organizeRelease(makes) {
 
     const outputs = [];
     for (const result of makes) {
-        const {platform, arch} = result;
-        const suffix = releaseSuffix(platform, arch);
         const guiZip = path.join(releaseDir, `${productName}-${version}.${suffix}.zip`);
         const cliZip = path.join(releaseDir, `${productName}-cli-${version}.${suffix}.zip`);
 
@@ -96,13 +96,13 @@ async function organizeRelease(makes) {
         try {
             await cp(buildDir, cliStageDir, {recursive: true});
 
-            if (platform === "win32") {
+            if (currentPlatform === "win32") {
                 const quote = (value) => `'${value.replace(/'/g, "''")}'`;
                 await runCommand("powershell", ["-NoProfile", "-Command",
-                    `Compress-Archive -Path ${quote(`${cliStageDir}\\*`)} -DestinationPath ${quote(destination)} -Force`
+                    `Compress-Archive -Path ${quote(`${cliStageDir}\\*`)} -DestinationPath ${quote(cliZip)} -Force`
                 ]);
             } else {
-                await runCommand("zip", ["-qry", destination, "cli"], stagingRoot);
+                await runCommand("zip", ["-qry", cliZip, "cli"], stagingRoot);
             }
         } finally {
             await rmrf(stagingRoot);
