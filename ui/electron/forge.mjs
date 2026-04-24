@@ -25,7 +25,7 @@ const sourceIcon = join(repoDir, "fig", `${APPLICATION}.png`);
 const rmrf = (target) => rm(target, { recursive: true, force: true });
 const mkdirs = (target) => mkdir(target, { recursive: true });
 
-function runCommand(cmd, args, cwd = repoDir) {
+function run(cmd, args, cwd = repoDir) {
     return new Promise((resolve, reject) => {
         const process = spawn(cmd, args, {cwd, stdio: "inherit"});
         process.once("error", reject);
@@ -34,7 +34,7 @@ function runCommand(cmd, args, cwd = repoDir) {
 }
 
 async function generateAssets() {
-    await runCommand("dotnet", ["build", join("src", `${APPLICATION}.csproj`), "-c", "Release", "-o", buildDir]);
+    await run("dotnet", ["build", join("src", `${APPLICATION}.csproj`), "-c", "Release", "-o", buildDir]);
     await rmrf(artifactsDir);
     await cp(buildDir, artifactsDir, {recursive: true});
 
@@ -51,10 +51,10 @@ async function generateAssets() {
         for (const size of [16, 32, 128, 256, 512]) {
             const sz = String(size);
             const dsz = String(size * 2);
-            await runCommand("sips", ["-z", sz, sz, sourceIcon, "-o", join(out, `icon_${sz}x${sz}.png`)]);
-            await runCommand("sips", ["-z", dsz, dsz, sourceIcon, "-o", join(out, `icon_${sz}x${sz}@2x.png`)]);
+            await run("sips", ["-z", sz, sz, sourceIcon, "-o", join(out, `icon_${sz}x${sz}.png`)]);
+            await run("sips", ["-z", dsz, dsz, sourceIcon, "-o", join(out, `icon_${sz}x${sz}@2x.png`)]);
         }
-        await runCommand("iconutil", ["--convert", "icns", out, "--output", `${iconBasename}.icns`]);
+        await run("iconutil", ["--convert", "icns", out, "--output", `${iconBasename}.icns`]);
     }
 }
 
@@ -70,11 +70,11 @@ async function organizeRelease(makes) {
         await rmrf(`${cli}.zip`);
         if (process.platform === "win32") {
             const quote = (value) => `'${value.replace(/'/g, "''")}'`;
-            await runCommand("powershell", ["-NoProfile", "-Command",
+            await run("powershell", ["-NoProfile", "-Command",
                 `Compress-Archive -Path ${quote(cliDir)} -DestinationPath ${quote(`${cli}.zip`)} -Force`
             ]);
         } else {
-            await runCommand("zip", ["-qry", `${cli}.zip`, basename(cliDir)], dirname(cliDir));
+            await run("zip", ["-qry", `${cli}.zip`, basename(cliDir)], dirname(cliDir));
         }
     } finally {
         await rename(cliDir, artifactsDir);
