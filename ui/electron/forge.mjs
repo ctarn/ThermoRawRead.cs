@@ -73,8 +73,6 @@ async function organizeRelease(makes) {
     const gui = path.join(releaseDir, `${productName}-${version}.${rid}.`);
     const cli = path.join(releaseDir, `${productName}-cli-${version}.${rid}.`);
     const names = [gui, cli];
-    const guiZip = path.join(releaseDir, `${productName}-${version}.${rid}.zip`);
-    const cliZip = path.join(releaseDir, `${productName}-cli-${version}.${rid}.zip`);
 
     await Promise.all((await readdir(releaseDir))
         .filter(x => names.some(name => x.startsWith(`${name}-${version}.${rid}.`)))
