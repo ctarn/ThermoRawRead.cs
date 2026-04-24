@@ -1,6 +1,6 @@
 import {spawn} from "node:child_process";
 import fs from "node:fs";
-import {copyFile, cp, mkdir, mkdtemp, rename, rm, stat, writeFile} from "node:fs/promises";
+import {copyFile, cp, mkdir, rename, rm, stat, writeFile} from "node:fs/promises";
 import path, {basename, dirname, join} from "node:path";
 import {fileURLToPath} from "node:url";
 import pngToIco from "png-to-ico";
