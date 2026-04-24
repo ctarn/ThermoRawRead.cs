@@ -111,8 +111,26 @@ async function organizeRelease(makes) {
         const suffix = releaseSuffix(platform, arch);
         const guiZip = path.join(releaseDir, `${productName}-${version}.${suffix}.zip`);
         const cliZip = path.join(releaseDir, `${productName}-cli-${version}.${suffix}.zip`);
-        const out = [await createCliZip(platform, cliZip)];
 
+        const stagingRoot = await mkdtemp(path.join(os.tmpdir(), `${productName}-cli-`));
+        const cliStageDir = path.join(stagingRoot, "cli");
+
+        try {
+            await cp(buildDir, cliStageDir, {recursive: true});
+
+            if (platform === "win32") {
+                const quote = (value) => `'${value.replace(/'/g, "''")}'`;
+                await runCommand("powershell", ["-NoProfile", "-Command",
+                    `Compress-Archive -Path ${quote(`${cliStageDir}\\*`)} -DestinationPath ${quote(destination)} -Force`
+                ]);
+            } else {
+                await runCommand("zip", ["-qry", destination, "cli"], stagingRoot);
+            }
+        } finally {
+            await rmrf(stagingRoot);
+        }
+
+        const out = [cliZip];
         for (const src of result.artifacts) {
             const dst = src.toLowerCase().endsWith(".zip")
                 ? guiZip
