@@ -101,10 +101,7 @@ async function organizeRelease(makes) {
     for (const result of makes) {
         const out = [`${cli}.zip`];
         for (const src of result.artifacts) {
-            const dst = src.toLowerCase().endsWith(".zip")
-                ? `${gui}.zip`
-                : path.join(releaseDir, `${productName}-${version}.${rid}${path.extname(src)}`);
-            await copyReleaseArtifact(src, dst);
+            await copyReleaseArtifact(src, `${gui}.${path.extname(src)}`);
             out.push(dst);
         }
         outputs.push({...result, artifacts: out});
