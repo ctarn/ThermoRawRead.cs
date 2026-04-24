@@ -101,11 +101,10 @@ async function organizeRelease(makes) {
         prefixes.push(`${productName}-cli-${version}.${suffix}.`);
     }
 
-    for (const name of await readdir(releaseDir)) {
-        if (prefixes.some((prefix) => name.startsWith(prefix))) {
-            await rmrf(path.join(releaseDir, name));
-        }
-    }
+    await Promise.all((await readdir(releaseDir))
+        .filter(name => prefixes.some(prefix => name.startsWith(prefix)))
+        .map(name => rmrf(path.join(releaseDir, name)))
+    );
 
     const outputs = [];
     for (const result of makes) {
