@@ -70,11 +70,7 @@ async function organizeRelease(makes) {
 
     await mkdirs(releaseDir);
 
-    const suffix = releaseSuffix();
-    const names = [
-        `${productName}-${version}.${suffix}.`,
-        `${productName}-cli-${version}.${suffix}.`
-    ];
+    const names = [`${productName}-${version}.${rid}.`, `${productName}-cli-${version}.${rid}.`];
 
     await Promise.all((await readdir(releaseDir))
         .filter(x => names.some(name => x.startsWith(name)))
@@ -83,8 +79,8 @@ async function organizeRelease(makes) {
 
     const outputs = [];
     for (const result of makes) {
-        const guiZip = path.join(releaseDir, `${productName}-${version}.${suffix}.zip`);
-        const cliZip = path.join(releaseDir, `${productName}-cli-${version}.${suffix}.zip`);
+        const guiZip = path.join(releaseDir, `${productName}-${version}.${rid}.zip`);
+        const cliZip = path.join(releaseDir, `${productName}-cli-${version}.${rid}.zip`);
 
         const stagingRoot = await mkdtemp(path.join(os.tmpdir(), `${productName}-cli-`));
         const cliStageDir = path.join(stagingRoot, "cli");
@@ -108,7 +104,7 @@ async function organizeRelease(makes) {
         for (const src of result.artifacts) {
             const dst = src.toLowerCase().endsWith(".zip")
                 ? guiZip
-                : path.join(releaseDir, `${productName}-${version}.${suffix}${path.extname(src)}`);
+                : path.join(releaseDir, `${productName}-${version}.${rid}${path.extname(src)}`);
             await copyReleaseArtifact(src, dst);
             out.push(dst);
         }
