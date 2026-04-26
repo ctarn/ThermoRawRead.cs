@@ -89,7 +89,7 @@ function renderCommandPreview() {
     ELEMENTS.commandPreview.textContent = [TASK_COMMAND, ...buildArgs({preview: true}).map(quote)].join(" ");
 }
 
-const statusMeta = {
+const STATUS_META = {
     idle: {badgeClass: "badge badge-muted", badgeText: "Idle"},
     running: {badgeClass: "badge", badgeText: "Running"},
     stopped: {badgeClass: "badge badge-muted", badgeText: "Stopped"},
@@ -98,7 +98,7 @@ const statusMeta = {
 };
 
 function setStatus(status, message) {
-    const meta = statusMeta[status] ?? statusMeta.idle;
+    const meta = STATUS_META[status] ?? STATUS_META.idle;
     ELEMENTS.statusBadge.className = meta.badgeClass;
     ELEMENTS.statusBadge.textContent = meta.badgeText;
     ELEMENTS.statusText.textContent = message ?? "";
