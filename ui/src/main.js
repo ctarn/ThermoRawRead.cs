@@ -30,9 +30,7 @@ const elements = {
 };
 
 const bridgeErrorMessage = "Desktop bridge is unavailable. Restart the app to reload the preload script.";
-const statePath = BUS
-    ? `${BUS.env.homeDir}${BUS.env.pathSep}.${APPLICATION}${BUS.env.pathSep}ui-state.json`
-    : "";
+const statePath = BUS ? `${BUS.env.homeDir}${BUS.env.pathSep}.${APPLICATION}${BUS.env.pathSep}ui-state.json` : "";
 const formatInputs = Array.from(elements.formatGrid.querySelectorAll("input[type='checkbox']"));
 const allowedOutputs = new Set(formatInputs.map((input) => input.value));
 const defaultOutputs = formatInputs.filter((input) => input.checked).map((input) => input.value);
