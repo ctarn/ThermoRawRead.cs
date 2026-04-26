@@ -2,7 +2,6 @@ const BUS = window.commandbus ?? null;
 const APPLICATION = "ThermoRawRead";
 const TASK_COMMAND = "ThermoRawRead";
 
-const bridgeErrorMessage = "Desktop bridge is unavailable. Restart the app to reload the preload script.";
 const statePath = BUS ? `${BUS.env.homeDir}${BUS.env.pathSep}.${APPLICATION}${BUS.env.pathSep}ui-state.json` : "";
 
 const elements = {
@@ -225,8 +224,9 @@ async function initialize() {
     if (!BUS) {
         Object.values(elements).forEach((element) => element.disabled = true);
         formatInputs.forEach((input) => input.disabled = true);
-        setStatus("error", bridgeErrorMessage);
-        appendLog(bridgeErrorMessage);
+        const msg = "Desktop bridge is unavailable. Restart the app to reload the preload script.";
+        setStatus("error", msg);
+        appendLog(msg);
         return;
     }
 
