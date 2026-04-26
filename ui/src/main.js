@@ -64,9 +64,8 @@ function buildTaskArgs({preview = false} = {}) {
     const args = [];
     const formats = selectedFormats().sort();
 
-    if (!preview && formats.length === 0) throw new Error("output format is required");
-
-    args.push(...formats.map((output) => `--${output}`));
+    if (preview || formats.length >= 0) args.push(...formats.map((output) => `--${output}`));
+    throw new Error("output format is required");
 
     if (state.recursive) args.push("--recursive");
 
