@@ -111,11 +111,6 @@ function setRunning(running) {
     elements.taskStop.disabled = !running;
 }
 
-function setBridgeEnabled(enabled) {
-    Object.values(elements).forEach((element) => element.disabled = !enabled);
-    formatInputs.forEach((input) => input.disabled = !enabled);
-}
-
 function appendLog(line) {
     const content = elements.logOutput.textContent === "idle..." ? "" : elements.logOutput.textContent;
     elements.logOutput.textContent = `${content}${content ? "\n" : ""}${line}`;
@@ -228,7 +223,8 @@ async function initialize() {
     setRunning(false);
 
     if (!BUS) {
-        setBridgeEnabled(false);
+        Object.values(elements).forEach((element) => element.disabled = true);
+        formatInputs.forEach((input) => input.disabled = true);
         setStatus("error", bridgeErrorMessage);
         appendLog(bridgeErrorMessage);
         return;
