@@ -51,7 +51,7 @@ const validFormats = (values) => values.filter((value) => allowedFormats.has(val
 const selectedFormats = () => validFormats(Array.from(state.formats));
 
 let nextTaskId = 1;
-const allocateTaskId = () => nextTaskId++
+const allocateTaskId = () => nextTaskId++;
 
 function buildRequest({preview = false} = {}) {
     const args = [];
