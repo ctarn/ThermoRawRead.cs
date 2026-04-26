@@ -42,8 +42,8 @@ const STATE = createState();
 const validFormats = (values) => values.filter((value) => ALLOWED_FORMATS.has(value));
 const selectedFormats = () => validFormats(Array.from(STATE.formats));
 
-let nextTaskId = 1;
-const allocateTaskId = () => nextTaskId++;
+let NEXT_TASK_ID = 1;
+const allocateTaskId = () => NEXT_TASK_ID++;
 
 function buildArgs({preview = false} = {}) {
     const args = [];
