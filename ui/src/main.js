@@ -1,7 +1,6 @@
-
+const BUS = window.commandbus ?? null;
 const APPLICATION = "ThermoRawRead";
 const TASK_COMMAND = "ThermoRawRead";
-const BUS = window.commandbus ?? null;
 const defaultState = Object.freeze({
     inputs: [],
     output: "",
