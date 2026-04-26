@@ -41,9 +41,7 @@ const statePath = BUS
     : "";
 const formatInputs = Array.from(elements.formatGrid.querySelectorAll("input[type='checkbox']"));
 const allowedOutputs = new Set(formatInputs.map((input) => input.value));
-const defaultOutputs = formatInputs
-    .filter((input) => input.checked)
-    .map((input) => input.value);
+const defaultOutputs = formatInputs.filter((input) => input.checked).map((input) => input.value);
 let nextTaskId = 1;
 const state = {
     inputs: [],
