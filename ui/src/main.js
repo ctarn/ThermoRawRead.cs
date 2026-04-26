@@ -160,7 +160,7 @@ function persistState() {
     }).catch(() => {}) : Promise.resolve();
 }
 
-async function chooseFiles() {
+async function clickInputAddFile() {
     const paths = await BUS.invoke("pick_raw_files");
     if (!Array.isArray(paths) || paths.length === 0) return;
 
@@ -170,7 +170,7 @@ async function chooseFiles() {
     await persistState();
 }
 
-async function chooseInputDir() {
+async function clickInputAddFolder() {
     const directory = await BUS.invoke("pick_input_dir");
     if (!directory) return;
 
@@ -180,7 +180,14 @@ async function chooseInputDir() {
     await persistState();
 }
 
-async function chooseOutputDir() {
+async function clickInputClear() {
+    state.inputs = [];
+    renderInput();
+    renderCommandPreview();
+    void persistState();
+}
+
+async function clickOutputPick() {
     const directory = await BUS.invoke("pick_output_dir");
     if (!directory) return;
 
@@ -189,7 +196,7 @@ async function chooseOutputDir() {
     await persistState();
 }
 
-async function runTask() {
+async function clickTaskStart() {
     try {
         const taskId = allocateTaskId();
         const request = buildCmd(taskId);
@@ -206,7 +213,7 @@ async function runTask() {
     }
 }
 
-async function stopTask() {
+async function clickTaskStop() {
     try {
         if (state.activeTaskId == null) return;
         await BUS.invoke("stop_task", {task_id: state.activeTaskId});
@@ -249,18 +256,13 @@ async function initialize() {
         await persistState();
     }));
 
-    elements.inputAddFile.addEventListener("click", chooseFiles);
-    elements.inputAddFolder.addEventListener("click", chooseInputDir);
-    elements.outputPick.addEventListener("click", chooseOutputDir);
-    elements.taskStart.addEventListener("click", runTask);
-    elements.taskStop.addEventListener("click", stopTask);
+    elements.inputAddFile.addEventListener("click", clickInputAddFile);
+    elements.inputAddFolder.addEventListener("click", clickInputAddFolder);
+    elements.inputClear.addEventListener("click", clickInputClear);
+    elements.outputPick.addEventListener("click", clickOutputPick);
+    elements.taskStart.addEventListener("click", clickTaskStart);
+    elements.taskStop.addEventListener("click", clickTaskStop);
     elements.logClear.addEventListener("click", () => elements.logOutput.textContent = "");
-    elements.inputClear.addEventListener("click", () => {
-        state.inputs = [];
-        renderInput();
-        renderCommandPreview();
-        void persistState();
-    });
 
     BUS.on("task-log", ({task_id: taskId, line}) => {
         if (taskId !== state.activeTaskId) return;
