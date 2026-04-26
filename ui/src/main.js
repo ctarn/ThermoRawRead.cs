@@ -80,13 +80,7 @@ function buildTaskArgs({preview = false} = {}) {
     return args;
 }
 
-function buildTaskCommand(taskId, options) {
-    return {
-        task_id: taskId,
-        command: TASK_COMMAND,
-        args: buildTaskArgs(options)
-    };
-}
+const buildCmd = (taskId, options) => ({task_id: taskId, command: TASK_COMMAND, args: buildTaskArgs(options)});
 
 function renderInput() {
     elements.inputList.replaceChildren();
@@ -232,7 +226,7 @@ async function chooseOutputDir() {
 async function runJob() {
     try {
         const taskId = allocateTaskId();
-        const request = buildTaskCommand(taskId);
+        const request = buildCmd(taskId);
         state.activeTaskId = taskId;
         elements.logOutput.textContent = "";
         setRunning(true);
