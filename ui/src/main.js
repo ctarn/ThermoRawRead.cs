@@ -2,14 +2,6 @@ const BUS = window.commandbus ?? null;
 const APPLICATION = "ThermoRawRead";
 const TASK_COMMAND = "ThermoRawRead";
 
-const statusMeta = {
-    idle: {badgeClass: "badge badge-muted", badgeText: "Idle"},
-    running: {badgeClass: "badge", badgeText: "Running"},
-    stopped: {badgeClass: "badge badge-muted", badgeText: "Stopped"},
-    success: {badgeClass: "badge", badgeText: "Finished"},
-    error: {badgeClass: "badge badge-error", badgeText: "Failed"}
-};
-
 const elements = {
     inputList: document.querySelector("#input-list"),
     inputCount: document.querySelector("#input-count"),
@@ -27,6 +19,14 @@ const elements = {
     statusText: document.querySelector("#status-text"),
     logClear: document.querySelector("#log-clear"),
     logOutput: document.querySelector("#log-output"),
+};
+
+const statusMeta = {
+    idle: {badgeClass: "badge badge-muted", badgeText: "Idle"},
+    running: {badgeClass: "badge", badgeText: "Running"},
+    stopped: {badgeClass: "badge badge-muted", badgeText: "Stopped"},
+    success: {badgeClass: "badge", badgeText: "Finished"},
+    error: {badgeClass: "badge badge-error", badgeText: "Failed"}
 };
 
 const bridgeErrorMessage = "Desktop bridge is unavailable. Restart the app to reload the preload script.";
