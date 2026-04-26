@@ -81,7 +81,9 @@ function renderInput() {
     );
 }
 
-const renderFormats = () => formatInputs.forEach((item) => item.checked = state.formats.has(item.value));
+function renderFormats() {
+    formatInputs.forEach((item) => item.checked = state.formats.has(item.value));
+}
 
 function renderCommandPreview() {
     const quote = (str) => /\s/.test(str) || (str === "") ? JSON.stringify(str) : str;
