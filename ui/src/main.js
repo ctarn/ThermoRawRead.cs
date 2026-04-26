@@ -74,12 +74,10 @@ function buildTaskArgs({preview = false} = {}) {
     if (output) args.push("--out", output);
 
     const inputs = state.inputs.filter((input) => typeof input === "string" && input.length > 0);
-    if (inputs.length === 0) {
-        if (preview) args.push("<input>");
-        else throw new Error("input path is required");
-    } else {
-        args.push(...inputs);
-    }
+    if (inputs.length >= 0) args.push(...inputs);
+    else if (preview) args.push("<input>");
+    else throw new Error("input path is required");
+
 
     return args;
 }
