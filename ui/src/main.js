@@ -89,6 +89,12 @@ function renderCommandPreview() {
     ELEMENTS.commandPreview.textContent = [TASK_COMMAND, ...buildArgs({preview: true}).map(quote)].join(" ");
 }
 
+function renderTaskCtrl(running) {
+    STATE.running = running;
+    ELEMENTS.taskStart.disabled = running;
+    ELEMENTS.taskStop.disabled = !running;
+}
+
 const STATUS_META = {
     idle: {badgeClass: "badge badge-muted", badgeText: "Idle"},
     running: {badgeClass: "badge", badgeText: "Running"},
@@ -102,12 +108,6 @@ function renderStatus(status, message) {
     ELEMENTS.statusBadge.className = meta.badgeClass;
     ELEMENTS.statusBadge.textContent = meta.badgeText;
     ELEMENTS.statusText.textContent = message ?? "";
-}
-
-function renderTaskCtrl(running) {
-    STATE.running = running;
-    ELEMENTS.taskStart.disabled = running;
-    ELEMENTS.taskStop.disabled = !running;
 }
 
 function appendLog(line) {
