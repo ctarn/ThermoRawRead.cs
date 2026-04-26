@@ -64,28 +64,19 @@ function buildTaskArgs({preview = false} = {}) {
     const args = [];
     const outputs = selectedFormats().sort();
 
-    if (!preview && outputs.length === 0) {
-        throw new Error("output format is required");
-    }
+    if (!preview && outputs.length === 0) throw new Error("output format is required");
 
     args.push(...outputs.map((output) => `--${output}`));
 
-    if (state.recursive) {
-        args.push("--recursive");
-    }
+    if (state.recursive) args.push("--recursive");
 
     const output = state.output.trim();
-    if (output) {
-        args.push("--out", output);
-    }
+    if (output) args.push("--out", output);
 
     const inputs = state.inputs.filter((input) => typeof input === "string" && input.length > 0);
     if (inputs.length === 0) {
-        if (preview) {
-            args.push("<input>");
-        } else {
-            throw new Error("input path is required");
-        }
+        if (preview) args.push("<input>");
+        else throw new Error("input path is required");
     } else {
         args.push(...inputs);
     }
