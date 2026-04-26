@@ -93,12 +93,7 @@ function renderInput() {
     );
 }
 
-function renderFormatGrid() {
-    const selected = state.formats;
-    formatInputs.forEach((input) => {
-        input.checked = selected.has(input.value);
-    });
-}
+const renderFormats = () => formatInputs.forEach((input) => input.checked = state.formats.has(input.value));
 
 function renderCommandPreview() {
     const quote = (str) => /\s/.test(str) || (str === "") ? JSON.stringify(str) : str;
@@ -145,7 +140,7 @@ function appendLog(line) {
 
 function renderState() {
     renderInput();
-    renderFormatGrid();
+    renderFormats();
     renderCommandPreview();
     elements.outputInput.value = state.output;
     elements.inputIsRecursive.checked = state.recursive;
@@ -242,7 +237,7 @@ async function stopJob() {
 
 async function initialize() {
     renderInput();
-    renderFormatGrid();
+    renderFormats();
     renderCommandPreview();
     setRunning(false);
 
@@ -270,7 +265,7 @@ async function initialize() {
             if (input.checked) state.formats.add(input.value);
             else state.formats.delete(input.value);
 
-            renderFormatGrid();
+            renderFormats();
             renderCommandPreview();
             await persistState();
         });
