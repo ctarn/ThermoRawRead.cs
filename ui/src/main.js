@@ -2,6 +2,9 @@ const BUS = window.commandbus ?? null;
 const APPLICATION = "ThermoRawRead";
 const TASK_COMMAND = "ThermoRawRead";
 
+const bridgeErrorMessage = "Desktop bridge is unavailable. Restart the app to reload the preload script.";
+const statePath = BUS ? `${BUS.env.homeDir}${BUS.env.pathSep}.${APPLICATION}${BUS.env.pathSep}ui-state.json` : "";
+
 const elements = {
     inputList: document.querySelector("#input-list"),
     inputCount: document.querySelector("#input-count"),
@@ -21,8 +24,6 @@ const elements = {
     logOutput: document.querySelector("#log-output"),
 };
 
-const bridgeErrorMessage = "Desktop bridge is unavailable. Restart the app to reload the preload script.";
-const statePath = BUS ? `${BUS.env.homeDir}${BUS.env.pathSep}.${APPLICATION}${BUS.env.pathSep}ui-state.json` : "";
 const formatInputs = Array.from(elements.formatGrid.querySelectorAll("input[type='checkbox']"));
 const allowedFormats = new Set(formatInputs.map((input) => input.value));
 const defaultFormats = formatInputs.filter((input) => input.checked).map((input) => input.value);
