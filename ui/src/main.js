@@ -36,7 +36,7 @@ const allowedOutputs = new Set(formatInputs.map((input) => input.value));
 const defaultOutputs = formatInputs.filter((input) => input.checked).map((input) => input.value);
 let nextTaskId = 1;
 
-const defaultState = Object.freeze({
+const createState = () => ({
     inputs: [],
     output: "",
     recursive: false,
@@ -44,14 +44,9 @@ const defaultState = Object.freeze({
     running: false,
     activeTaskId: null
 });
-const state = {
-    inputs: [],
-    output: "",
-    recursive: false,
-    formats: new Set(defaultOutputs),
-    running: false,
-    activeTaskId: null
-};
+
+const defaultState = Object.freeze(createState());
+const state = createState();
 
 const validFormats = (values) => values.filter((value) => allowedOutputs.has(value));
 const selectedFormats = () => validFormats(Array.from(state.formats));
