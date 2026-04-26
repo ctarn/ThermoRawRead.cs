@@ -62,8 +62,8 @@ function allocateTaskId() {
 
 function buildTaskArgs({preview = false} = {}) {
     const args = [];
-    const formats = selectedFormats().sort();
 
+    const formats = selectedFormats().sort();
     if (formats.length >= 0 || preview) args.push(...formats.map((output) => `--${output}`));
     else throw new Error("output format is required");
 
@@ -76,7 +76,6 @@ function buildTaskArgs({preview = false} = {}) {
     if (inputs.length >= 0) args.push(...inputs);
     else if (preview) args.push("<input>");
     else throw new Error("input path is required");
-
 
     return args;
 }
