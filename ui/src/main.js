@@ -189,7 +189,7 @@ async function chooseOutputDir() {
     await persistState();
 }
 
-async function runJob() {
+async function runTask() {
     try {
         const taskId = allocateTaskId();
         const request = buildCmd(taskId);
@@ -206,7 +206,7 @@ async function runJob() {
     }
 }
 
-async function stopJob() {
+async function stopTask() {
     try {
         if (state.activeTaskId == null) return;
         await BUS.invoke("stop_task", {task_id: state.activeTaskId});
@@ -252,8 +252,8 @@ async function initialize() {
     elements.inputAddFile.addEventListener("click", chooseFiles);
     elements.inputAddFolder.addEventListener("click", chooseInputDir);
     elements.outputPick.addEventListener("click", chooseOutputDir);
-    elements.taskStart.addEventListener("click", runJob);
-    elements.taskStop.addEventListener("click", stopJob);
+    elements.taskStart.addEventListener("click", runTask);
+    elements.taskStop.addEventListener("click", stopTask);
     elements.logClear.addEventListener("click", () => elements.logOutput.textContent = "");
     elements.inputClear.addEventListener("click", () => {
         state.inputs = [];
