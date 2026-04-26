@@ -96,14 +96,14 @@ function renderTaskCtrl(running) {
 }
 
 function renderStatus(status, message) {
-    const STATUS_META = {
+    const opts = {
         idle: {badgeClass: "badge badge-muted", badgeText: "Idle"},
         running: {badgeClass: "badge", badgeText: "Running"},
         stopped: {badgeClass: "badge badge-muted", badgeText: "Stopped"},
         success: {badgeClass: "badge", badgeText: "Finished"},
         error: {badgeClass: "badge badge-error", badgeText: "Failed"}
     };
-    const meta = STATUS_META[status] ?? STATUS_META.idle;
+    const meta = opts[status] ?? opts.idle;
     ELEMENTS.statusBadge.className = meta.badgeClass;
     ELEMENTS.statusBadge.textContent = meta.badgeText;
     ELEMENTS.statusText.textContent = message ?? "";
