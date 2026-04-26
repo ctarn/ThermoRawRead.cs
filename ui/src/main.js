@@ -34,7 +34,6 @@ const statePath = BUS ? `${BUS.env.homeDir}${BUS.env.pathSep}.${APPLICATION}${BU
 const formatInputs = Array.from(elements.formatGrid.querySelectorAll("input[type='checkbox']"));
 const allowedFormats = new Set(formatInputs.map((input) => input.value));
 const defaultFormats = formatInputs.filter((input) => input.checked).map((input) => input.value);
-let nextTaskId = 1;
 
 const createState = () => ({
     inputs: [],
@@ -51,6 +50,7 @@ const state = createState();
 const validFormats = (values) => values.filter((value) => allowedFormats.has(value));
 const selectedFormats = () => validFormats(Array.from(state.formats));
 
+let nextTaskId = 1;
 function allocateTaskId() {
     const taskId = nextTaskId;
     nextTaskId += 1;
