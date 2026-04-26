@@ -60,7 +60,7 @@ function allocateTaskId() {
     return taskId;
 }
 
-function buildTaskArgs({preview = false} = {}) {
+function buildRequest({preview = false} = {}) {
     const args = [];
 
     const formats = selectedFormats().sort();
@@ -80,7 +80,7 @@ function buildTaskArgs({preview = false} = {}) {
     return args;
 }
 
-const buildCmd = (taskId, options) => ({task_id: taskId, command: TASK_COMMAND, args: buildTaskArgs(options)});
+const buildCmd = (taskId, options) => ({task_id: taskId, command: TASK_COMMAND, args: buildRequest(options)});
 
 function renderInput() {
     elements.inputList.replaceChildren();
@@ -97,8 +97,7 @@ const renderFormats = () => formatInputs.forEach((item) => item.checked = state.
 
 function renderCommandPreview() {
     const quote = (str) => /\s/.test(str) || (str === "") ? JSON.stringify(str) : str;
-    const parts = [TASK_COMMAND, ...buildTaskArgs({preview: true}).map(quote)];
-    elements.commandPreview.textContent = parts.join(" ");
+    elements.commandPreview.textContent = [TASK_COMMAND, ...buildRequest({preview: true}).map(quote)].join(" ");
 }
 
 function setStatus(status, message) {
