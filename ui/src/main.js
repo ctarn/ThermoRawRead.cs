@@ -89,7 +89,7 @@ function renderInput() {
     elements.inputCount.textContent = `${count} entr${count <= 1 ? "y" : "ies"}`;
 
     elements.inputList.insertAdjacentHTML("beforeend", 
-        count > 0 ? state.inputs.map(path => `<li>${path}</li>`).join('') : '<li class="empty">No RAW files or folders selected.</li>'
+        count > 0 ? state.inputs.map(path => `<li>${path}</li>`).join('') : '<li class="empty">Nothing Selected.</li>'
     );
 }
 
