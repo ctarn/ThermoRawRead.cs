@@ -97,14 +97,14 @@ const STATUS_META = {
     error: {badgeClass: "badge badge-error", badgeText: "Failed"}
 };
 
-function setStatus(status, message) {
+function renderStatus(status, message) {
     const meta = STATUS_META[status] ?? STATUS_META.idle;
     ELEMENTS.statusBadge.className = meta.badgeClass;
     ELEMENTS.statusBadge.textContent = meta.badgeText;
     ELEMENTS.statusText.textContent = message ?? "";
 }
 
-function setRunning(running) {
+function renderTaskCtrl(running) {
     STATE.running = running;
     ELEMENTS.taskStart.disabled = running;
     ELEMENTS.taskStop.disabled = !running;
@@ -122,7 +122,7 @@ function renderState() {
     renderCommandPreview();
     ELEMENTS.outputInput.value = STATE.output;
     ELEMENTS.inputIsRecursive.checked = STATE.recursive;
-    setRunning(STATE.running);
+    renderTaskCtrl(STATE.running);
 }
 
 function hydrate(saved = {}) {
@@ -194,14 +194,14 @@ async function clickTaskStart() {
         const request = buildCmd(taskId);
         STATE.activeTaskId = taskId;
         ELEMENTS.logOutput.textContent = "";
-        setRunning(true);
-        setStatus("running", "ThermoRawRead is streaming logs from the CLI backend.");
+        renderTaskCtrl(true);
+        renderStatus("running", "ThermoRawRead is streaming logs from the CLI backend.");
         await BUS.invoke("run_task", request);
     } catch (error) {
         STATE.activeTaskId = null;
-        setRunning(false);
+        renderTaskCtrl(false);
         appendLog(String(error));
-        setStatus("error", String(error));
+        renderStatus("error", String(error));
     }
 }
 
@@ -211,7 +211,7 @@ async function clickTaskStop() {
         await BUS.invoke("stop_task", {task_id: STATE.activeTaskId});
     } catch (error) {
         appendLog(String(error));
-        setStatus("error", String(error));
+        renderStatus("error", String(error));
     }
 }
 
@@ -219,13 +219,13 @@ async function initialize() {
     renderInput();
     renderFormats();
     renderCommandPreview();
-    setRunning(false);
+    renderTaskCtrl(false);
 
     if (!BUS) {
         Object.values(ELEMENTS).forEach((element) => element.disabled = true);
         FORMAT_INPUTS.forEach((input) => input.disabled = true);
         const msg = "Desktop bridge is unavailable. Restart the app to reload the preload script.";
-        setStatus("error", msg);
+        renderStatus("error", msg);
         appendLog(msg);
         return;
     }
@@ -265,8 +265,8 @@ async function initialize() {
 
     BUS.on("task-status", ({task_id: taskId, status, message}) => {
         if (taskId !== STATE.activeTaskId) return;
-        setRunning(status === "running");
-        setStatus(status, message);
+        renderTaskCtrl(status === "running");
+        renderStatus(status, message);
         if (status !== "running") STATE.activeTaskId = null;
     });
 
