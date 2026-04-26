@@ -116,10 +116,10 @@ function appendLog(line) {
 
 function renderState() {
     renderInput();
+    ELEMENTS.inputIsRecursive.checked = STATE.recursive;
     renderFormats();
     renderCommandPreview();
     ELEMENTS.outputInput.value = STATE.output;
-    ELEMENTS.inputIsRecursive.checked = STATE.recursive;
     renderTaskCtrl(STATE.running);
 }
 
