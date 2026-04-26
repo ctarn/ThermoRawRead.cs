@@ -62,11 +62,11 @@ function allocateTaskId() {
 
 function buildTaskArgs({preview = false} = {}) {
     const args = [];
-    const outputs = selectedFormats().sort();
+    const formats = selectedFormats().sort();
 
-    if (!preview && outputs.length === 0) throw new Error("output format is required");
+    if (!preview && formats.length === 0) throw new Error("output format is required");
 
-    args.push(...outputs.map((output) => `--${output}`));
+    args.push(...formats.map((output) => `--${output}`));
 
     if (state.recursive) args.push("--recursive");
 
