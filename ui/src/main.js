@@ -51,13 +51,8 @@ const state = {
     activeTaskId: null
 };
 
-function validOutputs(values) {
-    return values.filter((value) => allowedOutputs.has(value));
-}
-
-function selectedOutputs() {
-    return validOutputs(Array.from(state.formats));
-}
+const validFormats = (values) => values.filter((value) => allowedOutputs.has(value));
+const selectedFormats = () => validFormats(Array.from(state.formats));
 
 function allocateTaskId() {
     const taskId = nextTaskId;
@@ -67,7 +62,7 @@ function allocateTaskId() {
 
 function buildTaskArgs({preview = false} = {}) {
     const args = [];
-    const outputs = selectedOutputs().sort();
+    const outputs = selectedFormats().sort();
 
     if (!preview && outputs.length === 0) {
         throw new Error("output format is required");
@@ -188,7 +183,7 @@ function renderState() {
 
 function hydrate(saved = {}) {
     const savedOutputs = Array.isArray(saved.formats) && saved.formats.length > 0
-        ? validOutputs(saved.formats)
+        ? validFormats(saved.formats)
         : defaultOutputs;
 
     state.inputs = Array.isArray(saved.inputs) ? saved.inputs : [];
@@ -212,7 +207,7 @@ function persistState() {
             inputs: state.inputs,
             output: state.output,
             recursive: state.recursive,
-            formats: selectedOutputs()
+            formats: selectedFormats()
         }
     }).catch(() => {
     });
