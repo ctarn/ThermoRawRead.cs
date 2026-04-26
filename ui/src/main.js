@@ -64,7 +64,7 @@ function buildTaskArgs({preview = false} = {}) {
     const args = [];
 
     const formats = selectedFormats().sort();
-    if (formats.length >= 0 || preview) args.push(...formats.map((output) => `--${output}`));
+    if (formats.length > 0 || preview) args.push(...formats.map((output) => `--${output}`));
     else throw new Error("output format is required");
 
     if (state.recursive) args.push("--recursive");
@@ -73,7 +73,7 @@ function buildTaskArgs({preview = false} = {}) {
     if (output) args.push("--out", output);
 
     const inputs = state.inputs.filter((input) => typeof input === "string" && input.length > 0);
-    if (inputs.length >= 0) args.push(...inputs);
+    if (inputs.length > 0) args.push(...inputs);
     else if (preview) args.push("<input>");
     else throw new Error("input path is required");
 
@@ -88,19 +88,9 @@ function renderInput() {
     const count = state.inputs.length;
     elements.inputCount.textContent = `${count} entr${count <= 1 ? "y" : "ies"}`;
 
-    if (count === 0) {
-        const empty = document.createElement("li");
-        empty.className = "empty";
-        empty.textContent = "No RAW files or folders selected.";
-        elements.inputList.append(empty);
-        return;
-    }
-
-    state.inputs.forEach((path) => {
-        const item = document.createElement("li");
-        item.textContent = path;
-        elements.inputList.append(item);
-    });
+    const list = count > 0 ? state.inputs.map(path => `<li>${path}</li>`).join('')
+        : '<li class="empty">No RAW files or folders selected.</li>';
+    elements.inputList.insertAdjacentHTML('beforeend', list);
 }
 
 function renderFormatGrid() {
