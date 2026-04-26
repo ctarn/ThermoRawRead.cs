@@ -66,7 +66,9 @@ function buildArgs({preview = false} = {}) {
     return args;
 }
 
-const buildCmd = (taskId, options) => ({task_id: taskId, command: TASK_COMMAND, args: buildArgs(options)});
+function buildCmd(taskId, options) {
+    return {task_id: taskId, command: TASK_COMMAND, args: buildArgs(options)};
+}
 
 function renderInput() {
     elements.inputList.replaceChildren();
