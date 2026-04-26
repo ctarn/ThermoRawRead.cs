@@ -103,9 +103,8 @@ function renderStatus(status, message) {
         success: {badgeClass: "badge", badgeText: "Finished"},
         error: {badgeClass: "badge badge-error", badgeText: "Failed"}
     };
-    const meta = opts[status] ?? opts.idle;
-    ELEMENTS.statusBadge.className = meta.badgeClass;
-    ELEMENTS.statusBadge.textContent = meta.badgeText;
+    ELEMENTS.statusBadge.className = opts[status].badgeClass;
+    ELEMENTS.statusBadge.textContent = opts[status].badgeText;
     ELEMENTS.statusText.textContent = message ?? "";
 }
 
