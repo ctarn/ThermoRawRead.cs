@@ -23,24 +23,24 @@ const ELEMENTS = {
     logOutput: document.querySelector("#log-output"),
 };
 
-const formatInputs = Array.from(ELEMENTS.formatGrid.querySelectorAll("input[type='checkbox']"));
-const allowedFormats = new Set(formatInputs.map((input) => input.value));
-const defaultFormats = formatInputs.filter((input) => input.checked).map((input) => input.value);
+const FORMAT_INPUTS = Array.from(ELEMENTS.formatGrid.querySelectorAll("input[type='checkbox']"));
+const ALLOWED_FORMATS = new Set(FORMAT_INPUTS.map((input) => input.value));
+const DEFAULT_FORMATS = FORMAT_INPUTS.filter((input) => input.checked).map((input) => input.value);
 
 const createState = () => ({
     inputs: [],
     output: "",
     recursive: false,
-    formats: new Set(defaultFormats),
+    formats: new Set(DEFAULT_FORMATS),
     running: false,
     activeTaskId: null
 });
 
-const defaultState = Object.freeze(createState());
-const state = createState();
+const DEFAULT_STATE = Object.freeze(createState());
+const STATE = createState();
 
-const validFormats = (values) => values.filter((value) => allowedFormats.has(value));
-const selectedFormats = () => validFormats(Array.from(state.formats));
+const validFormats = (values) => values.filter((value) => ALLOWED_FORMATS.has(value));
+const selectedFormats = () => validFormats(Array.from(STATE.formats));
 
 let nextTaskId = 1;
 const allocateTaskId = () => nextTaskId++;
@@ -52,12 +52,12 @@ function buildArgs({preview = false} = {}) {
     if (formats.length > 0 || preview) args.push(...formats.map((output) => `--${output}`));
     else throw new Error("output format is required");
 
-    if (state.recursive) args.push("--recursive");
+    if (STATE.recursive) args.push("--recursive");
 
-    const output = state.output.trim();
+    const output = STATE.output.trim();
     if (output) args.push("--out", output);
 
-    const inputs = state.inputs.filter((input) => typeof input === "string" && input.length > 0);
+    const inputs = STATE.inputs.filter((input) => typeof input === "string" && input.length > 0);
     if (inputs.length > 0) args.push(...inputs);
     else if (preview) args.push("<input>");
     else throw new Error("input path is required");
@@ -72,16 +72,16 @@ function buildCmd(taskId, options) {
 function renderInput() {
     ELEMENTS.inputList.replaceChildren();
 
-    const count = state.inputs.length;
+    const count = STATE.inputs.length;
     ELEMENTS.inputCount.textContent = `${count} entr${count <= 1 ? "y" : "ies"}`;
 
     ELEMENTS.inputList.insertAdjacentHTML("beforeend", 
-        count > 0 ? state.inputs.map(path => `<li>${path}</li>`).join('') : '<li class="empty">Nothing Selected.</li>'
+        count > 0 ? STATE.inputs.map(path => `<li>${path}</li>`).join('') : '<li class="empty">Nothing Selected.</li>'
     );
 }
 
 function renderFormats() {
-    formatInputs.forEach((item) => item.checked = state.formats.has(item.value));
+    FORMAT_INPUTS.forEach((item) => item.checked = STATE.formats.has(item.value));
 }
 
 function renderCommandPreview() {
@@ -105,7 +105,7 @@ function setStatus(status, message) {
 }
 
 function setRunning(running) {
-    state.running = running;
+    STATE.running = running;
     ELEMENTS.taskStart.disabled = running;
     ELEMENTS.taskStop.disabled = !running;
 }
@@ -120,22 +120,22 @@ function renderState() {
     renderInput();
     renderFormats();
     renderCommandPreview();
-    ELEMENTS.outputInput.value = state.output;
-    ELEMENTS.inputIsRecursive.checked = state.recursive;
-    setRunning(state.running);
+    ELEMENTS.outputInput.value = STATE.output;
+    ELEMENTS.inputIsRecursive.checked = STATE.recursive;
+    setRunning(STATE.running);
 }
 
 function hydrate(saved = {}) {
     const savedOutputs = Array.isArray(saved.formats) && saved.formats.length > 0
         ? validFormats(saved.formats)
-        : defaultFormats;
+        : DEFAULT_FORMATS;
 
-    state.inputs = Array.isArray(saved.inputs) ? saved.inputs : [];
-    state.output = typeof saved.output === "string" ? saved.output : "";
-    state.recursive = Boolean(saved.recursive);
-    state.formats = new Set(savedOutputs.length > 0 ? savedOutputs : defaultFormats);
-    state.running = false;
-    state.activeTaskId = null;
+    STATE.inputs = Array.isArray(saved.inputs) ? saved.inputs : [];
+    STATE.output = typeof saved.output === "string" ? saved.output : "";
+    STATE.recursive = Boolean(saved.recursive);
+    STATE.formats = new Set(savedOutputs.length > 0 ? savedOutputs : DEFAULT_FORMATS);
+    STATE.running = false;
+    STATE.activeTaskId = null;
 
     renderState();
 }
@@ -144,9 +144,9 @@ function persistState() {
     return BUS ? BUS.invoke("save_state", {
         state_path: STATE_PATH,
         state: {
-            inputs: state.inputs,
-            output: state.output,
-            recursive: state.recursive,
+            inputs: STATE.inputs,
+            output: STATE.output,
+            recursive: STATE.recursive,
             formats: selectedFormats()
         }
     }).catch(() => {}) : Promise.resolve();
@@ -156,7 +156,7 @@ async function clickInputAddFile() {
     const paths = await BUS.invoke("pick_raw_files");
     if (!Array.isArray(paths) || paths.length === 0) return;
 
-    state.inputs = [...new Set([...state.inputs, ...paths])];
+    STATE.inputs = [...new Set([...STATE.inputs, ...paths])];
 
     renderState();
     await persistState();
@@ -166,14 +166,14 @@ async function clickInputAddFolder() {
     const directory = await BUS.invoke("pick_input_dir");
     if (!directory) return;
 
-    state.inputs = [...new Set([...state.inputs, directory])];
+    STATE.inputs = [...new Set([...STATE.inputs, directory])];
 
     renderState();
     await persistState();
 }
 
 async function clickInputClear() {
-    state.inputs = [];
+    STATE.inputs = [];
     renderInput();
     renderCommandPreview();
     void persistState();
@@ -183,7 +183,7 @@ async function clickOutputPick() {
     const directory = await BUS.invoke("pick_output_dir");
     if (!directory) return;
 
-    state.output = directory;
+    STATE.output = directory;
     renderState();
     await persistState();
 }
@@ -192,13 +192,13 @@ async function clickTaskStart() {
     try {
         const taskId = allocateTaskId();
         const request = buildCmd(taskId);
-        state.activeTaskId = taskId;
+        STATE.activeTaskId = taskId;
         ELEMENTS.logOutput.textContent = "";
         setRunning(true);
         setStatus("running", "ThermoRawRead is streaming logs from the CLI backend.");
         await BUS.invoke("run_task", request);
     } catch (error) {
-        state.activeTaskId = null;
+        STATE.activeTaskId = null;
         setRunning(false);
         appendLog(String(error));
         setStatus("error", String(error));
@@ -207,8 +207,8 @@ async function clickTaskStart() {
 
 async function clickTaskStop() {
     try {
-        if (state.activeTaskId == null) return;
-        await BUS.invoke("stop_task", {task_id: state.activeTaskId});
+        if (STATE.activeTaskId == null) return;
+        await BUS.invoke("stop_task", {task_id: STATE.activeTaskId});
     } catch (error) {
         appendLog(String(error));
         setStatus("error", String(error));
@@ -223,7 +223,7 @@ async function initialize() {
 
     if (!BUS) {
         Object.values(ELEMENTS).forEach((element) => element.disabled = true);
-        formatInputs.forEach((input) => input.disabled = true);
+        FORMAT_INPUTS.forEach((input) => input.disabled = true);
         const msg = "Desktop bridge is unavailable. Restart the app to reload the preload script.";
         setStatus("error", msg);
         appendLog(msg);
@@ -231,20 +231,20 @@ async function initialize() {
     }
 
     ELEMENTS.outputInput.addEventListener("input", () => {
-        state.output = ELEMENTS.outputInput.value;
+        STATE.output = ELEMENTS.outputInput.value;
         renderCommandPreview();
         void persistState();
     });
 
     ELEMENTS.inputIsRecursive.addEventListener("change", () => {
-        state.recursive = ELEMENTS.inputIsRecursive.checked;
+        STATE.recursive = ELEMENTS.inputIsRecursive.checked;
         renderCommandPreview();
         void persistState();
     });
 
-    formatInputs.forEach((input) => input.addEventListener("change", async () => {
-        if (input.checked) state.formats.add(input.value);
-        else state.formats.delete(input.value);
+    FORMAT_INPUTS.forEach((input) => input.addEventListener("change", async () => {
+        if (input.checked) STATE.formats.add(input.value);
+        else STATE.formats.delete(input.value);
         renderFormats();
         renderCommandPreview();
         await persistState();
@@ -259,21 +259,21 @@ async function initialize() {
     ELEMENTS.logClear.addEventListener("click", () => ELEMENTS.logOutput.textContent = "");
 
     BUS.on("task-log", ({task_id: taskId, line}) => {
-        if (taskId !== state.activeTaskId) return;
+        if (taskId !== STATE.activeTaskId) return;
         appendLog(line);
     });
 
     BUS.on("task-status", ({task_id: taskId, status, message}) => {
-        if (taskId !== state.activeTaskId) return;
+        if (taskId !== STATE.activeTaskId) return;
         setRunning(status === "running");
         setStatus(status, message);
-        if (status !== "running") state.activeTaskId = null;
+        if (status !== "running") STATE.activeTaskId = null;
     });
 
     try {
         hydrate(await BUS.invoke("load_state", {state_path: STATE_PATH}));
     } catch {
-        hydrate(defaultState);
+        hydrate(DEFAULT_STATE);
     }
 }
 
