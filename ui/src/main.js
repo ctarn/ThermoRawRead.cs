@@ -151,7 +151,7 @@ function hydrate(saved = {}) {
 function persistState() {
     if (!BUS) return Promise.resolve();
 
-    return BUS.invoke("save_state", {
+    return BUS ? BUS.invoke("save_state", {
         state_path: statePath,
         state: {
             inputs: state.inputs,
@@ -159,7 +159,7 @@ function persistState() {
             recursive: state.recursive,
             formats: selectedFormats()
         }
-    }).catch(() => {});
+    }).catch(() => {}) : Promise.resolve();
 }
 
 async function chooseFiles() {
