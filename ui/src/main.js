@@ -1,12 +1,6 @@
 const BUS = window.commandbus ?? null;
 const APPLICATION = "ThermoRawRead";
 const TASK_COMMAND = "ThermoRawRead";
-const defaultState = Object.freeze({
-    inputs: [],
-    output: "",
-    recursive: false,
-    formats: ["umz", "csv", "txt", "meth"]
-});
 
 const statusMeta = {
     idle: {badgeClass: "badge badge-muted", badgeText: "Idle"},
@@ -43,6 +37,13 @@ const formatInputs = Array.from(elements.formatGrid.querySelectorAll("input[type
 const allowedOutputs = new Set(formatInputs.map((input) => input.value));
 const defaultOutputs = formatInputs.filter((input) => input.checked).map((input) => input.value);
 let nextTaskId = 1;
+
+const defaultState = Object.freeze({
+    inputs: [],
+    output: "",
+    recursive: false,
+    formats: ["umz", "csv", "txt", "meth"]
+});
 const state = {
     inputs: [],
     output: "",
