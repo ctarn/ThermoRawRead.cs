@@ -257,7 +257,7 @@ async function initialize() {
     elements.outputPick.addEventListener("click", chooseOutputDir);
     elements.taskStart.addEventListener("click", runJob);
     elements.taskStop.addEventListener("click", stopJob);
-    elements.logClear.addEventListener("click", () => elements.logOutput.textContent = "idle...");
+    elements.logClear.addEventListener("click", () => elements.logOutput.textContent = "");
     elements.inputClear.addEventListener("click", () => {
         state.inputs = [];
         renderInput();
