@@ -40,7 +40,9 @@ const defaultState = Object.freeze({
     inputs: [],
     output: "",
     recursive: false,
-    formats: ["umz", "csv", "txt", "meth"]
+    formats: new Set(defaultOutputs),
+    running: false,
+    activeTaskId: null
 });
 const state = {
     inputs: [],
