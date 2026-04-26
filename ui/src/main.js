@@ -21,14 +21,6 @@ const elements = {
     logOutput: document.querySelector("#log-output"),
 };
 
-const statusMeta = {
-    idle: {badgeClass: "badge badge-muted", badgeText: "Idle"},
-    running: {badgeClass: "badge", badgeText: "Running"},
-    stopped: {badgeClass: "badge badge-muted", badgeText: "Stopped"},
-    success: {badgeClass: "badge", badgeText: "Finished"},
-    error: {badgeClass: "badge badge-error", badgeText: "Failed"}
-};
-
 const bridgeErrorMessage = "Desktop bridge is unavailable. Restart the app to reload the preload script.";
 const statePath = BUS ? `${BUS.env.homeDir}${BUS.env.pathSep}.${APPLICATION}${BUS.env.pathSep}ui-state.json` : "";
 const formatInputs = Array.from(elements.formatGrid.querySelectorAll("input[type='checkbox']"));
@@ -92,6 +84,14 @@ function renderCommandPreview() {
     const quote = (str) => /\s/.test(str) || (str === "") ? JSON.stringify(str) : str;
     elements.commandPreview.textContent = [TASK_COMMAND, ...buildRequest({preview: true}).map(quote)].join(" ");
 }
+
+const statusMeta = {
+    idle: {badgeClass: "badge badge-muted", badgeText: "Idle"},
+    running: {badgeClass: "badge", badgeText: "Running"},
+    stopped: {badgeClass: "badge badge-muted", badgeText: "Stopped"},
+    success: {badgeClass: "badge", badgeText: "Finished"},
+    error: {badgeClass: "badge badge-error", badgeText: "Failed"}
+};
 
 function setStatus(status, message) {
     const meta = statusMeta[status] ?? statusMeta.idle;
