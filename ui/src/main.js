@@ -46,7 +46,7 @@ const selectedFormats = () => validFormats(Array.from(state.formats));
 let nextTaskId = 1;
 const allocateTaskId = () => nextTaskId++;
 
-function buildRequest({preview = false} = {}) {
+function buildArgs({preview = false} = {}) {
     const args = [];
 
     const formats = selectedFormats().sort();
@@ -66,7 +66,7 @@ function buildRequest({preview = false} = {}) {
     return args;
 }
 
-const buildCmd = (taskId, options) => ({task_id: taskId, command: TASK_COMMAND, args: buildRequest(options)});
+const buildCmd = (taskId, options) => ({task_id: taskId, command: TASK_COMMAND, args: buildArgs(options)});
 
 function renderInput() {
     elements.inputList.replaceChildren();
@@ -83,7 +83,7 @@ const renderFormats = () => formatInputs.forEach((item) => item.checked = state.
 
 function renderCommandPreview() {
     const quote = (str) => /\s/.test(str) || (str === "") ? JSON.stringify(str) : str;
-    elements.commandPreview.textContent = [TASK_COMMAND, ...buildRequest({preview: true}).map(quote)].join(" ");
+    elements.commandPreview.textContent = [TASK_COMMAND, ...buildArgs({preview: true}).map(quote)].join(" ");
 }
 
 const statusMeta = {
