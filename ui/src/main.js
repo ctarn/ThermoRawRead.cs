@@ -1,7 +1,3 @@
-function quoteArg(value) {
-    if (value === "") return '""';
-    return /\s/.test(value) ? JSON.stringify(value) : value;
-}
 
 const APPLICATION = "ThermoRawRead";
 const TASK_COMMAND = "ThermoRawRead";
@@ -143,7 +139,8 @@ function renderFormatGrid() {
 }
 
 function renderCommandPreview() {
-    const parts = [TASK_COMMAND, ...buildTaskArgs({preview: true}).map(quoteArg)];
+    const quote = (str) => /\s/.test(str) || (str === "") ? JSON.stringify(str) : str;
+    const parts = [TASK_COMMAND, ...buildTaskArgs({preview: true}).map(quote)];
     elements.commandPreview.textContent = parts.join(" ");
 }
 
