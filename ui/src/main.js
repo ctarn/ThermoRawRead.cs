@@ -241,16 +241,13 @@ async function initialize() {
         void persistState();
     });
 
-    formatInputs.forEach((input) => {
-        input.addEventListener("change", async () => {
-            if (input.checked) state.formats.add(input.value);
-            else state.formats.delete(input.value);
-
-            renderFormats();
-            renderCommandPreview();
-            await persistState();
-        });
-    });
+    formatInputs.forEach((input) => input.addEventListener("change", async () => {
+        if (input.checked) state.formats.add(input.value);
+        else state.formats.delete(input.value);
+        renderFormats();
+        renderCommandPreview();
+        await persistState();
+    }));
 
     elements.inputAddFile.addEventListener("click", chooseFiles);
     elements.inputAddFolder.addEventListener("click", chooseInputDir);
