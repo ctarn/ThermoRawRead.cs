@@ -114,21 +114,8 @@ function setRunning(running) {
 }
 
 function setBridgeEnabled(enabled) {
-    [
-        elements.outputInput,
-        elements.inputIsRecursive,
-        elements.inputAddFile,
-        elements.inputAddFolder,
-        elements.outputPick,
-        elements.taskStart,
-        elements.inputClear
-    ].forEach((element) => {
-        element.disabled = !enabled;
-    });
-    formatInputs.forEach((input) => {
-        input.disabled = !enabled;
-    });
-    elements.taskStop.disabled = true;
+    Object.values(elements).forEach((element) => element.disabled = !enabled);
+    formatInputs.forEach((input) => input.disabled = !enabled);
 }
 
 function appendLog(line) {
