@@ -32,15 +32,15 @@ const elements = {
 const bridgeErrorMessage = "Desktop bridge is unavailable. Restart the app to reload the preload script.";
 const statePath = BUS ? `${BUS.env.homeDir}${BUS.env.pathSep}.${APPLICATION}${BUS.env.pathSep}ui-state.json` : "";
 const formatInputs = Array.from(elements.formatGrid.querySelectorAll("input[type='checkbox']"));
-const allowedOutputs = new Set(formatInputs.map((input) => input.value));
-const defaultOutputs = formatInputs.filter((input) => input.checked).map((input) => input.value);
+const allowedFormats = new Set(formatInputs.map((input) => input.value));
+const defaultFormats = formatInputs.filter((input) => input.checked).map((input) => input.value);
 let nextTaskId = 1;
 
 const createState = () => ({
     inputs: [],
     output: "",
     recursive: false,
-    formats: new Set(defaultOutputs),
+    formats: new Set(defaultFormats),
     running: false,
     activeTaskId: null
 });
@@ -48,7 +48,7 @@ const createState = () => ({
 const defaultState = Object.freeze(createState());
 const state = createState();
 
-const validFormats = (values) => values.filter((value) => allowedOutputs.has(value));
+const validFormats = (values) => values.filter((value) => allowedFormats.has(value));
 const selectedFormats = () => validFormats(Array.from(state.formats));
 
 function allocateTaskId() {
@@ -133,12 +133,12 @@ function renderState() {
 function hydrate(saved = {}) {
     const savedOutputs = Array.isArray(saved.formats) && saved.formats.length > 0
         ? validFormats(saved.formats)
-        : defaultOutputs;
+        : defaultFormats;
 
     state.inputs = Array.isArray(saved.inputs) ? saved.inputs : [];
     state.output = typeof saved.output === "string" ? saved.output : "";
     state.recursive = Boolean(saved.recursive);
-    state.formats = new Set(savedOutputs.length > 0 ? savedOutputs : defaultOutputs);
+    state.formats = new Set(savedOutputs.length > 0 ? savedOutputs : defaultFormats);
     state.running = false;
     state.activeTaskId = null;
 
