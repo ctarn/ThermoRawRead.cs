@@ -274,14 +274,11 @@ async function initialize() {
         if (taskId !== state.activeTaskId) return;
         setRunning(status === "running");
         setStatus(status, message);
-        if (status !== "running") {
-            state.activeTaskId = null;
-        }
+        if (status !== "running") state.activeTaskId = null;
     });
 
     try {
-        const saved = await BUS.invoke("load_state", {state_path: statePath});
-        hydrate(saved);
+        hydrate(await BUS.invoke("load_state", {state_path: statePath}));
     } catch {
         hydrate(defaultState);
     }
