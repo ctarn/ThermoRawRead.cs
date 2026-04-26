@@ -149,8 +149,6 @@ function hydrate(saved = {}) {
 }
 
 function persistState() {
-    if (!BUS) return Promise.resolve();
-
     return BUS ? BUS.invoke("save_state", {
         state_path: statePath,
         state: {
