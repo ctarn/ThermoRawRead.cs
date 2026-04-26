@@ -2,9 +2,9 @@ const BUS = window.commandbus ?? null;
 const APPLICATION = "ThermoRawRead";
 const TASK_COMMAND = "ThermoRawRead";
 
-const statePath = BUS ? `${BUS.env.homeDir}${BUS.env.pathSep}.${APPLICATION}${BUS.env.pathSep}ui-state.json` : "";
+const STATE_PATH = BUS ? `${BUS.env.homeDir}${BUS.env.pathSep}.${APPLICATION}${BUS.env.pathSep}ui-state.json` : "";
 
-const elements = {
+const ELEMENTS = {
     inputList: document.querySelector("#input-list"),
     inputCount: document.querySelector("#input-count"),
     inputAddFile: document.querySelector("#input-add-file"),
@@ -23,7 +23,7 @@ const elements = {
     logOutput: document.querySelector("#log-output"),
 };
 
-const formatInputs = Array.from(elements.formatGrid.querySelectorAll("input[type='checkbox']"));
+const formatInputs = Array.from(ELEMENTS.formatGrid.querySelectorAll("input[type='checkbox']"));
 const allowedFormats = new Set(formatInputs.map((input) => input.value));
 const defaultFormats = formatInputs.filter((input) => input.checked).map((input) => input.value);
 
@@ -70,12 +70,12 @@ function buildCmd(taskId, options) {
 }
 
 function renderInput() {
-    elements.inputList.replaceChildren();
+    ELEMENTS.inputList.replaceChildren();
 
     const count = state.inputs.length;
-    elements.inputCount.textContent = `${count} entr${count <= 1 ? "y" : "ies"}`;
+    ELEMENTS.inputCount.textContent = `${count} entr${count <= 1 ? "y" : "ies"}`;
 
-    elements.inputList.insertAdjacentHTML("beforeend", 
+    ELEMENTS.inputList.insertAdjacentHTML("beforeend", 
         count > 0 ? state.inputs.map(path => `<li>${path}</li>`).join('') : '<li class="empty">Nothing Selected.</li>'
     );
 }
@@ -86,7 +86,7 @@ function renderFormats() {
 
 function renderCommandPreview() {
     const quote = (str) => /\s/.test(str) || (str === "") ? JSON.stringify(str) : str;
-    elements.commandPreview.textContent = [TASK_COMMAND, ...buildArgs({preview: true}).map(quote)].join(" ");
+    ELEMENTS.commandPreview.textContent = [TASK_COMMAND, ...buildArgs({preview: true}).map(quote)].join(" ");
 }
 
 const statusMeta = {
@@ -99,29 +99,29 @@ const statusMeta = {
 
 function setStatus(status, message) {
     const meta = statusMeta[status] ?? statusMeta.idle;
-    elements.statusBadge.className = meta.badgeClass;
-    elements.statusBadge.textContent = meta.badgeText;
-    elements.statusText.textContent = message ?? "";
+    ELEMENTS.statusBadge.className = meta.badgeClass;
+    ELEMENTS.statusBadge.textContent = meta.badgeText;
+    ELEMENTS.statusText.textContent = message ?? "";
 }
 
 function setRunning(running) {
     state.running = running;
-    elements.taskStart.disabled = running;
-    elements.taskStop.disabled = !running;
+    ELEMENTS.taskStart.disabled = running;
+    ELEMENTS.taskStop.disabled = !running;
 }
 
 function appendLog(line) {
-    const content = elements.logOutput.textContent === "idle..." ? "" : elements.logOutput.textContent;
-    elements.logOutput.textContent = `${content}${content ? "\n" : ""}${line}`;
-    elements.logOutput.scrollTop = elements.logOutput.scrollHeight;
+    const content = ELEMENTS.logOutput.textContent === "idle..." ? "" : ELEMENTS.logOutput.textContent;
+    ELEMENTS.logOutput.textContent = `${content}${content ? "\n" : ""}${line}`;
+    ELEMENTS.logOutput.scrollTop = ELEMENTS.logOutput.scrollHeight;
 }
 
 function renderState() {
     renderInput();
     renderFormats();
     renderCommandPreview();
-    elements.outputInput.value = state.output;
-    elements.inputIsRecursive.checked = state.recursive;
+    ELEMENTS.outputInput.value = state.output;
+    ELEMENTS.inputIsRecursive.checked = state.recursive;
     setRunning(state.running);
 }
 
@@ -142,7 +142,7 @@ function hydrate(saved = {}) {
 
 function persistState() {
     return BUS ? BUS.invoke("save_state", {
-        state_path: statePath,
+        state_path: STATE_PATH,
         state: {
             inputs: state.inputs,
             output: state.output,
@@ -193,7 +193,7 @@ async function clickTaskStart() {
         const taskId = allocateTaskId();
         const request = buildCmd(taskId);
         state.activeTaskId = taskId;
-        elements.logOutput.textContent = "";
+        ELEMENTS.logOutput.textContent = "";
         setRunning(true);
         setStatus("running", "ThermoRawRead is streaming logs from the CLI backend.");
         await BUS.invoke("run_task", request);
@@ -222,7 +222,7 @@ async function initialize() {
     setRunning(false);
 
     if (!BUS) {
-        Object.values(elements).forEach((element) => element.disabled = true);
+        Object.values(ELEMENTS).forEach((element) => element.disabled = true);
         formatInputs.forEach((input) => input.disabled = true);
         const msg = "Desktop bridge is unavailable. Restart the app to reload the preload script.";
         setStatus("error", msg);
@@ -230,14 +230,14 @@ async function initialize() {
         return;
     }
 
-    elements.outputInput.addEventListener("input", () => {
-        state.output = elements.outputInput.value;
+    ELEMENTS.outputInput.addEventListener("input", () => {
+        state.output = ELEMENTS.outputInput.value;
         renderCommandPreview();
         void persistState();
     });
 
-    elements.inputIsRecursive.addEventListener("change", () => {
-        state.recursive = elements.inputIsRecursive.checked;
+    ELEMENTS.inputIsRecursive.addEventListener("change", () => {
+        state.recursive = ELEMENTS.inputIsRecursive.checked;
         renderCommandPreview();
         void persistState();
     });
@@ -250,13 +250,13 @@ async function initialize() {
         await persistState();
     }));
 
-    elements.inputAddFile.addEventListener("click", clickInputAddFile);
-    elements.inputAddFolder.addEventListener("click", clickInputAddFolder);
-    elements.inputClear.addEventListener("click", clickInputClear);
-    elements.outputPick.addEventListener("click", clickOutputPick);
-    elements.taskStart.addEventListener("click", clickTaskStart);
-    elements.taskStop.addEventListener("click", clickTaskStop);
-    elements.logClear.addEventListener("click", () => elements.logOutput.textContent = "");
+    ELEMENTS.inputAddFile.addEventListener("click", clickInputAddFile);
+    ELEMENTS.inputAddFolder.addEventListener("click", clickInputAddFolder);
+    ELEMENTS.inputClear.addEventListener("click", clickInputClear);
+    ELEMENTS.outputPick.addEventListener("click", clickOutputPick);
+    ELEMENTS.taskStart.addEventListener("click", clickTaskStart);
+    ELEMENTS.taskStop.addEventListener("click", clickTaskStop);
+    ELEMENTS.logClear.addEventListener("click", () => ELEMENTS.logOutput.textContent = "");
 
     BUS.on("task-log", ({task_id: taskId, line}) => {
         if (taskId !== state.activeTaskId) return;
@@ -271,7 +271,7 @@ async function initialize() {
     });
 
     try {
-        hydrate(await BUS.invoke("load_state", {state_path: statePath}));
+        hydrate(await BUS.invoke("load_state", {state_path: STATE_PATH}));
     } catch {
         hydrate(defaultState);
     }
