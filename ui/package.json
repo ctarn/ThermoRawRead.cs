@@ -8,13 +8,14 @@
   "type": "module",
   "main": "electron/main.mjs",
   "scripts": {
-    "start": "electron-forge start",
-    "package": "electron-forge package",
-    "make": "electron-forge make",
-    "publish": "electron-forge publish"
+    "build": "esbuild src/main.jsx --bundle --format=iife --jsx=automatic --minify --outfile=src/main.bundle.js",
+    "start": "npm run build && electron-forge start",
+    "package": "npm run build && electron-forge package",
+    "make": "npm run build && electron-forge make",
+    "publish": "npm run build && electron-forge publish"
   },
   "config": {
-      "forge": "./electron/forge.mjs"
+    "forge": "./electron/forge.mjs"
   },
   "dependencies": {
     "electron-squirrel-startup": "^1.0.1"
@@ -26,6 +27,9 @@
     "@electron-forge/maker-squirrel": "^7.11.1",
     "@electron-forge/maker-zip": "^7.11.1",
     "electron": "^31.7.7",
-    "png-to-ico": "^3.0.1"
+    "esbuild": "^0.28.0",
+    "png-to-ico": "^3.0.1",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5"
   }
 }

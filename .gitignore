@@ -4,10 +4,6 @@ bin/
 obj/
 
 ui/node_modules/
-ui/src-tauri/gen/
-ui/src-tauri/target/
+*.bundle.js
 
 .DS_Store
-
-__pycache__/
-*.spec
